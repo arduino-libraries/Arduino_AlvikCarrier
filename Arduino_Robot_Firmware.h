@@ -5,5 +5,6 @@
 #include "pinout_definitions.h"
 #include "HAL_custom_init.h"
 #include "encoder.h"
+#include "rgb_led.h"
 
 #endif

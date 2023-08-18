@@ -2,6 +2,7 @@
 
 Encoder enc_right(TIM2);
 Encoder enc_left(TIM3);
+RGBled led1(LED_1_RED, LED_1_GREEN, LED_1_BLUE);
 
 
 void setup(){
@@ -15,12 +16,16 @@ void setup(){
 }
 
 void loop(){
-  for(int i=0; i<10; i++){
-    Serial.print(enc_right.getCount());
-    Serial.print("  ");
-    Serial.println(enc_left.getCount());
-    delay(10);
+  Serial.print(enc_right.getCount());
+  if (enc_right.getCount()>0){
+    led1.setBlue(HIGH);
+    led1.setRed(LOW);
   }
-  enc_right.reset();
-    
+  else{
+    led1.setBlue(LOW);
+    led1.setRed(HIGH);
+  }
+  Serial.print("  ");
+  Serial.println(enc_left.getCount());
+  delay(10);
 }
