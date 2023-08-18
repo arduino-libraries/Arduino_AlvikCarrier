@@ -15,8 +15,12 @@ void setup(){
 }
 
 void loop(){
+  for(int i=0; i<10; i++){
     Serial.print(enc_right.getCount());
     Serial.print("  ");
     Serial.println(enc_left.getCount());
-    delay(100);
+    delay(10);
+  }
+  enc_right.reset();
+    
 }
