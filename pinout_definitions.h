@@ -6,15 +6,19 @@
 #define ENC_RIGHT_TIMER TIM2
 #define ENC_RIGHT_A PA_0
 #define ENC_RIGHT_B PA_1
-#define MOTOR_RIGHT_A PA_2
-#define MOTOR_RIGHT_B PA_3
+#define MOTOR_RIGHT_A PA2
+#define MOTOR_RIGHT_A_CH 3
+#define MOTOR_RIGHT_B PA3
+#define MOTOR_RIGHT_B_CH 4
 
 // Left Motor
 #define ENC_LEFT_TIMER TIM3
-#define ENC_RIGHT_A PC_6
-#define ENC_RIGHT_B PC_7
-#define MOTOR_RIGHT_A PA_15
-#define MOTOR_RIGHT_B PB_3
+#define ENC_LEFT_A PC_6
+#define ENC_LEFT_B PC_7
+#define MOTOR_LEFT_A PA15
+#define MOTOR_LEFT_A_CH 1
+#define MOTOR_LEFT_B PB3
+#define MOTOR_LEFT_B_CH 2
 
 
 // Leds

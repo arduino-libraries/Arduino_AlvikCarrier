@@ -6,5 +6,8 @@
 #include "HAL_custom_init.h"
 #include "encoder.h"
 #include "rgb_led.h"
+#include "dcmotor.h"
+
+
 
 #endif

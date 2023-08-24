@@ -3,6 +3,7 @@
 
 
 // Set PA_0 and PA_1 as alternate function 1 -> TIM2
+/*
 void AF_Tim2_pins_encoder(){
     GPIO_InitTypeDef GPIO_InitStruct;
 	__HAL_RCC_TIM2_CLK_ENABLE();
@@ -13,6 +14,13 @@ void AF_Tim2_pins_encoder(){
     GPIO_InitStruct.Alternate = GPIO_AF1_TIM1;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 }
+*/
+
+
+/***************************************************************/
+/*                            Encoder                          */
+/***************************************************************/
+
 
 // Set PA_0 and PA_1 as alternate function 1 -> TIM5
 void AF_Tim5_pins_encoder(){
@@ -38,6 +46,30 @@ void AF_Tim3_pins_encoder(){
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 }
 
+/***************************************************************/
+/*                             PWM                             */
+/***************************************************************/
+
+void AF_Tim2_pwm(){
+    GPIO_InitTypeDef GPIO_InitStructA;
+	__HAL_RCC_TIM2_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+    GPIO_InitStructA.Pin = GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_15;
+	GPIO_InitStructA.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStructA.Pull = GPIO_NOPULL;
+  	GPIO_InitStructA.Alternate = GPIO_AF1_TIM2;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStructA);
+
+
+	GPIO_InitTypeDef GPIO_InitStructB;
+	__HAL_RCC_TIM2_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+    GPIO_InitStructB.Pin = GPIO_PIN_3;
+	GPIO_InitStructB.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStructB.Pull = GPIO_NOPULL;
+  	GPIO_InitStructB.Alternate = GPIO_AF1_TIM2;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStructB);
+}
 
 
 
