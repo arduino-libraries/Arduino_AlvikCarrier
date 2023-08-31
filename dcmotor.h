@@ -19,7 +19,7 @@ class DCmotor{
 
     public:
         DCmotor(const uint32_t _pinA, const uint32_t _chA, const uint32_t _pinB, const uint32_t _chB, 
-                const bool flip=false,TIM_TypeDef * _tim = TIM2, const uint32_t _frequency=20000){
+                const bool flip=false, TIM_TypeDef * _tim = TIM2, const uint32_t _frequency=20000){
             if (!flip){
                 pinA=_pinA;
                 chA=_chA;

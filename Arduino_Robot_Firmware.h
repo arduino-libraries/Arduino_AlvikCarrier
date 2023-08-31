@@ -7,6 +7,7 @@
 #include "encoder.h"
 #include "rgb_led.h"
 #include "dcmotor.h"
+#include "motor_control.h"
 
 
 
