@@ -19,7 +19,6 @@ class RGBled{
             digitalWrite(R,LOW);
             digitalWrite(G,LOW);
             digitalWrite(B,LOW);
-
         }
 
         void setRed(const uint32_t red){

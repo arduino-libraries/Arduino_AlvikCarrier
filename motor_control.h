@@ -25,6 +25,8 @@ class MotorControl{
         float ctrl_d;
         float actuation;
 
+        float prev_error;
+
         DCmotor * motor;
         Encoder * encoder;
     public:

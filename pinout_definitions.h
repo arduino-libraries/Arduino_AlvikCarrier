@@ -3,20 +3,21 @@
 
 
 // Right Motor
-#define ENC_RIGHT_TIMER TIM2
+#define ENC_RIGHT_TIMER TIM5
 #define ENC_RIGHT_A PA0
 #define ENC_RIGHT_B PA1
 #define MOTOR_RIGHT_A PA2
 #define MOTOR_RIGHT_A_CH 3
-#define MOTOR_RIGHT_B PA3
-#define MOTOR_RIGHT_B_CH 4
+#define MOTOR_RIGHT_B PA15
+#define MOTOR_RIGHT_B_CH 1
+
 
 // Left Motor
 #define ENC_LEFT_TIMER TIM3
 #define ENC_LEFT_A PC6
 #define ENC_LEFT_B PC7
-#define MOTOR_LEFT_A PA15
-#define MOTOR_LEFT_A_CH 1
+#define MOTOR_LEFT_A PA3
+#define MOTOR_LEFT_A_CH 4
 #define MOTOR_LEFT_B PB3
 #define MOTOR_LEFT_B_CH 2
 
@@ -33,6 +34,10 @@
 // Analog RC Servos
 #define SERVO_A PC9
 #define SERVO_B PA8
+
+// APDS9960
+#define LED_APDS PB6
+
 
 
 #endif
