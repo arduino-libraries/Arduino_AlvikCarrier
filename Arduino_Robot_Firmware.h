@@ -17,6 +17,8 @@ class Arduino_Robot_Firmware{
         RGBled * led2;
         DCmotor * motor_left;
         DCmotor * motor_right;
+        Encoder * encoder_left;
+        Encoder * encoder_right;
 
 
         Arduino_Robot_Firmware(){
@@ -25,6 +27,9 @@ class Arduino_Robot_Firmware{
 
             motor_left = new DCmotor(MOTOR_LEFT_A,MOTOR_LEFT_A_CH, MOTOR_LEFT_B, MOTOR_LEFT_B_CH,true);
             motor_right = new DCmotor(MOTOR_RIGHT_A,MOTOR_RIGHT_A_CH,MOTOR_RIGHT_B,MOTOR_RIGHT_B_CH);
+
+            encoder_left = new Encoder(TIM3);
+            encoder_right = new Encoder(TIM5);
 
         }
 
@@ -42,6 +47,9 @@ class Arduino_Robot_Firmware{
             motor_right->begin();
             motor_left->stop();
             motor_right->stop();
+
+            encoder_left->begin();
+            encoder_right->begin();
 
             return 0;
         }
