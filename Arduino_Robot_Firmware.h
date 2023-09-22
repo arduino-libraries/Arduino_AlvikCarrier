@@ -8,10 +8,15 @@
 #include "rgb_led.h"
 #include "dcmotor.h"
 #include "motor_control.h"
+#include "Arduino_APDS9960.h"
 
 class Arduino_Robot_Firmware{
     private:
-        
+        APDS9960 * apds9960;
+        int bottom_red, bottom_green, bottom_blue, bottom_clear, bottom_proximity;
+
+
+
     public:
         RGBled * led1;
         RGBled * led2;
@@ -19,17 +24,27 @@ class Arduino_Robot_Firmware{
         DCmotor * motor_right;
         Encoder * encoder_left;
         Encoder * encoder_right;
+        TwoWire * wire;
 
 
         Arduino_Robot_Firmware(){
+            // I2C internal bus
+            wire = new TwoWire(I2C_1_SDA, I2C_1_SCL);
+
+            // RGB leds
             led1 = new RGBled(LED_1_RED,LED_1_GREEN,LED_1_BLUE);
             led2 = new RGBled(LED_2_RED,LED_2_GREEN,LED_2_BLUE);
 
+            // motors
             motor_left = new DCmotor(MOTOR_LEFT_A,MOTOR_LEFT_A_CH, MOTOR_LEFT_B, MOTOR_LEFT_B_CH,true);
             motor_right = new DCmotor(MOTOR_RIGHT_A,MOTOR_RIGHT_A_CH,MOTOR_RIGHT_B,MOTOR_RIGHT_B_CH);
 
+            // encoders
             encoder_left = new Encoder(TIM3);
             encoder_right = new Encoder(TIM5);
+
+            // color sensor
+            apds9960 = new APDS9960(*wire,APDS_INT);
 
         }
 
@@ -51,7 +66,42 @@ class Arduino_Robot_Firmware{
             encoder_left->begin();
             encoder_right->begin();
 
+            wire->begin();
+
+            pinMode(APDS_LED,OUTPUT);
+            digitalWrite(APDS_LED,HIGH);
+            apds9960->begin();
+
+
+
             return 0;
+        }
+
+        void updateAPDS(){
+            if (apds9960->proximityAvailable()){
+                bottom_proximity=apds9960->readProximity();
+            }
+            //digitalWrite(APDS_LED,HIGH);
+            if (apds9960->colorAvailable()){
+                apds9960->readColor(bottom_red,bottom_green,bottom_blue,bottom_clear);
+            }
+            //digitalWrite(APDS_LED,LOW);
+        }
+
+        int getRed(){
+            return bottom_red;
+        }
+
+        int getGreen(){
+            return bottom_green;
+        }
+
+        int getBlue(){
+            return bottom_blue;
+        }
+
+        int getProximity(){
+            return bottom_proximity;
         }
 };
 

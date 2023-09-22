@@ -31,12 +31,18 @@
 #define LED_2_GREEN PB4
 #define LED_2_BLUE PB5
 
+
 // Analog RC Servos
 #define SERVO_A PC9
 #define SERVO_B PA8
 
+
 // APDS9960
-#define LED_APDS PB6
+#define APDS_LED PB6
+#define APDS_INT PC10
+
+#define I2C_1_SDA PB7
+#define I2C_1_SCL PB8
 
 
 
