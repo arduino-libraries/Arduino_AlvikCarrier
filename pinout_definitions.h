@@ -2,6 +2,9 @@
 #define __PINOUT_DEFINITIONS_H__
 
 
+
+#define MOTORS_ENABLE PD2
+
 // Right Motor
 #define ENC_RIGHT_TIMER TIM5
 #define ENC_RIGHT_A PA0

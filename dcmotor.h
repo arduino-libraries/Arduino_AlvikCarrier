@@ -34,12 +34,18 @@ class DCmotor{
             }
             htimX.Instance = _tim; 
             frequency=_frequency;
+            pinMode(MOTORS_ENABLE,OUTPUT);
         }
 
         void begin(){
             timX = new HardwareTimer(htimX.Instance);
             timX->setPWM(chA, pinA, frequency, 0);  
-            timX->setPWM(chB, pinB, frequency, 0);  
+            timX->setPWM(chB, pinB, frequency, 0);
+            digitalWrite(MOTORS_ENABLE,HIGH);
+        }
+
+        void disable(){
+            digitalWrite(MOTORS_ENABLE,LOW);
         }
 
         void setSpeed(const int speed){
