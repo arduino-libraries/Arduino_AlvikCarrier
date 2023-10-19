@@ -3,7 +3,6 @@
 
 #include "Arduino.h"
 #include "pinout_definitions.h"
-#include "HAL_custom_init.h"
 #include "encoder.h"
 #include "rgb_led.h"
 #include "dcmotor.h"
@@ -30,6 +29,8 @@ class Arduino_Robot_Firmware{
         int begin();
 
 
+
+        //custom class????
 
         // Color sensor, APDS9960
         int beginAPDS();                            // initialize all components required by color detection

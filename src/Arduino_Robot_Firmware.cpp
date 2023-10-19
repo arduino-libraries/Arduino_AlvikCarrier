@@ -1,4 +1,6 @@
 #include "Arduino_Robot_Firmware.h"
+#include "HAL_custom_init.h"
+
 
 
 Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
