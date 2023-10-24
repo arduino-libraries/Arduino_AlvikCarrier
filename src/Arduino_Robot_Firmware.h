@@ -8,11 +8,15 @@
 #include "dcmotor.h"
 #include "motor_control.h"
 #include "Arduino_APDS9960.h"
+#include <Servo.h>
 
 class Arduino_Robot_Firmware{
     private:
         APDS9960 * apds9960;
         int bottom_red, bottom_green, bottom_blue, bottom_clear, bottom_proximity;
+
+        Servo * servo_A;
+        Servo * servo_B;
 
     public:
         RGBled * led1;
@@ -42,6 +46,12 @@ class Arduino_Robot_Firmware{
         int getGreen();                             // green value 0-255
         int getBlue();                              // blue value 0-255
         int getProximity();                         // proximity value 0-127
+
+
+        // Servo
+        int beginServo();                           // initialize Servo interfaces
+        void setServoA(int position);              // 0°-180° servo position
+        void setServoB(int position);              // 0°-180° servo position
 };
 
 #endif
