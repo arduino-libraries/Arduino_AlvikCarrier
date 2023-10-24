@@ -1,5 +1,8 @@
+#include "Wire.h"
 #include "motion_fx.h"
 #include "LSM6DSOSensor.h"
+
+TwoWire wire(PB7, PB8);
 
 #define ALGO_FREQ  100U /* Algorithm frequency 100Hz */
 #define ALGO_PERIOD  (1000U / ALGO_FREQ) /* Algorithm period [ms] */
@@ -37,7 +40,7 @@ int32_t gyroscope[3];
 int32_t magnetometer[3];
 int32_t MagOffset[3];
 
-LSM6DSOSensor AccGyr(&Wire, LSM6DSO_I2C_ADD_L);
+LSM6DSOSensor AccGyr(&wire, LSM6DSO_I2C_ADD_L);
 
 HardwareTimer *MyTim;
 
@@ -54,8 +57,8 @@ void setup() {
   while (!Serial) yield();
 
   /* Initialize I2C bus */
-  Wire.begin();
-  Wire.setClock(400000);
+  wire.begin();
+  wire.setClock(400000);
 
   /* Start communication with IMU */
   AccGyr.begin();
@@ -94,7 +97,7 @@ void setup() {
   /* Get library version */
   LibVersionLen = (int)MotionFX_GetLibVersion(LibVersion);
 
-  MyTim = new HardwareTimer(TIM3);
+  MyTim = new HardwareTimer(TIM9);  //TIM3
   MyTim->setOverflow(ALGO_FREQ, HERTZ_FORMAT);
   MyTim->attachInterrupt(fusion_update);
   MyTim->resume();
