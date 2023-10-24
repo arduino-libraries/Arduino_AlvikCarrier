@@ -50,8 +50,15 @@ class Arduino_Robot_Firmware{
 
         // Servo
         int beginServo();                           // initialize Servo interfaces
-        void setServoA(int position);              // 0°-180° servo position
-        void setServoB(int position);              // 0°-180° servo position
+        void setServoA(int position);               // 0°-180° servo position
+        void setServoB(int position);               // 0°-180° servo position
+
+
+        // I2C select
+        int beginI2Cselect();                       // initialize I2C bus selector
+        void setExternalI2C(uint8_t state);         // set A4,A5 connection on I2C bus 2
+        void connectExternalI2C();                  // allow A4,A5 on nano connector to be attached to I2C bus 2
+        void disconnectExternalI2C();               // disable the connection on A4,A5
 };
 
 #endif

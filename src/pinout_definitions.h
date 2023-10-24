@@ -44,8 +44,11 @@
 #define APDS_LED PB6
 #define APDS_INT PC10
 
+// I2C ports
 #define I2C_1_SDA PB7
 #define I2C_1_SCL PB8
+#define SELECT_I2C_BUS PB2
+
 
 
 

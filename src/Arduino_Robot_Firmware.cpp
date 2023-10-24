@@ -49,6 +49,8 @@ int Arduino_Robot_Firmware::begin(){
 
     beginAPDS();
     beginServo();
+    beginI2Cselect();
+    connectExternalI2C();
 
     return 0;
 }
@@ -120,4 +122,24 @@ void Arduino_Robot_Firmware::setServoA(int position){
 
 void Arduino_Robot_Firmware::setServoB(int position){
     servo_B->write(position);
+}
+
+/******************************************************************************************************/
+/*                                        RC Servo A & B                                              */
+/******************************************************************************************************/
+
+int Arduino_Robot_Firmware::beginI2Cselect(){
+    pinMode(SELECT_I2C_BUS,OUTPUT);
+}
+
+void Arduino_Robot_Firmware::setExternalI2C(uint8_t state){
+    digitalWrite(SELECT_I2C_BUS,state);
+}
+
+void Arduino_Robot_Firmware::connectExternalI2C(){
+    setExternalI2C(LOW);
+}
+
+void Arduino_Robot_Firmware::disconnectExternalI2C(){
+    setExternalI2C(HIGH);
 }
