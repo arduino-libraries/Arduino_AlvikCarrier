@@ -59,6 +59,7 @@ class Arduino_Robot_Firmware{
         void setExternalI2C(uint8_t state);         // set A4,A5 connection on I2C bus 2
         void connectExternalI2C();                  // allow A4,A5 on nano connector to be attached to I2C bus 2
         void disconnectExternalI2C();               // disable the connection on A4,A5
+
 };
 
 #endif
