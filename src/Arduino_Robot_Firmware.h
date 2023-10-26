@@ -18,6 +18,9 @@ class Arduino_Robot_Firmware{
         Servo * servo_A;
         Servo * servo_B;
 
+        TwoWire * wire;
+
+
     public:
         RGBled * led1;
         RGBled * led2;
@@ -25,7 +28,6 @@ class Arduino_Robot_Firmware{
         DCmotor * motor_right;
         Encoder * encoder_left;
         Encoder * encoder_right;
-        TwoWire * wire;
 
 
         Arduino_Robot_Firmware();
