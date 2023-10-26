@@ -21,6 +21,10 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
 
     // color sensor
     apds9960 = new APDS9960(*wire,APDS_INT);
+
+    // servo
+    servo_A = new Servo();
+    servo_B = new Servo();
 }
 
 int Arduino_Robot_Firmware::begin(){
@@ -44,6 +48,9 @@ int Arduino_Robot_Firmware::begin(){
     wire->begin();
 
     beginAPDS();
+    beginServo();
+    beginI2Cselect();
+    connectExternalI2C();
 
     return 0;
 }
@@ -97,4 +104,42 @@ int Arduino_Robot_Firmware::getBlue(){
 
 int Arduino_Robot_Firmware::getProximity(){
     return bottom_proximity;
+}
+
+/******************************************************************************************************/
+/*                                        RC Servo A & B                                              */
+/******************************************************************************************************/
+
+int Arduino_Robot_Firmware::beginServo(){
+    servo_A->attach(SERVO_A);
+    servo_B->attach(SERVO_B);
+    return 0;
+}
+
+void Arduino_Robot_Firmware::setServoA(int position){
+    servo_A->write(position);
+}
+
+void Arduino_Robot_Firmware::setServoB(int position){
+    servo_B->write(position);
+}
+
+/******************************************************************************************************/
+/*                                        RC Servo A & B                                              */
+/******************************************************************************************************/
+
+int Arduino_Robot_Firmware::beginI2Cselect(){
+    pinMode(SELECT_I2C_BUS,OUTPUT);
+}
+
+void Arduino_Robot_Firmware::setExternalI2C(uint8_t state){
+    digitalWrite(SELECT_I2C_BUS,state);
+}
+
+void Arduino_Robot_Firmware::connectExternalI2C(){
+    setExternalI2C(LOW);
+}
+
+void Arduino_Robot_Firmware::disconnectExternalI2C(){
+    setExternalI2C(HIGH);
 }

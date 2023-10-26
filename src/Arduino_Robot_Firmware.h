@@ -8,11 +8,18 @@
 #include "dcmotor.h"
 #include "motor_control.h"
 #include "Arduino_APDS9960.h"
+#include <Servo.h>
 
 class Arduino_Robot_Firmware{
     private:
         APDS9960 * apds9960;
         int bottom_red, bottom_green, bottom_blue, bottom_clear, bottom_proximity;
+
+        Servo * servo_A;
+        Servo * servo_B;
+
+        TwoWire * wire;
+
 
     public:
         RGBled * led1;
@@ -21,7 +28,6 @@ class Arduino_Robot_Firmware{
         DCmotor * motor_right;
         Encoder * encoder_left;
         Encoder * encoder_right;
-        TwoWire * wire;
 
 
         Arduino_Robot_Firmware();
@@ -42,6 +48,20 @@ class Arduino_Robot_Firmware{
         int getGreen();                             // green value 0-255
         int getBlue();                              // blue value 0-255
         int getProximity();                         // proximity value 0-127
+
+
+        // Servo
+        int beginServo();                           // initialize Servo interfaces
+        void setServoA(int position);               // 0°-180° servo position
+        void setServoB(int position);               // 0°-180° servo position
+
+
+        // I2C select
+        int beginI2Cselect();                       // initialize I2C bus selector
+        void setExternalI2C(uint8_t state);         // set A4,A5 connection on I2C bus 2
+        void connectExternalI2C();                  // allow A4,A5 on nano connector to be attached to I2C bus 2
+        void disconnectExternalI2C();               // disable the connection on A4,A5
+
 };
 
 #endif
