@@ -25,6 +25,9 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
     // servo
     servo_A = new Servo();
     servo_B = new Servo();
+
+    // bms
+    bms = new MAX17332(*wire);
 }
 
 int Arduino_Robot_Firmware::begin(){
@@ -51,6 +54,7 @@ int Arduino_Robot_Firmware::begin(){
     beginServo();
     beginI2Cselect();
     connectExternalI2C();
+    beginBMS();
 
     return 0;
 }
@@ -125,7 +129,7 @@ void Arduino_Robot_Firmware::setServoB(int position){
 }
 
 /******************************************************************************************************/
-/*                                        RC Servo A & B                                              */
+/*                                        External I2C                                                */
 /******************************************************************************************************/
 
 int Arduino_Robot_Firmware::beginI2Cselect(){
@@ -142,4 +146,23 @@ void Arduino_Robot_Firmware::connectExternalI2C(){
 
 void Arduino_Robot_Firmware::disconnectExternalI2C(){
     setExternalI2C(HIGH);
+}
+
+
+/******************************************************************************************************/
+/*                               Battery Management System, MAX17332                                  */
+/******************************************************************************************************/
+
+int Arduino_Robot_Firmware::beginBMS(){
+    bms->begin();
+    return 0;
+}
+
+
+float Arduino_Robot_Firmware::getBatteryVoltage(){
+    return bms->readVCell();
+}
+
+float Arduino_Robot_Firmware::getBatteryChargePercentage(){
+    return bms->readSoc();
 }

@@ -9,6 +9,7 @@
 #include "motor_control.h"
 #include "Arduino_APDS9960.h"
 #include <Servo.h>
+#include "Arduino_MAX17332.h"
 
 class Arduino_Robot_Firmware{
     private:
@@ -19,6 +20,8 @@ class Arduino_Robot_Firmware{
         Servo * servo_B;
 
         TwoWire * wire;
+
+        MAX17332 * bms;
 
 
     public:
@@ -61,6 +64,13 @@ class Arduino_Robot_Firmware{
         void setExternalI2C(uint8_t state);         // set A4,A5 connection on I2C bus 2
         void connectExternalI2C();                  // allow A4,A5 on nano connector to be attached to I2C bus 2
         void disconnectExternalI2C();               // disable the connection on A4,A5
+
+
+        // BMS, MAX17332
+        int beginBMS();
+        float getBatteryVoltage();
+        float getBatteryChargePercentage();
+
 
 };
 
