@@ -49,6 +49,10 @@
 #define I2C_1_SCL PB8
 #define SELECT_I2C_BUS PB2
 
+#define I2C_2_SDA PB9
+#define I2C_2_SCL PB10
+#define ARDUINO_ROBOT_ADDRESS 0xAB
+
 
 
 

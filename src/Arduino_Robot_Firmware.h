@@ -32,6 +32,8 @@ class Arduino_Robot_Firmware{
         DCmotor * motor_right;
         Encoder * encoder_left;
         Encoder * encoder_right;
+        TwoWire * ext_wire;
+
 
 
         Arduino_Robot_Firmware();
@@ -68,8 +70,8 @@ class Arduino_Robot_Firmware{
 
 
         // BMS, MAX17332
-        
         int beginBMS();
+        void updateBMS();
         float getBatteryVoltage();
         float getBatteryChargePercentage();
         

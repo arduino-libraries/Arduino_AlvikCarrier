@@ -7,6 +7,9 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
     // I2C internal bus
     wire = new TwoWire(I2C_1_SDA, I2C_1_SCL);
 
+    // I2C external bus
+    ext_wire = new TwoWire(I2C_2_SDA,I2C_2_SCL);
+
     // RGB leds
     led1 = new RGBled(LED_1_RED,LED_1_GREEN,LED_1_BLUE);
     led2 = new RGBled(LED_2_RED,LED_2_GREEN,LED_2_BLUE);
@@ -49,13 +52,13 @@ int Arduino_Robot_Firmware::begin(){
     encoder_right->begin();
 
     wire->begin();
+    ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
 
     beginAPDS();
     beginServo();
-   // beginI2Cselect();
+    //beginI2Cselect();
     //disconnectExternalI2C();
     beginBMS();
-    Serial.println("done");
 
     return 0;
 }
@@ -155,16 +158,20 @@ void Arduino_Robot_Firmware::disconnectExternalI2C(){
 /******************************************************************************************************/
 
 int Arduino_Robot_Firmware::beginBMS(){
-    Serial.println("begin bms");
     bms->begin();
     return 0;
 }
 
+void Arduino_Robot_Firmware::updateBMS(){
+    voltage = bms->readVCell();
+    state_of_charge = bms->readSoc();
+}
+
 
 float Arduino_Robot_Firmware::getBatteryVoltage(){
-    return bms->readVCell();
+    return voltage;
 }
 
 float Arduino_Robot_Firmware::getBatteryChargePercentage(){
-    return bms->readSoc();
+    return state_of_charge;
 }
