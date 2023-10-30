@@ -67,9 +67,11 @@ class Arduino_Robot_Firmware{
 
 
         // BMS, MAX17332
+        
         int beginBMS();
         float getBatteryVoltage();
         float getBatteryChargePercentage();
+        
 
 
 };

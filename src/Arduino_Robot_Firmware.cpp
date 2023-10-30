@@ -52,9 +52,10 @@ int Arduino_Robot_Firmware::begin(){
 
     beginAPDS();
     beginServo();
-    beginI2Cselect();
-    connectExternalI2C();
+   // beginI2Cselect();
+    //disconnectExternalI2C();
     beginBMS();
+    Serial.println("done");
 
     return 0;
 }
@@ -154,6 +155,7 @@ void Arduino_Robot_Firmware::disconnectExternalI2C(){
 /******************************************************************************************************/
 
 int Arduino_Robot_Firmware::beginBMS(){
+    Serial.println("begin bms");
     bms->begin();
     return 0;
 }
