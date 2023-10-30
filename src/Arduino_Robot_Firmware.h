@@ -22,6 +22,7 @@ class Arduino_Robot_Firmware{
         TwoWire * wire;
 
         MAX17332 * bms;
+        float voltage, state_of_charge; 
 
 
     public:
