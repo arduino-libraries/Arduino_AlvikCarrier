@@ -1,25 +1,24 @@
 #include "Arduino_Robot_Firmware.h"
 
-Encoder enc_right(TIM5);
+Arduino_Robot_Firmware robot;
 
-DCmotor motor_right(MOTOR_RIGHT_A,MOTOR_RIGHT_A_CH,MOTOR_RIGHT_B,MOTOR_RIGHT_B_CH);
 
-MotorControl right(&motor_right,&enc_right,1.0,0.01,0,10.0);
+MotorControl right(robot.motor_right,robot.encoder_right,100.0,0.01,0,20.0);
 
 unsigned long t=0;
 
 void setup(){
-    Serial.begin(115200);
-    motor_right.begin();
-    enc_right.begin();
-    right.begin();
-    t=millis();
+   
+  Serial.begin(115200);
+  robot.begin();
+  right.begin();
+  t=millis();
+  right.setReference(30.0);
 }
 
 void loop(){
-    if (millis()-t>10){
-        Serial.println(enc_right.getCount());
-        t=millis();
-        right.update();
-    }
+  if (millis()-t>20){
+    t=millis();
+    right.update();
+  }
 }
