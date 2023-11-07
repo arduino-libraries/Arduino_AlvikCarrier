@@ -8,6 +8,7 @@ void setup(){
 }
 
 void loop(){
+    robot.updateBMS();
     Serial.print(robot.getBatteryVoltage(),4);
     Serial.print("\t");
     Serial.println(robot.getBatteryChargePercentage(),4);
