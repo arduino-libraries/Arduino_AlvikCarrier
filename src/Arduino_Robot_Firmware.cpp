@@ -51,6 +51,7 @@ int Arduino_Robot_Firmware::begin(){
     encoder_left->begin();
     encoder_right->begin();
 
+
     wire->begin();
     ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
 

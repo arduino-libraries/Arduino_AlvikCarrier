@@ -7,6 +7,7 @@
 #include "robot_definitions.h"
 
 #define CONTROL_LIMIT 4095
+#define MEM_SIZE 5
 
 class MotorControl{
     private:
@@ -17,8 +18,11 @@ class MotorControl{
         float travel;
         float reference;
 
+        float controller_frequency;
+
         float measure;
         float error;
+        float conversion_factor;
 
         float ctrl_p;
         float ctrl_i;
@@ -27,16 +31,24 @@ class MotorControl{
 
         float prev_error;
 
+        float mean;
+        int i;
+        int id_memory;
+        float measure_memory[MEM_SIZE];
+
+
         DCmotor * motor;
         Encoder * encoder;
     public:
-        MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd){
+        MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd, const float _controller_frequency){
             motor = _motor;
             encoder = _encoder;
             
             kp = _kp;
             ki = _ki;
             kd = _kd;
+
+            controller_frequency = _controller_frequency;
 
             travel=0.0;
             reference = 0.0;
@@ -49,12 +61,18 @@ class MotorControl{
             ctrl_d = 0.0;
 
             actuation = 0.0;
+
+            id_memory=0;
+            mean=0.0;
+
+            conversion_factor = (1/(12.0*150.0))*(1000.0*60.0)/controller_frequency;
         }
 
         void begin(){
             motor->begin();
             encoder->begin();
             encoder->reset();
+            clearMemory();
         }
 
         bool setReference(const float ref){
@@ -75,22 +93,60 @@ class MotorControl{
             return value;
         }
 
+        void addMemory(float _val){
+            if (id_memory>=MEM_SIZE){
+                id_memory=0;
+            }
+            measure_memory[id_memory]=_val;
+            id_memory++;
+        }
+
+        float meanMemory(){
+            mean=0.0;
+            for (i=0; i<MEM_SIZE; i++){
+                mean=mean+measure_memory[i];
+            }
+            return mean/float(MEM_SIZE);
+        }                  
+
+        void clearMemory(){
+            for (i=0; i<MEM_SIZE; i++){
+                measure_memory[i]=0.0;
+            }
+        }
+
         
 
         void test(){
             motor->setSpeed(2000);
             delay(1000);
             motor->setSpeed(-2000);
-            delay(1000);
-            
+            delay(1000); 
         }
 
 
 
         void update(){
             measure = encoder->getCount();
+            Serial.print(measure);
+            Serial.print("\t");
+
             encoder->reset();
+            measure = measure*conversion_factor;
+            Serial.print(measure);
+            Serial.print("\t");
+
+            addMemory(measure);
+
+            measure = meanMemory();
+
+            Serial.print(measure);
+            Serial.print("\t");
+
             error = reference - measure;
+
+            Serial.print(error);
+            Serial.print("\t");
 
             ctrl_p = kp * error;
             ctrl_i = checkLimits(ctrl_i+ki*error);
@@ -99,8 +155,9 @@ class MotorControl{
             prev_error = error;
 
             actuation = checkLimits(ctrl_p+ctrl_i+ctrl_d);
+            Serial.println(actuation);
 
-            motor->setSpeed(actuation);
+            motor->setSpeed(-actuation);
         }
 
         
