@@ -131,25 +131,15 @@ class MotorControl{
 
         void update(){
             measure = encoder->getCount();
-            /*Serial.print(measure);
-            Serial.print("\t");*/
 
             encoder->reset();
             measure = measure*conversion_factor;
-            /*Serial.print(measure);
-            Serial.print("\t");*/
 
             addMemory(measure);
 
             measure = meanMemory();
 
-            /*Serial.print(measure);
-            Serial.print("\t");*/
-
             error = reference - measure;
-
-            /*Serial.print(error);
-            Serial.print("\t");*/
 
             ctrl_p = kp * error;
             ctrl_i = checkLimits(ctrl_i+ki*error);
@@ -158,9 +148,24 @@ class MotorControl{
             prev_error = error;
 
             actuation = checkLimits(ctrl_p+ctrl_i+ctrl_d);
-            //Serial.println(actuation);
 
             motor->setSpeed(-actuation);
+        }
+
+        void setKP(const float _kp){
+            kp=_kp;
+        }
+
+        void setKI(const float _ki){
+            ki=_ki;
+        }
+
+        void setKD(const float _kd){
+            kd=_kd;
+        }
+
+        float getError(){
+            return error;
         }
 
         

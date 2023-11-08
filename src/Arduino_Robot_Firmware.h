@@ -87,6 +87,7 @@ class Arduino_Robot_Firmware{
         void updateMotors();
         bool setRpmRight(const float rpm);
         float getRpmRight();
+        void setKPidRight(const float kp, const float ki, const float kd);
 
         
 

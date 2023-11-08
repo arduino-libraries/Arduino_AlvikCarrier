@@ -202,3 +202,9 @@ bool Arduino_Robot_Firmware::setRpmRight(const float rpm){
 float Arduino_Robot_Firmware::getRpmRight(){
     return motor_control_right->getRPM();
 }
+
+void Arduino_Robot_Firmware::setKPidRight(const float kp, const float ki, const float kd){
+    motor_control_right->setKP(kp);
+    motor_control_right->setKI(ki);
+    motor_control_right->setKP(kp);
+}
