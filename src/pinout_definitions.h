@@ -2,7 +2,7 @@
 #define __PINOUT_DEFINITIONS_H__
 
 
-
+// Motors
 #define MOTORS_ENABLE PD2
 
 // Right Motor
@@ -13,7 +13,6 @@
 #define MOTOR_RIGHT_A_CH 3
 #define MOTOR_RIGHT_B PA15
 #define MOTOR_RIGHT_B_CH 1
-
 
 // Left Motor
 #define ENC_LEFT_TIMER TIM3

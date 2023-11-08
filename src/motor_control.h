@@ -65,7 +65,7 @@ class MotorControl{
             id_memory=0;
             mean=0.0;
 
-            conversion_factor = (1/(12.0*150.0))*(1000.0*60.0)/controller_frequency;
+            conversion_factor = (1/MOTOR_RATIO)*(1000.0*60.0)/controller_frequency;
         }
 
         void begin(){
@@ -115,7 +115,10 @@ class MotorControl{
             }
         }
 
-        
+        float getRPM(){
+            return measure;
+        }
+
 
         void test(){
             motor->setSpeed(2000);
