@@ -22,6 +22,9 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
     encoder_left = new Encoder(TIM3);
     encoder_right = new Encoder(TIM5);
 
+    // motor control
+    motor_control_right = new MotorControl(motor_right,encoder_right,MOTOR_KP_RIGHT,MOTOR_KI_RIGHT,MOTOR_KD_RIGHT,MOTOR_CONTROL_PERIOD);
+
     // color sensor
     apds9960 = new APDS9960(*wire,APDS_INT);
 
@@ -175,4 +178,27 @@ float Arduino_Robot_Firmware::getBatteryVoltage(){
 
 float Arduino_Robot_Firmware::getBatteryChargePercentage(){
     return state_of_charge;
+}
+
+
+/******************************************************************************************************/
+/*                                            Motor controls                                          */
+/******************************************************************************************************/
+
+int Arduino_Robot_Firmware::beginMotors(){
+    motor_control_right->begin();
+    
+    return 0;
+}
+
+void Arduino_Robot_Firmware::updateMotors(){
+    motor_control_right->update();
+}
+
+bool Arduino_Robot_Firmware::setRpmRight(const float rpm){
+    return motor_control_right->setRPM(rpm);
+}
+
+float Arduino_Robot_Firmware::getRpmRight(){
+    return motor_control_right->getRPM();
 }

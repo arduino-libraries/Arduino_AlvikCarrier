@@ -75,7 +75,7 @@ class MotorControl{
             clearMemory();
         }
 
-        bool setReference(const float ref){
+        bool setRPM(const float ref){
             if ((ref<MOTOR_LIMIT)&&(ref>-MOTOR_LIMIT)){
                 reference = ref;
                 return true;
@@ -131,25 +131,25 @@ class MotorControl{
 
         void update(){
             measure = encoder->getCount();
-            Serial.print(measure);
-            Serial.print("\t");
+            /*Serial.print(measure);
+            Serial.print("\t");*/
 
             encoder->reset();
             measure = measure*conversion_factor;
-            Serial.print(measure);
-            Serial.print("\t");
+            /*Serial.print(measure);
+            Serial.print("\t");*/
 
             addMemory(measure);
 
             measure = meanMemory();
 
-            Serial.print(measure);
-            Serial.print("\t");
+            /*Serial.print(measure);
+            Serial.print("\t");*/
 
             error = reference - measure;
 
-            Serial.print(error);
-            Serial.print("\t");
+            /*Serial.print(error);
+            Serial.print("\t");*/
 
             ctrl_p = kp * error;
             ctrl_i = checkLimits(ctrl_i+ki*error);
@@ -158,7 +158,7 @@ class MotorControl{
             prev_error = error;
 
             actuation = checkLimits(ctrl_p+ctrl_i+ctrl_d);
-            Serial.println(actuation);
+            //Serial.println(actuation);
 
             motor->setSpeed(-actuation);
         }

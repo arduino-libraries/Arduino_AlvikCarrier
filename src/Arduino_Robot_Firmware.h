@@ -24,6 +24,9 @@ class Arduino_Robot_Firmware{
         MAX17332 * bms;
         float voltage, state_of_charge; 
 
+        MotorControl * motor_control_right;
+
+
 
     public:
         RGBled * led1;
@@ -32,6 +35,9 @@ class Arduino_Robot_Firmware{
         DCmotor * motor_right;
         Encoder * encoder_left;
         Encoder * encoder_right;
+
+
+
         TwoWire * ext_wire;
 
 
@@ -74,6 +80,14 @@ class Arduino_Robot_Firmware{
         void updateBMS();
         float getBatteryVoltage();
         float getBatteryChargePercentage();
+
+
+        // Motors
+        int beginMotors();
+        void updateMotors();
+        bool setRpmRight(const float rpm);
+        float getRpmRight();
+
         
 
 
