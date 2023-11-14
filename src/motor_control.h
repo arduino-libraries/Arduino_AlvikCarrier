@@ -18,10 +18,13 @@ class MotorControl{
         float travel;
         float reference;
 
-        float controller_frequency;
+        float controller_period;
 
         float measure;
+        float last_measure;
         float error;
+        float error_sum;
+        float error_rate;
         float conversion_factor;
 
         float ctrl_p;
@@ -29,7 +32,6 @@ class MotorControl{
         float ctrl_d;
         float actuation;
 
-        float prev_error;
 
         float mean;
         int i;
@@ -40,7 +42,7 @@ class MotorControl{
         DCmotor * motor;
         Encoder * encoder;
     public:
-        MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd, const float _controller_frequency){
+        MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd, const float _controller_period){
             motor = _motor;
             encoder = _encoder;
             
@@ -48,13 +50,17 @@ class MotorControl{
             ki = _ki;
             kd = _kd;
 
-            controller_frequency = _controller_frequency;
+            controller_period = 60.0*_controller_period;
 
             travel=0.0;
             reference = 0.0;
 
             measure = 0.0;
+            last_measure = 0.0;
             error = 0.0;
+            error_sum = 0.0;
+            error_rate = 0.0;
+
 
             ctrl_p = 0.0;
             ctrl_i = 0.0;
@@ -65,7 +71,7 @@ class MotorControl{
             id_memory=0;
             mean=0.0;
 
-            conversion_factor = (1/MOTOR_RATIO)*(1000.0*60.0)/controller_frequency;
+            conversion_factor = (1/MOTOR_RATIO)/(controller_period);
         }
 
         void begin(){
@@ -128,7 +134,7 @@ class MotorControl{
         }
 
 
-
+/*
         void update(){
             measure = encoder->getCount();
 
@@ -151,6 +157,23 @@ class MotorControl{
 
             motor->setSpeed(-actuation);
         }
+
+        */
+
+       void update(){
+            measure = encoder->getCount();
+            encoder->reset();
+            measure = measure*conversion_factor;
+            error = reference-measure;
+            error_sum+=error*controller_period;
+            error_rate=(measure-last_measure)/controller_period;
+            last_measure=measure;
+            ctrl_p = error*kp;
+            ctrl_i = checkLimits(error_sum*ki);
+            ctrl_d = error_rate*kd;
+            actuation = checkLimits(ctrl_p+ctrl_i-ctrl_d);
+            motor->setSpeed(-actuation);
+       }
 
         void setKP(const float _kp){
             kp=_kp;
