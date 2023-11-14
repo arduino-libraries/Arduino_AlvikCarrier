@@ -107,6 +107,11 @@ class Arduino_Robot_Firmware{
         bool getTouchDelete();
 
 
+        // Leds
+        int beginLeds();
+        void setLedBuiltin(const uint8_t value);
+
+
 
         
 

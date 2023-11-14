@@ -67,6 +67,7 @@ int Arduino_Robot_Firmware::begin(){
     //disconnectExternalI2C();
     beginBMS();
     beginTouch();
+    beginLeds();
 
     return 0;
 }
@@ -286,3 +287,18 @@ bool Arduino_Robot_Firmware::getTouchOk(){
 bool Arduino_Robot_Firmware::getTouchDelete(){
     return getTouchKey(TOUCH_PAD_DELETE);
 }
+
+
+/******************************************************************************************************/
+/*                                               Leds                                                 */
+/******************************************************************************************************/
+
+int Arduino_Robot_Firmware::beginLeds(){
+    pinMode(LED_BUILTIN,OUTPUT);
+    return 0;
+}
+
+void Arduino_Robot_Firmware::setLedBuiltin(const uint8_t value){
+    digitalWrite(LED_BUILTIN,value);
+}
+
