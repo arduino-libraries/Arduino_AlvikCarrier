@@ -34,6 +34,9 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
 
     // bms
     bms = new MAX17332(*wire);
+
+    // touch
+    touch_sensor = new AT42QT2120(*wire);
 }
 
 int Arduino_Robot_Firmware::begin(){
@@ -63,6 +66,7 @@ int Arduino_Robot_Firmware::begin(){
     //beginI2Cselect();
     //disconnectExternalI2C();
     beginBMS();
+    beginTouch();
 
     return 0;
 }
@@ -207,4 +211,78 @@ void Arduino_Robot_Firmware::setKPidRight(const float kp, const float ki, const 
     motor_control_right->setKP(kp);
     motor_control_right->setKI(ki);
     motor_control_right->setKP(kp);
+}
+
+
+/******************************************************************************************************/
+/*                                           Touch pads                                               */
+/******************************************************************************************************/
+
+int Arduino_Robot_Firmware::beginTouch(){
+    touch_sensor->begin();
+    if (!touch_sensor->communicating()){
+        return -1;
+    }
+
+    /*  //NEED TO BE CHECKED
+    AT42QT2120::KeyControl key_control;
+    key_control.guard=1;
+    touch_sensor->setKeyControl(1, key_control);
+    */
+
+    touch_sensor->reset();
+    delay(2000);
+
+    touch_sensor->triggerCalibration();
+    delay(100);
+    while (touch_sensor->calibrating()){
+        delay(100);
+    }
+    return 0;
+}
+
+void Arduino_Robot_Firmware::updateTouch(){
+    touch_status = touch_sensor->getStatus();
+}
+
+bool Arduino_Robot_Firmware::getTouchPressed({
+    if (touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
+        return true;
+    }
+    return false;
+}
+
+bool Arduino_Robot_Firmware::getTouchKey(const uint8_t key){
+    if (touch_sensor->touched(touch_status,key)&&touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
+        return true;
+    }
+    return false;
+}
+
+bool Arduino_Robot_Firmware::getTouchUp(){
+    return getTouchKey(TOUCH_PAD_UP);
+}
+
+bool Arduino_Robot_Firmware::getTouchRight(){
+    return getTouchKey(TOUCH_PAD_RIGHT);
+}
+
+bool Arduino_Robot_Firmware::getTouchDown(){
+    return getTouchKey(TOUCH_PAD_DOWN);
+}
+
+bool Arduino_Robot_Firmware::getTouchLeft(){
+    return getTouchKey(TOUCH_PAD_LEFT);
+}
+
+bool Arduino_Robot_Firmware::getTouchEnter(){
+    return getTouchKey(TOUCH_PAD_ENTER);
+}
+
+bool Arduino_Robot_Firmware::getTouchOk(){
+    return getTouchKey(TOUCH_PAD_OK);
+}
+
+bool Arduino_Robot_Firmware::getTouchDelete(){
+    return getTouchKey(TOUCH_PAD_DELETE);
 }

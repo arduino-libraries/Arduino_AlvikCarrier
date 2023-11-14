@@ -10,6 +10,7 @@
 #include "Arduino_APDS9960.h"
 #include <Servo.h>
 #include "Arduino_MAX17332.h"
+#include "AT42QT2120.h"
 
 class Arduino_Robot_Firmware{
     private:
@@ -19,12 +20,14 @@ class Arduino_Robot_Firmware{
         Servo * servo_A;
         Servo * servo_B;
 
-        TwoWire * wire;
 
         MAX17332 * bms;
         float voltage, state_of_charge; 
 
         MotorControl * motor_control_right;
+
+        AT42QT2120 * touch_sensor;
+        AT42QT2120::Status touch_status;
 
 
 
@@ -37,7 +40,7 @@ class Arduino_Robot_Firmware{
         Encoder * encoder_right;
 
 
-
+        TwoWire * wire;
         TwoWire * ext_wire;
 
 
@@ -88,6 +91,22 @@ class Arduino_Robot_Firmware{
         bool setRpmRight(const float rpm);
         float getRpmRight();
         void setKPidRight(const float kp, const float ki, const float kd);
+
+
+        // Touch
+        int beginTouch();
+        void updateTouch();
+        bool getTouchPressed();
+        bool getTouchKey(const uint8_t key);
+        bool getTouchUp();
+        bool getTouchRight();
+        bool getTouchDown();
+        bool getTouchLeft();
+        bool getTouchEnter();
+        bool getTouchOk();
+        bool getTouchDelete();
+
+
 
         
 
