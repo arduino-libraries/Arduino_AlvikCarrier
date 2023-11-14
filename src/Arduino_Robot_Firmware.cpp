@@ -245,7 +245,7 @@ void Arduino_Robot_Firmware::updateTouch(){
     touch_status = touch_sensor->getStatus();
 }
 
-bool Arduino_Robot_Firmware::getTouchPressed({
+bool Arduino_Robot_Firmware::getTouchPressed(){
     if (touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
         return true;
     }
