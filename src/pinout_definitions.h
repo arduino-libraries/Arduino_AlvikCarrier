@@ -46,11 +46,11 @@
 // I2C ports
 #define I2C_1_SDA PB7
 #define I2C_1_SCL PB8
-#define SELECT_I2C_BUS PB2
+#define SELECT_I2C_BUS PB2  //PC1
 
 #define I2C_2_SDA PB9_ALT1
 #define I2C_2_SCL PB10
-#define ARDUINO_ROBOT_ADDRESS 0xAB
+#define ARDUINO_ROBOT_ADDRESS 0x2B
 
 
 // Touch
@@ -62,6 +62,13 @@
 #define TOUCH_PAD_OK 6
 #define TOUCH_PAD_DELETE 5
 #define TOUCH_PAD_GUARD 1
+
+
+// External Sensor Bar
+#define EXT_A0 PA7 //MOSI
+#define EXT_A1 PA6 //MISO
+#define EXT_A2 PA5 //SCK
+#define EXT_A3 PA4 //CS
 
 
 

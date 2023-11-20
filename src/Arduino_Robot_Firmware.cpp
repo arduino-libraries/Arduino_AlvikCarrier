@@ -59,12 +59,12 @@ int Arduino_Robot_Firmware::begin(){
 
 
     wire->begin();
-    ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
+    //ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
 
     beginAPDS();
     beginServo();
     //beginI2Cselect();
-    //disconnectExternalI2C();
+    //connectExternalI2C();
     beginBMS();
     beginTouch();
     beginLeds();
