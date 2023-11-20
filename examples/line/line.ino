@@ -19,7 +19,7 @@ void loop(){
     Serial.print("\t");
     Serial.print(line.getRight());
     Serial.print("\t");
-    Serial.print(line.getCetroid());
+    Serial.print(line.getCentroid());
     Serial.print("\n");
     delay(10);
 }

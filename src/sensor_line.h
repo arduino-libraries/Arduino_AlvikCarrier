@@ -76,7 +76,7 @@ class SensorLine{
             }
         }
 
-        float getCetroid(){
+        float getCentroid(){
             return centroid;
         }
 
