@@ -8,7 +8,7 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
     wire = new TwoWire(I2C_1_SDA, I2C_1_SCL);
 
     // I2C external bus
-    ext_wire = new TwoWire(I2C_2_SDA,I2C_2_SCL);
+    //ext_wire = new TwoWire(I2C_2_SDA,I2C_2_SCL);
 
     // RGB leds
     led1 = new RGBled(LED_1_RED,LED_1_GREEN,LED_1_BLUE);
@@ -37,9 +37,15 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
 
     // touch
     touch_sensor = new AT42QT2120(*wire);
+
+    // imu
+    imu = new LSM6DSOSensor(wire, LSM6DSO_I2C_ADD_L);
+
 }
 
 int Arduino_Robot_Firmware::begin(){
+    beginLeds();
+
     // setup alternate functions
     AF_Tim2_pwm();
     AF_Tim5_pins_encoder();
@@ -59,15 +65,30 @@ int Arduino_Robot_Firmware::begin(){
 
 
     wire->begin();
+    wire->setClock(400000);
+
     //ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
 
-    beginAPDS();
+    //beginImu();
+    
+    if (beginAPDS()!=0){
+        errorLed(ERROR_APDS);
+    }
+    
+    
     beginServo();
     //beginI2Cselect();
     //connectExternalI2C();
-    beginBMS();
-    beginTouch();
-    beginLeds();
+    
+    if (beginBMS()!=0){
+        errorLed(ERROR_BMS);
+    }
+    
+
+    if (beginTouch()!=0){
+        //errorLed(ERROR_TOUCH);
+    }
+    
 
     return 0;
 }
@@ -80,7 +101,9 @@ int Arduino_Robot_Firmware::begin(){
 int Arduino_Robot_Firmware::beginAPDS(){
     pinMode(APDS_LED,OUTPUT);
     enableIlluminator();
-    apds9960->begin();
+    if (!apds9960->begin()){
+        return ERROR_APDS;
+    }
     return 0;
 }
 
@@ -222,7 +245,7 @@ void Arduino_Robot_Firmware::setKPidRight(const float kp, const float ki, const 
 int Arduino_Robot_Firmware::beginTouch(){
     touch_sensor->begin();
     if (!touch_sensor->communicating()){
-        return -1;
+        return ERROR_TOUCH;
     }
 
     /*  //NEED TO BE CHECKED
@@ -302,3 +325,34 @@ void Arduino_Robot_Firmware::setLedBuiltin(const uint8_t value){
     digitalWrite(LED_BUILTIN,value);
 }
 
+
+/******************************************************************************************************/
+/*                                                IMU                                                 */
+/******************************************************************************************************/
+
+int Arduino_Robot_Firmware::beginImu(){
+    imu->begin();
+    imu->Set_X_ODR(100.0);
+    imu->Set_X_FS(4);
+    imu->Set_G_ODR(100.0);
+    imu->Set_G_FS(2000);
+    imu->Enable_X();
+    imu->Enable_G();
+}
+
+
+/******************************************************************************************************/
+/*                                               Error                                                */
+/******************************************************************************************************/
+
+void Arduino_Robot_Firmware::errorLed(const int error_code){
+    while(true){
+        for (int i = 0; i<error_code; i++){
+            setLedBuiltin(HIGH);
+            delay(100);
+            setLedBuiltin(LOW);
+            delay(500);
+        }
+        delay(5000);
+    }
+}

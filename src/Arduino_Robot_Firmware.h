@@ -11,6 +11,7 @@
 #include <Servo.h>
 #include "Arduino_MAX17332.h"
 #include "AT42QT2120.h"
+#include "LSM6DSOSensor.h"
 
 class Arduino_Robot_Firmware{
     private:
@@ -29,6 +30,7 @@ class Arduino_Robot_Firmware{
         AT42QT2120 * touch_sensor;
         AT42QT2120::Status touch_status;
 
+        LSM6DSOSensor * imu;
 
 
     public:
@@ -41,7 +43,7 @@ class Arduino_Robot_Firmware{
 
 
         TwoWire * wire;
-        TwoWire * ext_wire;
+        //TwoWire * ext_wire;
 
 
 
@@ -110,6 +112,15 @@ class Arduino_Robot_Firmware{
         // Leds
         int beginLeds();
         void setLedBuiltin(const uint8_t value);
+
+
+        // Imu
+        int beginImu();
+
+
+
+        void errorLed(const int error_code);
+
 
 
 

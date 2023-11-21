@@ -72,4 +72,14 @@
 
 
 
+
+
+// Errors
+#define ERROR_APDS 1
+#define ERROR_BMS 2
+#define ERROR_TOUCH 3
+#define ERROR_IMU 4
+
+
+
 #endif
