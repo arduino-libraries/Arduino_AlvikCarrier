@@ -71,6 +71,9 @@
 #define EXT_A3 PA4 //CS
 
 
+// Uart
+#define UART_TX PA9
+#define UART_RX PA10
 
 
 
