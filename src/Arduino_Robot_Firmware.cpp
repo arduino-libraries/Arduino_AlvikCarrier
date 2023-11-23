@@ -51,9 +51,6 @@ int Arduino_Robot_Firmware::begin(){
     AF_Tim5_pins_encoder();
     AF_Tim3_pins_encoder();
 
-    // turn off leds
-    led1->clear();
-    led2->clear();
 
     motor_left->begin();
     motor_right->begin();
@@ -318,6 +315,9 @@ bool Arduino_Robot_Firmware::getTouchDelete(){
 
 int Arduino_Robot_Firmware::beginLeds(){
     pinMode(LED_BUILTIN,OUTPUT);
+    // turn off leds
+    led1->clear();
+    led2->clear();
     return 0;
 }
 
@@ -325,6 +325,55 @@ void Arduino_Robot_Firmware::setLedBuiltin(const uint8_t value){
     digitalWrite(LED_BUILTIN,value);
 }
 
+void Arduino_Robot_Firmware::setLedLeft(const uint32_t color){
+    led1->set(color); 
+}
+
+void Arduino_Robot_Firmware::setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue){
+    led1->set(red,green,blue); 
+}
+
+void Arduino_Robot_Firmware::setLedLeftRed(const uint32_t red){
+    led1->setRed(red);
+}
+
+void Arduino_Robot_Firmware::setLedLeftGreen(const uint32_t green){
+    led1->setGreen(green);
+}
+
+void Arduino_Robot_Firmware::setLedLeftBlue(const uint32_t blue){
+    led1->setBlue(blue);
+}
+
+void Arduino_Robot_Firmware::setLedRight(const uint32_t color){
+    led2->set(color);
+}
+
+void Arduino_Robot_Firmware::setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue){
+    led2->set(red,green,blue);
+}
+
+void Arduino_Robot_Firmware::setLedRightRed(const uint32_t red){
+    led2->setRed(red);
+}
+
+void Arduino_Robot_Firmware::setLedRightGreen(const uint32_t green){
+    led2->setGreen(green);
+}
+
+void Arduino_Robot_Firmware::setLedRightBlue(const uint32_t blue){
+    led2->setBlue(blue);
+}
+
+void Arduino_Robot_Firmware::setLeds(const uint32_t color){
+    setLedLeft(color);
+    setLedRight(color);  
+}
+
+void Arduino_Robot_Firmware::setLeds(const uint32_t red, const uint32_t green, const uint32_t blue){
+    setLedLeft(red,green,blue);
+    setLedRight(red,green,blue);    
+}
 
 /******************************************************************************************************/
 /*                                                IMU                                                 */

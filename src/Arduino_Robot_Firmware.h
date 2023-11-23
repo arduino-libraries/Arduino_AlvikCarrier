@@ -81,7 +81,7 @@ class Arduino_Robot_Firmware{
 
 
         // BMS, MAX17332
-        int beginBMS();
+        int beginBMS();                             
         void updateBMS();
         float getBatteryVoltage();
         float getBatteryChargePercentage();
@@ -112,6 +112,16 @@ class Arduino_Robot_Firmware{
         // Leds
         int beginLeds();
         void setLedBuiltin(const uint8_t value);
+        void setLedLeft(const uint32_t color);
+        void setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue);
+        void setLedLeftRed(const uint32_t red);
+        void setLedLeftGreen(const uint32_t green);
+        void setLedLeftBlue(const uint32_t blue);
+        void setLedRight(const uint32_t color);
+        void setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue);
+        void setLedRightRed(const uint32_t red);
+        void setLedRightGreen(const uint32_t green);
+        void setLedRightBlue(const uint32_t blue);
 
 
         // Imu
