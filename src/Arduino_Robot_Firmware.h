@@ -17,7 +17,7 @@ class Arduino_Robot_Firmware{
     private:
         RGBled * led1;
         RGBled * led2;
-        
+
         APDS9960 * apds9960;
         int bottom_red, bottom_green, bottom_blue, bottom_clear, bottom_proximity;
 
@@ -124,6 +124,8 @@ class Arduino_Robot_Firmware{
         void setLedRightRed(const uint32_t red);
         void setLedRightGreen(const uint32_t green);
         void setLedRightBlue(const uint32_t blue);
+        void setLeds(const uint32_t color);
+        void setLeds(const uint32_t red, const uint32_t green, const uint32_t blue);
 
 
         // Imu
