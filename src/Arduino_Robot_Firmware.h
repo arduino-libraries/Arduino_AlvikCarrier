@@ -15,6 +15,9 @@
 
 class Arduino_Robot_Firmware{
     private:
+        RGBled * led1;
+        RGBled * led2;
+        
         APDS9960 * apds9960;
         int bottom_red, bottom_green, bottom_blue, bottom_clear, bottom_proximity;
 
@@ -34,8 +37,7 @@ class Arduino_Robot_Firmware{
 
 
     public:
-        RGBled * led1;
-        RGBled * led2;
+
         DCmotor * motor_left;
         DCmotor * motor_right;
         Encoder * encoder_left;
