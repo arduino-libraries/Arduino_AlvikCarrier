@@ -28,9 +28,9 @@ void simpleMotors(){
       case 0:
         robot.motor_left->setSpeed(4095);
         robot.motor_right->setSpeed(4095);
-        robot.led1->set(HIGH,LOW,LOW);
-        robot.led2->set(LOW,LOW,HIGH);
-        if (millis()-tmotor>2000){
+        robot.setLedLeft(COLOR_BLUE);
+        robot.setLedRight(COLOR_RED);
+        if (millis()-tmotor>1000){
           status++;
           tmotor=millis();
         }
@@ -38,8 +38,8 @@ void simpleMotors(){
       case 1:
         robot.motor_left->setSpeed(4095);
         robot.motor_right->setSpeed(-4095);
-        robot.led1->set(LOW,LOW,HIGH);
-        robot.led2->set(HIGH,LOW,LOW);
+        robot.setLedLeft(COLOR_RED);
+        robot.setLedRight(COLOR_BLUE);
         if (millis()-tmotor>1000){
           status++;
           status=0;
@@ -51,8 +51,7 @@ void simpleMotors(){
   }
   robot.motor_left->setSpeed(0);
   robot.motor_right->setSpeed(0);
-  robot.led1->set(LOW,LOW,LOW);
-  robot.led2->set(LOW,LOW,LOW);
+  robot.setLeds(COLOR_BLACK);
 }
 
 void line_follower(){
@@ -72,17 +71,17 @@ void line_follower(){
       control = kp*line.getCentroid();
 
       if ((control<1)&&(control>-1)){
-        robot.led1->set(LOW,HIGH,LOW);
-        robot.led2->set(LOW,HIGH,LOW);
+        robot.setLedLeft(COLOR_GREEN);
+        robot.setLedRight(COLOR_GREEN);
       }
       else{
         if (control>=1){
-          robot.led1->set(HIGH,HIGH,LOW);
-          robot.led2->set(LOW,LOW,LOW);
+          robot.setLedLeft(COLOR_ORANGE);
+          robot.setLedRight(COLOR_BLACK);
         }
         else{
-          robot.led1->set(LOW,LOW,LOW);
-          robot.led2->set(HIGH,HIGH,LOW);
+          robot.setLedLeft(COLOR_BLACK);
+          robot.setLedRight(COLOR_ORANGE);
         }
       }
 
@@ -111,6 +110,5 @@ void line_follower(){
   }
   robot.motor_left->setSpeed(0);
   robot.motor_right->setSpeed(0);
-  robot.led1->set(LOW,LOW,LOW);
-  robot.led2->set(LOW,LOW,LOW);
+  robot.setLeds(COLOR_BLACK);
 }

@@ -5,12 +5,12 @@ Arduino_Robot_Firmware robot;
 
 void setup(){
     Serial.begin(115200);
-    pinMode(LED_BUILTIN,OUTPUT);
+    robot.begin();
 }
 
 void loop(){
-    digitalWrite(LED_BUILTIN,HIGH);
+    robot.setLedBuiltin(HIGH);
     delay(100);
-    digitalWrite(LED_BUILTIN,LOW);
+    robot.setLedBuiltin(LOW);
     delay(1000);
 }
