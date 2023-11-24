@@ -8,7 +8,7 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
     wire = new TwoWire(I2C_1_SDA, I2C_1_SCL);
 
     // I2C external bus
-    //ext_wire = new TwoWire(I2C_2_SDA,I2C_2_SCL);
+    ext_wire = new TwoWire(I2C_2_SDA,I2C_2_SCL);
 
     // RGB leds
     led1 = new RGBled(LED_1_RED,LED_1_GREEN,LED_1_BLUE);
@@ -63,16 +63,16 @@ int Arduino_Robot_Firmware::begin(){
 
     wire->begin();
     wire->setClock(400000);
-
-    //ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
+    
+    connectExternalI2C();
+    ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
 
     //beginImu();
     
     if (beginAPDS()!=0){
         errorLed(ERROR_APDS);
     }
-    
-    
+     
     beginServo();
     //beginI2Cselect();
     //connectExternalI2C();
@@ -81,7 +81,6 @@ int Arduino_Robot_Firmware::begin(){
         errorLed(ERROR_BMS);
     }
     
-
     if (beginTouch()!=0){
         //errorLed(ERROR_TOUCH);
     }

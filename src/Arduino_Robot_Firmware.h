@@ -45,7 +45,7 @@ class Arduino_Robot_Firmware{
 
 
         TwoWire * wire;
-        //TwoWire * ext_wire;
+        TwoWire * ext_wire;
 
 
 
