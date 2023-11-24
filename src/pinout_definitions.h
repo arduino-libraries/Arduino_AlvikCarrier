@@ -69,6 +69,11 @@
 #define EXT_A1 PA6 //MISO
 #define EXT_A2 PA5 //SCK
 #define EXT_A3 PA4 //CS
+#define EXT_GPIO0 PC3
+#define EXT_GPIO1 PC4
+#define EXT_GPIO2 PB0
+#define EXT_GPIO3 PB1
+
 
 
 // Uart

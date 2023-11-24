@@ -12,6 +12,8 @@
 #include "Arduino_MAX17332.h"
 #include "AT42QT2120.h"
 #include "LSM6DSOSensor.h"
+#include "motion_fx.h"
+
 
 class Arduino_Robot_Firmware{
     private:
@@ -36,6 +38,10 @@ class Arduino_Robot_Firmware{
         LSM6DSOSensor * imu;
         int32_t accelerometer[3];
         int32_t gyroscope[3];
+
+
+        MFX_input_t data_in;
+        MFX_output_t data_out;
 
 
     public:
@@ -102,7 +108,7 @@ class Arduino_Robot_Firmware{
         // Touch
         int beginTouch();
         void updateTouch();
-        bool getTouchPressed();
+        bool getAnyTouchPressed();
         bool getTouchKey(const uint8_t key);
         bool getTouchUp();
         bool getTouchRight();

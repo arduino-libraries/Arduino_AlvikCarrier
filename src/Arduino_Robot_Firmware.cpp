@@ -67,15 +67,12 @@ int Arduino_Robot_Firmware::begin(){
     connectExternalI2C();
     ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
 
-
     
     if (beginAPDS()!=0){
         errorLed(ERROR_APDS);
     }
      
     beginServo();
-    //beginI2Cselect();
-    //connectExternalI2C();
     
     if (beginBMS()!=0){
         errorLed(ERROR_BMS);
@@ -85,7 +82,7 @@ int Arduino_Robot_Firmware::begin(){
         //errorLed(ERROR_TOUCH);
     }
     
-    if (beginImu()!=){
+    if (beginImu()!=0){
         errorLed(ERROR_IMU);
     }
 
@@ -268,7 +265,7 @@ void Arduino_Robot_Firmware::updateTouch(){
     touch_status = touch_sensor->getStatus();
 }
 
-bool Arduino_Robot_Firmware::getTouchPressed(){
+bool Arduino_Robot_Firmware::getAnyTouchPressed(){
     if (touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
         return true;
     }
@@ -395,6 +392,7 @@ int Arduino_Robot_Firmware::beginImu(){
 void Arduino_Robot_Firmware::updateImu(){
     imu->Get_X_Axes(accelerometer);
     imu->Get_G_Axes(gyroscope);
+
 }
 
 
