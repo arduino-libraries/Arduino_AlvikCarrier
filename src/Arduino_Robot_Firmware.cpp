@@ -67,7 +67,7 @@ int Arduino_Robot_Firmware::begin(){
     connectExternalI2C();
     ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
 
-    //beginImu();
+
     
     if (beginAPDS()!=0){
         errorLed(ERROR_APDS);
@@ -85,6 +85,9 @@ int Arduino_Robot_Firmware::begin(){
         //errorLed(ERROR_TOUCH);
     }
     
+    if (beginImu()!=){
+        errorLed(ERROR_IMU);
+    }
 
     return 0;
 }
@@ -386,6 +389,12 @@ int Arduino_Robot_Firmware::beginImu(){
     imu->Set_G_FS(2000);
     imu->Enable_X();
     imu->Enable_G();
+    return 0;
+}
+
+void Arduino_Robot_Firmware::updateImu(){
+    imu->Get_X_Axes(accelerometer);
+    imu->Get_G_Axes(gyroscope);
 }
 
 

@@ -34,6 +34,8 @@ class Arduino_Robot_Firmware{
         AT42QT2120::Status touch_status;
 
         LSM6DSOSensor * imu;
+        int32_t accelerometer[3];
+        int32_t gyroscope[3];
 
 
     public:
@@ -130,8 +132,7 @@ class Arduino_Robot_Firmware{
 
         // Imu
         int beginImu();
-
-
+        void updateImu();
 
         void errorLed(const int error_code);
 

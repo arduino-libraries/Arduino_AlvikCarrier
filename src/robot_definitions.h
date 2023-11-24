@@ -14,4 +14,11 @@ const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 #define MOTOR_KD_RIGHT 0.4
 #define MOTOR_CONTROL_PERIOD 0.01
 
+
+
+#define FROM_MG_TO_G  0.001f
+#define FROM_G_TO_MG  1000.0f
+#define FROM_MDPS_TO_DPS  0.001f
+#define FROM_DPS_TO_MDPS  1000.0f
+
 #endif
