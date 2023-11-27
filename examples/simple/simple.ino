@@ -6,6 +6,8 @@ Arduino_Robot_Firmware robot;
 void setup(){
   Serial.begin(115200);
   robot.begin();
+  pinMode(PD2,OUTPUT);
+  digitalWrite(PD2,HIGH);
 }
 
 void loop(){

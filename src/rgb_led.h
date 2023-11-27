@@ -3,6 +3,15 @@
 
 #include "Arduino.h"
 
+#define COLOR_BLACK 0
+#define COLOR_RED 1
+#define COLOR_GREEN 2
+#define COLOR_ORANGE 3
+#define COLOR_BLUE 4
+#define COLOR_VIOLET 5
+#define COLOR_TEAL 6
+#define COLOR_WHITE 7
+
 class RGBled{
     private:
         uint8_t R;
@@ -37,6 +46,35 @@ class RGBled{
             setRed(red);
             setGreen(green);
             setBlue(blue);
+        }
+
+        void set(const uint32_t color){
+            switch(color){
+                case COLOR_RED:
+                    set(HIGH,LOW,LOW);
+                    break;
+                case COLOR_GREEN:
+                    set(LOW,HIGH,LOW);
+                    break;
+                case COLOR_BLUE:
+                    set(LOW,LOW,HIGH);
+                    break;
+                case COLOR_ORANGE:
+                    set(HIGH,HIGH,LOW);
+                    break;
+                case COLOR_VIOLET:
+                    set(HIGH,LOW,HIGH);
+                    break;
+                case COLOR_TEAL:
+                    set(LOW,HIGH,HIGH);
+                    break;
+                case COLOR_WHITE:
+                    set(HIGH,HIGH,HIGH);
+                    break;
+                case COLOR_BLACK:
+                default:
+                    set(LOW,LOW,LOW);
+            }
         }
 
         void clear(){

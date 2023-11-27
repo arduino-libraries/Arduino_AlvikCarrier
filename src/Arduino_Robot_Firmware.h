@@ -9,25 +9,52 @@
 #include "motor_control.h"
 #include "Arduino_APDS9960.h"
 #include <Servo.h>
+#include "Arduino_MAX17332.h"
+#include "AT42QT2120.h"
+#include "LSM6DSOSensor.h"
+#include "motion_fx.h"
+
 
 class Arduino_Robot_Firmware{
     private:
+        RGBled * led1;
+        RGBled * led2;
+
         APDS9960 * apds9960;
         int bottom_red, bottom_green, bottom_blue, bottom_clear, bottom_proximity;
 
         Servo * servo_A;
         Servo * servo_B;
 
-        TwoWire * wire;
+
+        MAX17332 * bms;
+        float voltage, state_of_charge; 
+
+        MotorControl * motor_control_right;
+
+        AT42QT2120 * touch_sensor;
+        AT42QT2120::Status touch_status;
+
+        LSM6DSOSensor * imu;
+        int32_t accelerometer[3];
+        int32_t gyroscope[3];
+
+
+        MFX_input_t data_in;
+        MFX_output_t data_out;
 
 
     public:
-        RGBled * led1;
-        RGBled * led2;
+
         DCmotor * motor_left;
         DCmotor * motor_right;
         Encoder * encoder_left;
         Encoder * encoder_right;
+
+
+        TwoWire * wire;
+        TwoWire * ext_wire;
+
 
 
         Arduino_Robot_Firmware();
@@ -61,6 +88,65 @@ class Arduino_Robot_Firmware{
         void setExternalI2C(uint8_t state);         // set A4,A5 connection on I2C bus 2
         void connectExternalI2C();                  // allow A4,A5 on nano connector to be attached to I2C bus 2
         void disconnectExternalI2C();               // disable the connection on A4,A5
+
+
+        // BMS, MAX17332
+        int beginBMS();                             
+        void updateBMS();
+        float getBatteryVoltage();
+        float getBatteryChargePercentage();
+
+
+        // Motors
+        int beginMotors();
+        void updateMotors();
+        bool setRpmRight(const float rpm);
+        float getRpmRight();
+        void setKPidRight(const float kp, const float ki, const float kd);
+
+
+        // Touch
+        int beginTouch();
+        void updateTouch();
+        bool getAnyTouchPressed();
+        bool getTouchKey(const uint8_t key);
+        bool getTouchUp();
+        bool getTouchRight();
+        bool getTouchDown();
+        bool getTouchLeft();
+        bool getTouchEnter();
+        bool getTouchOk();
+        bool getTouchDelete();
+
+
+        // Leds
+        int beginLeds();
+        void setLedBuiltin(const uint8_t value);
+        void setLedLeft(const uint32_t color);
+        void setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue);
+        void setLedLeftRed(const uint32_t red);
+        void setLedLeftGreen(const uint32_t green);
+        void setLedLeftBlue(const uint32_t blue);
+        void setLedRight(const uint32_t color);
+        void setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue);
+        void setLedRightRed(const uint32_t red);
+        void setLedRightGreen(const uint32_t green);
+        void setLedRightBlue(const uint32_t blue);
+        void setLeds(const uint32_t color);
+        void setLeds(const uint32_t red, const uint32_t green, const uint32_t blue);
+
+
+        // Imu
+        int beginImu();
+        void updateImu();
+
+        void errorLed(const int error_code);
+
+
+
+
+        
+
 
 };
 

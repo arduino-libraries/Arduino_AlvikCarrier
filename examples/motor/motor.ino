@@ -1,38 +1,59 @@
 #include "Arduino_Robot_Firmware.h"
 
-Encoder enc_right(TIM5);
+Arduino_Robot_Firmware robot;
 
-DCmotor motor_right(MOTOR_RIGHT_A,MOTOR_RIGHT_A_CH,MOTOR_RIGHT_B,MOTOR_RIGHT_B_CH);
-DCmotor motor_left(MOTOR_LEFT_A,MOTOR_LEFT_A_CH, MOTOR_LEFT_B, MOTOR_LEFT_B_CH);
+unsigned long t=0;
+unsigned long t_change = 0;
 
-//MotorControl right(&motor_right,&enc_right,0,0,0);
+int status=0;
+float reference = 0.0;
 
-void setup(){
-    motor_right.begin();
-    motor_left.begin();
+void setup(){ 
+  Serial.begin(115200);
+  robot.begin();
+  t=millis();
+  t_change=millis();
+  robot.setRpmRight(reference);
+  robot.setKPidRight(30.0, 0.1, 0.4);
+  Serial.print("reference");
+  Serial.print(" ");
+  Serial.println("measure");
 }
 
 void loop(){
-    for (int i=0; i<4096; i++){
-        motor_right.setSpeed(i);
-        motor_left.setSpeed(i);
-        delay(1);
+  if (millis()-t_change>2000){
+    t_change=millis();
+    switch (status){
+      case 0:
+          reference=0.0;
+          break;
+      case 1:
+          reference=30.0;
+          break;
+      case 2:
+          reference=60.0;
+          break;
+      case 3:
+          reference=-10.0;
+          break;
+      case 4:
+          reference=-60.0;
+          break;
+      case 5:
+          reference=20.0;
+          break;
     }
-    for (int i=4095; i>0; i--){
-        motor_right.setSpeed(i);
-        motor_left.setSpeed(i);
-        delay(1);
+    status++;
+    if (status>1){
+      status=0;
     }
-    delay(1000);
-    for (int i=0; i<4096; i++){
-        motor_right.setSpeed(i);
-        motor_left.setSpeed(-i);
-        delay(1);
-    }
-    for (int i=4095; i>0; i--){
-        motor_right.setSpeed(i);
-        motor_left.setSpeed(-i);
-        delay(1);
-    }
-    delay(1000);
+    robot.setRpmRight(reference);
+  }
+  if (millis()-t>20){
+    t=millis();
+    robot.updateMotors();
+    Serial.print(reference);
+    Serial.print(" ");
+    Serial.println(robot.getRpmRight());
+  }
 }

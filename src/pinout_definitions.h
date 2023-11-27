@@ -2,7 +2,7 @@
 #define __PINOUT_DEFINITIONS_H__
 
 
-
+// Motors
 #define MOTORS_ENABLE PD2
 
 // Right Motor
@@ -13,7 +13,6 @@
 #define MOTOR_RIGHT_A_CH 3
 #define MOTOR_RIGHT_B PA15
 #define MOTOR_RIGHT_B_CH 1
-
 
 // Left Motor
 #define ENC_LEFT_TIMER TIM3
@@ -47,8 +46,47 @@
 // I2C ports
 #define I2C_1_SDA PB7
 #define I2C_1_SCL PB8
-#define SELECT_I2C_BUS PB2
+#define SELECT_I2C_BUS PB2  //PC1
 
+#define I2C_2_SDA PB9_ALT1
+#define I2C_2_SCL PB10
+#define ARDUINO_ROBOT_ADDRESS 0x2B
+
+
+// Touch
+#define TOUCH_PAD_UP 7        
+#define TOUCH_PAD_RIGHT 4
+#define TOUCH_PAD_DOWN 9
+#define TOUCH_PAD_LEFT 10
+#define TOUCH_PAD_ENTER 8
+#define TOUCH_PAD_OK 6
+#define TOUCH_PAD_DELETE 5
+#define TOUCH_PAD_GUARD 1
+
+
+// External Sensor Bar
+#define EXT_A0 PA7 //MOSI
+#define EXT_A1 PA6 //MISO
+#define EXT_A2 PA5 //SCK
+#define EXT_A3 PA4 //CS
+#define EXT_GPIO0 PC3
+#define EXT_GPIO1 PC4
+#define EXT_GPIO2 PB0
+#define EXT_GPIO3 PB1
+
+
+
+// Uart
+#define UART_TX PA9
+#define UART_RX PA10
+#define UART_BAUD 115200
+
+
+// Errors
+#define ERROR_APDS 1
+#define ERROR_BMS 2
+#define ERROR_TOUCH 3
+#define ERROR_IMU 4
 
 
 
