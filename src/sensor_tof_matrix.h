@@ -17,7 +17,7 @@ class SensorTofMatrix{
         }
 
         int begin(){
-            wire->begin();
+            //wire->begin();
             sensor->begin();
             sensor->init_sensor();
             sensor->vl53l7cx_set_resolution(VL53L7CX_RESOLUTION_4X4);

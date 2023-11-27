@@ -5,6 +5,7 @@
 #include "dcmotor.h"
 #include "encoder.h"
 #include "robot_definitions.h"
+#include "pid_controller.h"
 
 #define CONTROL_LIMIT 4095
 #define MEM_SIZE 5
@@ -41,6 +42,7 @@ class MotorControl{
 
         DCmotor * motor;
         Encoder * encoder;
+        PidController * vel_pid;
     public:
         MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd, const float _controller_period){
             motor = _motor;
@@ -72,6 +74,7 @@ class MotorControl{
             mean=0.0;
 
             conversion_factor = (1/MOTOR_RATIO)/(controller_period);
+            vel_pid = new PidController(kp,ki,kd,controller_period,CONTROL_LIMIT);
         }
 
         void begin(){
@@ -84,6 +87,7 @@ class MotorControl{
         bool setRPM(const float ref){
             if ((ref<MOTOR_LIMIT)&&(ref>-MOTOR_LIMIT)){
                 reference = ref;
+                vel_pid->setReference(reference);
                 return true;
             }
             return false;
@@ -159,7 +163,9 @@ class MotorControl{
         }
 
         */
+    
 
+    /*
        void update(){
             measure = encoder->getCount();
             encoder->reset();
@@ -174,6 +180,16 @@ class MotorControl{
             actuation = checkLimits(ctrl_p+ctrl_i-ctrl_d);
             motor->setSpeed(-actuation);
        }
+
+       */
+
+        void update(){
+            measure = encoder->getCount();
+            encoder->reset();
+            measure = measure*conversion_factor;
+            vel_pid->update(measure);
+            motor->setSpeed(-vel_pid->getControlOutput());
+        }
 
         void setKP(const float _kp){
             kp=_kp;

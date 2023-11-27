@@ -14,7 +14,7 @@ void setup(){
   t=millis();
   t_change=millis();
   robot.setRpmRight(reference);
-  robot.setKPidRight(150, 0.1, 0);
+  robot.setKPidRight(30.0, 0.1, 0.4);
   Serial.print("reference");
   Serial.print(" ");
   Serial.println("measure");
