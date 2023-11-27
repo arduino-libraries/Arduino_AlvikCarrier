@@ -17,11 +17,13 @@ class SensorTofMatrix{
         }
 
         int begin(){
-            //wire->begin();
-            sensor->begin();
-            sensor->init_sensor();
-            sensor->vl53l7cx_set_resolution(VL53L7CX_RESOLUTION_4X4);
-            sensor->vl53l7cx_start_ranging();
+            int out = 0;
+            wire->begin();
+            out |= sensor->begin();
+            out |= sensor->init_sensor();
+            out |= sensor->vl53l7cx_set_resolution(VL53L7CX_RESOLUTION_4X4);
+            out |= sensor->vl53l7cx_start_ranging();
+            return out;
         }
 
         void print(){
