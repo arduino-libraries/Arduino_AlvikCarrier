@@ -10,6 +10,7 @@ class SensorTofMatrix{
     private:
         VL53L7CX * sensor;
         TwoWire * wire;
+        VL53L7CX_ResultsData results;
     public:
         SensorTofMatrix(TwoWire * _wire, const uint8_t lpn_pin, const uint8_t i2c_rst_pin){
             wire=_wire;
@@ -47,6 +48,32 @@ class SensorTofMatrix{
                 Serial.println();
             }
         }
+
+        uint8_t get_size() {
+            uint8_t res;
+            sensor->vl53l7cx_get_resolution(&res);
+            return (res == VL53L7CX_RESOLUTION_4X4? 4: 8);
+        }
+
+        void update() {
+            uint8_t NewDataReady = 0;
+            uint8_t status;
+            do {
+                status = sensor->vl53l7cx_check_data_ready(&NewDataReady);
+            } while (!NewDataReady);
+
+            if ((!status) && (NewDataReady != 0)) {
+                status = sensor->vl53l7cx_get_ranging_data(&results);
+            }
+        }
+
+        int get_range_mm_top() {
+            int size = get_size();
+            update();
+            // do some calculations
+            return 0;
+        }
+
 
         /*void setResolution(){
             sensor->setRes
