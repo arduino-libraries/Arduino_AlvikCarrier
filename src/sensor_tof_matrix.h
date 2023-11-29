@@ -67,11 +67,17 @@ class SensorTofMatrix{
             }
         }
 
-        int get_range_mm_top() {
+        int get_min_range_top_mm() {
             int size = get_size();
             update();
-            // do some calculations
-            return 0;
+
+            int16_t top_min = results.distance_mm[0];
+
+            for (int i=0; i < (size==4?4:16) ;i++) {
+                top_min = min(top_min, results.distance_mm[i]);
+            }
+
+            return top_min;
         }
 
 
