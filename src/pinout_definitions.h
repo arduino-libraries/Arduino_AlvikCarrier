@@ -5,14 +5,6 @@
 // Motors
 #define MOTORS_ENABLE PD2
 
-// Right Motor
-#define ENC_RIGHT_TIMER TIM5
-#define ENC_RIGHT_A PA0
-#define ENC_RIGHT_B PA1
-#define MOTOR_RIGHT_A PA2
-#define MOTOR_RIGHT_A_CH 3
-#define MOTOR_RIGHT_B PA15
-#define MOTOR_RIGHT_B_CH 1
 
 // Left Motor
 #define ENC_LEFT_TIMER TIM3
@@ -22,6 +14,19 @@
 #define MOTOR_LEFT_A_CH 4
 #define MOTOR_LEFT_B PB3
 #define MOTOR_LEFT_B_CH 2
+#define ENC_LEFT_FLIP false
+#define MOTOR_LEFT_FLIP true
+
+// Right Motor
+#define ENC_RIGHT_TIMER TIM5
+#define ENC_RIGHT_A PA0
+#define ENC_RIGHT_B PA1
+#define MOTOR_RIGHT_A PA2
+#define MOTOR_RIGHT_A_CH 3
+#define MOTOR_RIGHT_B PA15
+#define MOTOR_RIGHT_B_CH 1
+#define ENC_RIGHT_FLIP true
+#define MOTOR_RIGHT_FLIP false
 
 
 // Leds
@@ -75,7 +80,6 @@
 #define EXT_GPIO3 PB1
 
 
-
 // Uart
 #define UART_TX PA9
 #define UART_RX PA10
@@ -87,7 +91,6 @@
 #define ERROR_BMS 2
 #define ERROR_TOUCH 3
 #define ERROR_IMU 4
-
 
 
 #endif

@@ -9,6 +9,7 @@ class Encoder{
         bool flip;
     public:
         Encoder(TIM_TypeDef * _tim, bool _flip=false){
+            memset(&htimX, 0, sizeof(htimX));
             htimX.Instance = _tim;
             flip = _flip;
         }

@@ -15,15 +15,17 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
     led2 = new RGBled(LED_2_RED,LED_2_GREEN,LED_2_BLUE);
 
     // motors
-    motor_left = new DCmotor(MOTOR_LEFT_A,MOTOR_LEFT_A_CH, MOTOR_LEFT_B, MOTOR_LEFT_B_CH,true);
-    motor_right = new DCmotor(MOTOR_RIGHT_A,MOTOR_RIGHT_A_CH,MOTOR_RIGHT_B,MOTOR_RIGHT_B_CH);
+    motor_left = new DCmotor(MOTOR_LEFT_A,MOTOR_LEFT_A_CH, MOTOR_LEFT_B, MOTOR_LEFT_B_CH,MOTOR_LEFT_FLIP);
+    motor_right = new DCmotor(MOTOR_RIGHT_A,MOTOR_RIGHT_A_CH,MOTOR_RIGHT_B,MOTOR_RIGHT_B_CH,MOTOR_RIGHT_FLIP);
 
     // encoders
-    encoder_left = new Encoder(TIM3);
-    encoder_right = new Encoder(TIM5);
+    encoder_left = new Encoder(TIM3,ENC_LEFT_FLIP);
+    encoder_right = new Encoder(TIM5,ENC_RIGHT_FLIP);
 
     // motor control
     motor_control_right = new MotorControl(motor_right,encoder_right,MOTOR_KP_RIGHT,MOTOR_KI_RIGHT,MOTOR_KD_RIGHT,MOTOR_CONTROL_PERIOD);
+    motor_control_left = new MotorControl(motor_left,encoder_left,MOTOR_KP_RIGHT,MOTOR_KI_RIGHT,MOTOR_KD_RIGHT,MOTOR_CONTROL_PERIOD);
+
 
     // color sensor
     apds9960 = new APDS9960(*wire,APDS_INT);
@@ -46,6 +48,7 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
 int Arduino_Robot_Firmware::begin(){
     beginLeds();
 
+
     // setup alternate functions
     AF_Tim2_pwm();
     AF_Tim5_pins_encoder();
@@ -56,9 +59,14 @@ int Arduino_Robot_Firmware::begin(){
     motor_right->begin();
     motor_left->stop();
     motor_right->stop();
-
+    
     encoder_left->begin();
     encoder_right->begin();
+    encoder_left->reset();
+    encoder_right->reset();
+
+    motor_control_left->begin();
+    motor_control_right->begin();
 
 
     wire->begin();
@@ -85,6 +93,9 @@ int Arduino_Robot_Firmware::begin(){
     if (beginImu()!=0){
         errorLed(ERROR_IMU);
     }
+    
+
+
 
     return 0;
 }
@@ -210,13 +221,32 @@ float Arduino_Robot_Firmware::getBatteryChargePercentage(){
 /******************************************************************************************************/
 
 int Arduino_Robot_Firmware::beginMotors(){
-    motor_control_right->begin();
+    motor_left->begin();
+    motor_right->begin();
+    motor_left->stop();
+    motor_right->stop();
     
+    encoder_left->begin();
+    encoder_right->begin();
+    encoder_left->reset();
+    encoder_right->reset();
+
+    motor_control_left->begin();
+    motor_control_right->begin();
     return 0;
 }
 
 void Arduino_Robot_Firmware::updateMotors(){
+    motor_control_left->update();
     motor_control_right->update();
+}
+
+bool Arduino_Robot_Firmware::setRpmLeft(const float rpm){
+    return motor_control_left->setRPM(rpm);
+}
+
+float Arduino_Robot_Firmware::getRpmLeft(){
+    return motor_control_left->getRPM();
 }
 
 bool Arduino_Robot_Firmware::setRpmRight(const float rpm){
@@ -227,11 +257,30 @@ float Arduino_Robot_Firmware::getRpmRight(){
     return motor_control_right->getRPM();
 }
 
+bool Arduino_Robot_Firmware::setRpm(const float left, const float right){
+    motor_control_left->setRPM(left);
+    motor_control_right->setRPM(right);
+    return true;
+}
+
+void Arduino_Robot_Firmware::getRpm(float & left, float & right){
+    left=motor_control_left->getRPM();
+    right=motor_control_right->getRPM();
+}
+
 void Arduino_Robot_Firmware::setKPidRight(const float kp, const float ki, const float kd){
     motor_control_right->setKP(kp);
     motor_control_right->setKI(ki);
     motor_control_right->setKP(kp);
 }
+
+void Arduino_Robot_Firmware::setKPidLeft(const float kp, const float ki, const float kd){
+    motor_control_left->setKP(kp);
+    motor_control_left->setKI(ki);
+    motor_control_left->setKP(kp);
+}
+
+
 
 
 /******************************************************************************************************/

@@ -54,6 +54,10 @@ class PidController{
             return ctrl_output;
         }
 
+        float getError(){
+            return error;
+        }
+
         void setKPid(const float _kp, const float _ki, const float _kd){
             kp=_kp;
             ki=_ki;
@@ -98,8 +102,13 @@ class PidController{
             error=0.0;
             error_sum=0.0;
             previous_error=0.0;
+            error_rate=0.0;
             reference=0.0;
             last_measure=0.0;
+            ctrl_p=0.0;
+            ctrl_i=0.0;
+            ctrl_d=0.0;
+            ctrl_output=0.0;
         }
 };
 

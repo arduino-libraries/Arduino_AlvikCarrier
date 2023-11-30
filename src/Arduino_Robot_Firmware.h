@@ -20,8 +20,10 @@ class Arduino_Robot_Firmware{
         RGBled * led1;
         RGBled * led2;
 
+
         APDS9960 * apds9960;
         int bottom_red, bottom_green, bottom_blue, bottom_clear, bottom_proximity;
+
 
         Servo * servo_A;
         Servo * servo_B;
@@ -30,10 +32,10 @@ class Arduino_Robot_Firmware{
         MAX17332 * bms;
         float voltage, state_of_charge; 
 
-        MotorControl * motor_control_right;
 
         AT42QT2120 * touch_sensor;
         AT42QT2120::Status touch_status;
+
 
         LSM6DSOSensor * imu;
         int32_t accelerometer[3];
@@ -44,7 +46,12 @@ class Arduino_Robot_Firmware{
         MFX_output_t data_out;
 
 
-    public:
+    public:        
+    
+        MotorControl * motor_control_right;
+        MotorControl * motor_control_left;
+
+
 
         DCmotor * motor_left;
         DCmotor * motor_right;
@@ -100,9 +107,14 @@ class Arduino_Robot_Firmware{
         // Motors
         int beginMotors();
         void updateMotors();
+        bool setRpmLeft(const float rpm);
+        float getRpmLeft();
         bool setRpmRight(const float rpm);
         float getRpmRight();
+        bool setRpm(const float left, const float right);
+        void getRpm(float & left, float & right);
         void setKPidRight(const float kp, const float ki, const float kd);
+        void setKPidLeft(const float kp, const float ki, const float kd);
 
 
         // Touch
