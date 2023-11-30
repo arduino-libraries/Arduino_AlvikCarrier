@@ -271,13 +271,13 @@ void Arduino_Robot_Firmware::getRpm(float & left, float & right){
 void Arduino_Robot_Firmware::setKPidRight(const float kp, const float ki, const float kd){
     motor_control_right->setKP(kp);
     motor_control_right->setKI(ki);
-    motor_control_right->setKP(kp);
+    motor_control_right->setKD(kd);
 }
 
 void Arduino_Robot_Firmware::setKPidLeft(const float kp, const float ki, const float kd){
     motor_control_left->setKP(kp);
     motor_control_left->setKI(ki);
-    motor_control_left->setKP(kp);
+    motor_control_left->setKD(kd);
 }
 
 
