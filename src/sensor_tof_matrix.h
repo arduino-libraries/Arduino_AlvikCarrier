@@ -55,16 +55,19 @@ class SensorTofMatrix{
             return (res == VL53L7CX_RESOLUTION_4X4? 4: 8);
         }
 
-        void update() {
+        bool update() {
             uint8_t NewDataReady = 0;
             uint8_t status;
-            do {
-                status = sensor->vl53l7cx_check_data_ready(&NewDataReady);
-            } while (!NewDataReady);
+
+            status = sensor->vl53l7cx_check_data_ready(&NewDataReady);
 
             if ((!status) && (NewDataReady != 0)) {
                 status = sensor->vl53l7cx_get_ranging_data(&results);
+            } else {
+                return false;
             }
+
+            return true;
         }
 
         int get_min_range_top_mm() {
@@ -80,6 +83,34 @@ class SensorTofMatrix{
             return top_min;
         }
 
+        int get_max_range_bottom_mm() {
+            int size = get_size();
+            update();
+
+            int16_t bottom_max = results.distance_mm[0];
+
+            for (int i=(size==4?12:48); i < (size==4?15:63) ;i++) {
+                bottom_max = max(bottom_max, results.distance_mm[i]);
+            }
+
+            return bottom_max;
+        }
+
+        int get_min_range_right_mm() {
+            int size = get_size();
+            update();
+
+            int16_t top_min = results.distance_mm[0];
+
+            for (int i=0; i < (size==4?16:64) ;i+=size) {
+                top_min = min(top_min, results.distance_mm[i]);
+                if (size==8) {
+                    top_min = min(top_min, results.distance_mm[i+1]);
+                }
+            }
+
+            return top_min;
+        }
 
         /*void setResolution(){
             sensor->setRes
