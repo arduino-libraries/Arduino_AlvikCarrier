@@ -26,6 +26,7 @@ class SensorTofMatrix{
         int begin(){
             int out = 0;
             _wire->begin();
+            _wire->setClock(1000000);
             out |= _sensor->begin();
             out |= _sensor->init_sensor();
             if (_size == 8){
@@ -44,6 +45,7 @@ class SensorTofMatrix{
                 }
             }
             out |= _sensor->vl53l7cx_start_ranging();
+            _wire->setClock(400000);
             return out;
         }
 
