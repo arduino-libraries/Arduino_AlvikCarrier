@@ -29,5 +29,7 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define GBIAS_ACC_TH_SC                 (2.0f*0.000765f)
 #define GBIAS_GYRO_TH_SC                (2.0f*0.002f)
 #define DECIMATION                      1U
+#define STATE_SIZE                      (size_t)(2432)
+
 
 #endif

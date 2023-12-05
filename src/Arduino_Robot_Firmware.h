@@ -35,15 +35,20 @@ class Arduino_Robot_Firmware{
 
         AT42QT2120 * touch_sensor;
         AT42QT2120::Status touch_status;
+        uint8_t touch_value;
 
 
         LSM6DSOSensor * imu;
         int32_t accelerometer[3];
         int32_t gyroscope[3];
 
-
-        MFX_input_t data_in;
-        MFX_output_t data_out;
+        float imu_delta_time;
+        MFX_knobs_t iKnobs;
+        MFX_knobs_t *ipKnobs;
+        uint8_t mfxstate[STATE_SIZE];
+        MFX_input_t imu_data;
+        MFX_output_t filter_data;
+        uint16_t sample_to_discard;
 
 
     public:        
@@ -61,6 +66,7 @@ class Arduino_Robot_Firmware{
 
         TwoWire * wire;
         TwoWire * ext_wire;
+        HardwareSerial * serial;
 
 
 
@@ -122,6 +128,7 @@ class Arduino_Robot_Firmware{
         void updateTouch();
         bool getAnyTouchPressed();
         bool getTouchKey(const uint8_t key);
+        uint8_t getTouchKeys();
         bool getTouchUp();
         bool getTouchRight();
         bool getTouchDown();
@@ -146,11 +153,21 @@ class Arduino_Robot_Firmware{
         void setLedRightBlue(const uint32_t blue);
         void setLeds(const uint32_t color);
         void setLeds(const uint32_t red, const uint32_t green, const uint32_t blue);
+        void setEachLed(const uint8_t value);
 
 
         // Imu
         int beginImu();
         void updateImu();
+        float getAccelerationX();
+        float getAccelerationY();
+        float getAccelerationZ();
+        float getAngularVelocityX();
+        float getAngularVelocityY();
+        float getAngularVelocityZ();
+        float getRoll();
+        float getPitch();
+        float getYaw();
 
         void errorLed(const int error_code);
 

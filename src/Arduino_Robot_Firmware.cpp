@@ -10,6 +10,9 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
     // I2C external bus
     ext_wire = new TwoWire(I2C_2_SDA,I2C_2_SCL);
 
+    // uart to esp32
+    serial = new HardwareSerial(UART_RX,UART_TX);
+
     // RGB leds
     led1 = new RGBled(LED_1_RED,LED_1_GREEN,LED_1_BLUE);
     led2 = new RGBled(LED_2_RED,LED_2_GREEN,LED_2_BLUE);
@@ -42,12 +45,15 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
 
     // imu
     imu = new LSM6DSOSensor(wire, LSM6DSO_I2C_ADD_L);
-
+    ipKnobs = &iKnobs;
+    imu_delta_time = MOTION_FX_ENGINE_DELTATIME;
+    sample_to_discard=0;
 }
 
 int Arduino_Robot_Firmware::begin(){
     beginLeds();
 
+    serial->begin(UART_BAUD);
 
     // setup alternate functions
     AF_Tim2_pwm();
@@ -328,6 +334,21 @@ bool Arduino_Robot_Firmware::getTouchKey(const uint8_t key){
     return false;
 }
 
+uint8_t Arduino_Robot_Firmware::getTouchKeys(){
+    touch_value=0;
+    if (getAnyTouchPressed()){
+        touch_value|=1;
+        touch_value|=getTouchOk()<<1;
+        touch_value|=getTouchDelete()<<2;
+        touch_value|=getTouchEnter()<<3;
+        touch_value|=getTouchUp()<<4;
+        touch_value|=getTouchLeft()<<5;
+        touch_value|=getTouchDown()<<6;
+        touch_value|=getTouchRight()<<7;
+    }
+    return touch_value;
+}
+
 bool Arduino_Robot_Firmware::getTouchUp(){
     return getTouchKey(TOUCH_PAD_UP);
 }
@@ -423,6 +444,18 @@ void Arduino_Robot_Firmware::setLeds(const uint32_t red, const uint32_t green, c
     setLedRight(red,green,blue);    
 }
 
+void Arduino_Robot_Firmware::setEachLed(const uint8_t value){
+    setLedBuiltin(value&1);
+    setIlluminator((value>>1)&1);
+    setLedLeftRed(((value>>2)&1));
+    setLedLeftGreen(((value>>3)&1));
+    setLedLeftBlue(((value>>4)&1));
+    setLedRightRed(((value>>5)&1));
+    setLedRightGreen(((value>>6)&1));
+    setLedRightBlue(((value>>7)&1));
+}
+
+
 /******************************************************************************************************/
 /*                                                IMU                                                 */
 /******************************************************************************************************/
@@ -435,14 +468,89 @@ int Arduino_Robot_Firmware::beginImu(){
     imu->Set_G_FS(2000);
     imu->Enable_X();
     imu->Enable_G();
+
+    delay(10);
+
+    MotionFX_initialize((MFXState_t *)mfxstate);
+
+    MotionFX_getKnobs(mfxstate, ipKnobs);
+
+    ipKnobs->acc_orientation[0] = 'n';
+    ipKnobs->acc_orientation[1] = 'e';
+    ipKnobs->acc_orientation[2] = 'd';
+    ipKnobs->gyro_orientation[0] = 'n';
+    ipKnobs->gyro_orientation[1] = 'e';
+    ipKnobs->gyro_orientation[2] = 'd';
+
+    ipKnobs->gbias_acc_th_sc = GBIAS_ACC_TH_SC;
+    ipKnobs->gbias_gyro_th_sc = GBIAS_GYRO_TH_SC;
+
+    ipKnobs->output_type = MFX_ENGINE_OUTPUT_ENU;
+    ipKnobs->LMode = 1;
+    ipKnobs->modx = DECIMATION;
+
+    MotionFX_setKnobs(mfxstate, ipKnobs);
+    MotionFX_enable_6X(mfxstate, MFX_ENGINE_ENABLE);
+    MotionFX_enable_9X(mfxstate, MFX_ENGINE_DISABLE);
+
     return 0;
 }
 
 void Arduino_Robot_Firmware::updateImu(){
     imu->Get_X_Axes(accelerometer);
     imu->Get_G_Axes(gyroscope);
+    imu_data.gyro[0] = (float)gyroscope[0] * FROM_MDPS_TO_DPS;
+    imu_data.gyro[1] = (float)gyroscope[1] * FROM_MDPS_TO_DPS;
+    imu_data.gyro[2] = (float)gyroscope[2] * FROM_MDPS_TO_DPS;
+    imu_data.acc[0] = (float)accelerometer[0] * FROM_MG_TO_G;
+    imu_data.acc[1] = (float)accelerometer[1] * FROM_MG_TO_G;
+    imu_data.acc[2] = (float)accelerometer[2] * FROM_MG_TO_G;
+
+    if (sample_to_discard>SAMPLETODISCARD){
+        MotionFX_propagate(mfxstate, &filter_data, &imu_data, &imu_delta_time);
+        MotionFX_update(mfxstate, &filter_data, &imu_data, &imu_delta_time, NULL);
+    }else{
+        sample_to_discard++;
+    }
 
 }
+
+float Arduino_Robot_Firmware::getAccelerationX(){
+    return imu_data.acc[0];
+}
+
+float Arduino_Robot_Firmware::getAccelerationY(){
+    return imu_data.acc[1];
+}
+
+float Arduino_Robot_Firmware::getAccelerationZ(){
+    return imu_data.acc[2];
+}
+
+float Arduino_Robot_Firmware::getAngularVelocityX(){
+    return imu_data.gyro[0];
+}
+
+float Arduino_Robot_Firmware::getAngularVelocityY(){
+    return imu_data.gyro[1];
+}
+
+float Arduino_Robot_Firmware::getAngularVelocityZ(){
+    return imu_data.gyro[2];
+}
+
+float Arduino_Robot_Firmware::getRoll(){
+    return filter_data.rotation[0];
+}
+
+float Arduino_Robot_Firmware::getPitch(){
+    return filter_data.rotation[1];
+}
+
+float Arduino_Robot_Firmware::getYaw(){
+    return filter_data.rotation[2];
+}
+
 
 
 /******************************************************************************************************/
