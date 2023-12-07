@@ -516,11 +516,11 @@ void Arduino_Robot_Firmware::updateImu(){
 }
 
 float Arduino_Robot_Firmware::getAccelerationX(){
-    return imu_data.acc[0];
+    return -imu_data.acc[1];
 }
 
 float Arduino_Robot_Firmware::getAccelerationY(){
-    return imu_data.acc[1];
+    return -imu_data.acc[0];
 }
 
 float Arduino_Robot_Firmware::getAccelerationZ(){
@@ -528,27 +528,27 @@ float Arduino_Robot_Firmware::getAccelerationZ(){
 }
 
 float Arduino_Robot_Firmware::getAngularVelocityX(){
-    return imu_data.gyro[0];
-}
-
-float Arduino_Robot_Firmware::getAngularVelocityY(){
     return imu_data.gyro[1];
 }
 
+float Arduino_Robot_Firmware::getAngularVelocityY(){
+    return imu_data.gyro[0];
+}
+
 float Arduino_Robot_Firmware::getAngularVelocityZ(){
-    return imu_data.gyro[2];
+    return -imu_data.gyro[2];
 }
 
 float Arduino_Robot_Firmware::getRoll(){
-    return filter_data.rotation[0];
+    return -filter_data.rotation[1];
 }
 
 float Arduino_Robot_Firmware::getPitch(){
-    return filter_data.rotation[1];
+    return -filter_data.rotation[2];
 }
 
 float Arduino_Robot_Firmware::getYaw(){
-    return filter_data.rotation[2];
+    return 360.0-filter_data.rotation[0];
 }
 
 
