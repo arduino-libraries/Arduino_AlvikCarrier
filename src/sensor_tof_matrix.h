@@ -7,6 +7,8 @@
 
 #define DEFAULT_RANGING_FREQ_4X4    30
 #define DEFAULT_RANGING_FREQ_8X8    10
+#define WIRE_BASE_CLOCK 400000
+#define WIRE_BOOST_CLOCK 1000000
 
 class SensorTofMatrix{
     private:
@@ -15,18 +17,25 @@ class SensorTofMatrix{
         VL53L7CX_ResultsData results;
         int _size;
         int _ranging_freq;
+        bool _wire_boost;
+        uint32_t _wire_base_clock;
+        
     public:
-        SensorTofMatrix(TwoWire * wire, const uint8_t lpn_pin, const uint8_t i2c_rst_pin, const int size=4, const int ranging_freq=-1){
+        SensorTofMatrix(TwoWire * wire, const uint8_t lpn_pin, const uint8_t i2c_rst_pin, const int size=4, const int ranging_freq=-1, const bool wire_boost = true, const uint32_t wire_base_clock=WIRE_BASE_CLOCK){
             _wire=wire;
             _sensor = new VL53L7CX(_wire,lpn_pin,i2c_rst_pin);
             _size = size;
             _ranging_freq = ranging_freq;
+            _wire_boost=wire_boost;
+            _wire_base_clock=wire_base_clock;
         }
 
         int begin(){
             int out = 0;
             _wire->begin();
-            _wire->setClock(1000000);
+            if (_wire_boost){
+                _wire->setClock(WIRE_BOOST_CLOCK);
+            }
             out |= _sensor->begin();
             out |= _sensor->init_sensor();
             if (_size == 8){
@@ -45,7 +54,10 @@ class SensorTofMatrix{
                 }
             }
             out |= _sensor->vl53l7cx_start_ranging();
-            _wire->setClock(400000);
+
+            if (_wire_boost){
+                _wire->setClock(WIRE_BASE_CLOCK);
+            }
             return out;
         }
 
@@ -73,16 +85,25 @@ class SensorTofMatrix{
         bool update() {
             uint8_t NewDataReady = 0;
             uint8_t status;
+            bool return_value=true;
+
+            if (_wire_boost){
+                _wire->setClock(WIRE_BOOST_CLOCK);
+            }
 
             status = _sensor->vl53l7cx_check_data_ready(&NewDataReady);
 
             if ((!status) && (NewDataReady != 0)) {
                 status = _sensor->vl53l7cx_get_ranging_data(&results);
             } else {
-                return false;
+                return_value = false;
             }
 
-            return true;
+            if (_wire_boost){
+                _wire->setClock(WIRE_BASE_CLOCK);
+            }
+
+            return return_value;
         }
 
         int get_min_range_top_mm() {
