@@ -1,9 +1,12 @@
 #include "Arduino_Robot_Firmware.h"
 #include "sensor_line.h"
+#include "sensor_tof_matrix.h"
 #include "ucPack.h"
 
 Arduino_Robot_Firmware robot;
 SensorLine line(EXT_A2,EXT_A1,EXT_A0);
+SensorTofMatrix tof(robot.wire, EXT_GPIO3, EXT_GPIO2);
+
 
 ucPack packeter(200);
 
@@ -26,6 +29,7 @@ void setup(){
   Serial.begin(115200);
   robot.begin();
   line.begin();
+  tof.begin();
   code=0;
   tmotor=millis();
   tsend=millis();
@@ -55,7 +59,7 @@ void loop(){
     }
   }
 
-  if (millis()-tsensor>20){
+  if (millis()-tsensor>10){
     tsensor=millis();
     switch(sensor_id){
       case 0:
@@ -73,9 +77,18 @@ void loop(){
         msg_size = packeter.packetC3B('c', robot.getRed(), robot.getGreen(), robot.getBlue());
         robot.serial->write(packeter.msg,msg_size);
         break;
+      case 3:
+        tof.update();
+        msg_size = packeter.packetC7I('f', tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm());
+        robot.serial->write(packeter.msg,msg_size);
+        break;
+      case 4:
+        msg_size = packeter.packetC3F('q', robot.getRoll(), robot.getPitch(), robot.getYaw());
+        robot.serial->write(packeter.msg,msg_size);
+        break;
     }
     sensor_id++;
-    if (sensor_id>2){
+    if (sensor_id>4){
       sensor_id=0;
     }
   }
