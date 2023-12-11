@@ -30,6 +30,12 @@ void setup(){
   robot.begin();
   line.begin();
   tof.begin();
+
+  uint8_t version[3];
+  robot.getVersion(version[0], version[1], version[2]);
+  msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
+  robot.serial->write(packeter.msg,msg_size);
+
   code=0;
   tmotor=millis();
   tsend=millis();
