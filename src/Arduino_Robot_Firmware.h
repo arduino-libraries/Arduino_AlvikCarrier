@@ -50,6 +50,10 @@ class Arduino_Robot_Firmware{
         MFX_output_t filter_data;
         uint16_t sample_to_discard;
 
+        uint8_t version_high;
+        uint8_t version_mid;
+        uint8_t version_low;
+
 
     public:        
     
@@ -74,6 +78,8 @@ class Arduino_Robot_Firmware{
 
         int begin();
 
+
+        void getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte);
 
 
         //custom class????

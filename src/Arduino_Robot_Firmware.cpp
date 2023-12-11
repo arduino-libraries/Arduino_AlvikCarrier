@@ -48,6 +48,11 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
     ipKnobs = &iKnobs;
     imu_delta_time = MOTION_FX_ENGINE_DELTATIME;
     sample_to_discard=0;
+
+    // version
+    version_high = VERSION_BYTE_HIGH;
+    version_mid = VERSION_BYTE_MID;
+    version_low = VERSION_BYTE_LOW;
 }
 
 int Arduino_Robot_Firmware::begin(){
@@ -101,9 +106,13 @@ int Arduino_Robot_Firmware::begin(){
     }
     
 
-
-
     return 0;
+}
+
+void Arduino_Robot_Firmware::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte){
+    high_byte=version_high;
+    mid_byte=version_mid;
+    low_byte=version_low;
 }
 
 

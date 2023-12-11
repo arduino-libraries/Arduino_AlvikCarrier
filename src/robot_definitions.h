@@ -31,5 +31,8 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define DECIMATION                      1U
 #define STATE_SIZE                      (size_t)(2432)
 
+#define VERSION_BYTE_HIGH 0
+#define VERSION_BYTE_MID 0
+#define VERSION_BYTE_LOW 1
 
 #endif
