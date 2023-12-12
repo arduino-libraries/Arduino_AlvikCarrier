@@ -159,7 +159,7 @@ class Arduino_Robot_Firmware{
         void setLedRightBlue(const uint32_t blue);
         void setLeds(const uint32_t color);
         void setLeds(const uint32_t red, const uint32_t green, const uint32_t blue);
-        void setEachLed(const uint8_t value);
+        void setAllLeds(const uint8_t value);
 
 
         // Imu

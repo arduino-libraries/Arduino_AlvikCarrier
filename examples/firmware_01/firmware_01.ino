@@ -60,7 +60,7 @@ void loop(){
       */
       case 'L':
         packeter.unpacketC1B(code,leds);
-        robot.setEachLed(leds);
+        robot.setAllLeds(leds);
         break;
     }
   }

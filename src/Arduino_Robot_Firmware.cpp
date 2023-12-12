@@ -453,7 +453,7 @@ void Arduino_Robot_Firmware::setLeds(const uint32_t red, const uint32_t green, c
     setLedRight(red,green,blue);    
 }
 
-void Arduino_Robot_Firmware::setEachLed(const uint8_t value){
+void Arduino_Robot_Firmware::setAllLeds(const uint8_t value){
     setLedBuiltin(value&1);
     setIlluminator((value>>1)&1);
     setLedLeftRed(((value>>2)&1));
