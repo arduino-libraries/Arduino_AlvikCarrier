@@ -145,9 +145,64 @@ class SensorTofMatrix{
             return top_min;
         }
 
-        /*void setResolution(){
-            _sensor->setRes
-        }*/
+        int get_min_range_left_mm() {
+            update();
+
+            int16_t top_min = results.distance_mm[0];
+
+            for (int i=(_size==4?3:6); i < (_size==4?16:64) ;i+=_size) {
+                top_min = min(top_min, results.distance_mm[i]);
+                if (_size==8) {
+                    top_min = min(top_min, results.distance_mm[i+1]);
+                }
+            }
+
+            return top_min;
+        }
+
+        int get_min_range_center_right_mm() {
+            update();
+
+            int16_t top_min = results.distance_mm[0];
+
+            for (int i=(_size==4?5:18); i < (_size==4?13:50) ;i+=_size) {
+                top_min = min(top_min, results.distance_mm[i]);
+                if (_size==8) {
+                    top_min = min(top_min, results.distance_mm[i+1]);
+                }
+            }
+
+            return top_min;
+        }
+
+        int get_min_range_center_left_mm() {
+            update();
+
+            int16_t top_min = results.distance_mm[0];
+
+            for (int i=(_size==4?6:20); i < (_size==4?14:52) ;i+=_size) {
+                top_min = min(top_min, results.distance_mm[i]);
+                if (_size==8) {
+                    top_min = min(top_min, results.distance_mm[i+1]);
+                }
+            }
+
+            return top_min;
+        }
+
+        int get_min_range_center_mm() {
+            update();
+
+            int16_t top_min = results.distance_mm[0];
+
+            for (int i=(_size==5?6:19); i < (_size==4?13:51) ;i+=_size) {
+                top_min = min(top_min, results.distance_mm[i]);
+                top_min = min(top_min, results.distance_mm[i+1]);               
+            }
+
+            return top_min;
+        }
+
 };
 
 #endif

@@ -24,18 +24,25 @@ void setup() {
 
 void loop() {
     bool updated = false;
-    T1 = micros();
     updated = tof.update();
-    T2 = micros();
-
-    Serial.print(T2-T1);
-    Serial.print(", ");
-
+    
     if (updated) {
       Serial.println(" ");
       Serial.print("TOP=");
       Serial.println(tof.get_min_range_top_mm());
+      Serial.print("BOT=");
+      Serial.println(tof.get_max_range_bottom_mm());
+      Serial.print("LEFT=");
+      Serial.println(tof.get_min_range_left_mm());
+      Serial.print("RIGHT=");
+      Serial.println(tof.get_min_range_right_mm());
+      Serial.print("CLEFT=");
+      Serial.println(tof.get_min_range_center_left_mm());
+      Serial.print("CRIGHT=");
+      Serial.println(tof.get_min_range_center_right_mm());
+      Serial.print("CENTER=");
+      Serial.println(tof.get_min_range_center_mm());
     }
 
-    delay(100);
+    //delay(1000);
 }
