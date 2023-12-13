@@ -164,6 +164,19 @@ class SensorTofMatrix{
             return bottom_max;
         }
 
+        int get_avg_range_bottom_mm() {
+
+            int16_t _avg = 0;
+            uint8_t n = 0;
+
+            for (int i=(_size==4?12:48); i < (_size==4?15:63) ;i++) {
+                _avg += results.distance_mm[i];
+                n++;
+            }
+
+            return _avg/n;
+        }
+
         int get_min_range_left_mm() {
 
             int16_t _min = results.distance_mm[0];
