@@ -33,11 +33,14 @@ class SensorTofMatrix{
         int begin(){
             int out = 0;
             _wire->begin();
+            Serial.println("wire begin done");
             if (_wire_boost){
                 _wire->setClock(WIRE_BOOST_CLOCK);
             }
             out |= _sensor->begin();
+            Serial.println("sensor begin done");
             out |= _sensor->init_sensor();
+            Serial.println("sensor begin done");
             if (_size == 8){
                 out |= _sensor->vl53l7cx_set_resolution(VL53L7CX_RESOLUTION_8X8);
                 if (_ranging_freq > 0 ) {
@@ -56,7 +59,7 @@ class SensorTofMatrix{
             out |= _sensor->vl53l7cx_start_ranging();
 
             if (_wire_boost){
-                _wire->setClock(WIRE_BASE_CLOCK);
+                _wire->setClock(_wire_base_clock);
             }
             return out;
         }
@@ -130,77 +133,167 @@ class SensorTofMatrix{
             return bottom_max;
         }
 
-        int get_min_range_right_mm() {
-            update();
-
-            int16_t top_min = results.distance_mm[0];
-
-            for (int i=0; i < (_size==4?16:64) ;i+=_size) {
-                top_min = min(top_min, results.distance_mm[i]);
-                if (_size==8) {
-                    top_min = min(top_min, results.distance_mm[i+1]);
-                }
-            }
-
-            return top_min;
-        }
-
         int get_min_range_left_mm() {
             update();
 
-            int16_t top_min = results.distance_mm[0];
+            int16_t _min = results.distance_mm[0];
 
-            for (int i=(_size==4?3:6); i < (_size==4?16:64) ;i+=_size) {
-                top_min = min(top_min, results.distance_mm[i]);
+            for (int i=0; i < (_size==4?16:64) ;i+=_size) {
+                _min = min(_min, results.distance_mm[i]);
                 if (_size==8) {
-                    top_min = min(top_min, results.distance_mm[i+1]);
+                    _min = min(_min, results.distance_mm[i+1]);
                 }
             }
 
-            return top_min;
+            return _min;
         }
 
-        int get_min_range_center_right_mm() {
+        int get_min_range_right_mm() {
             update();
 
-            int16_t top_min = results.distance_mm[0];
+            int16_t _min = results.distance_mm[0];
 
-            for (int i=(_size==4?5:18); i < (_size==4?13:50) ;i+=_size) {
-                top_min = min(top_min, results.distance_mm[i]);
+            for (int i=(_size==4?3:6); i < (_size==4?16:64) ;i+=_size) {
+                _min = min(_min, results.distance_mm[i]);
                 if (_size==8) {
-                    top_min = min(top_min, results.distance_mm[i+1]);
+                    _min = min(_min, results.distance_mm[i+1]);
                 }
             }
 
-            return top_min;
+            return _min;
         }
 
         int get_min_range_center_left_mm() {
             update();
 
-            int16_t top_min = results.distance_mm[0];
+            int16_t _min = results.distance_mm[0];
 
-            for (int i=(_size==4?6:20); i < (_size==4?14:52) ;i+=_size) {
-                top_min = min(top_min, results.distance_mm[i]);
+            for (int i=(_size==4?5:18); i < (_size==4?13:50) ;i+=_size) {
+                _min = min(_min, results.distance_mm[i]);
                 if (_size==8) {
-                    top_min = min(top_min, results.distance_mm[i+1]);
+                    _min = min(_min, results.distance_mm[i+1]);
                 }
             }
 
-            return top_min;
+            return _min;
+        }
+
+        int get_min_range_center_right_mm() {
+            update();
+
+            int16_t _min = results.distance_mm[0];
+
+            for (int i=(_size==4?6:20); i < (_size==4?14:52) ;i+=_size) {
+                _min = min(_min, results.distance_mm[i]);
+                if (_size==8) {
+                    _min = min(_min, results.distance_mm[i+1]);
+                }
+            }
+
+            return _min;
         }
 
         int get_min_range_center_mm() {
             update();
 
-            int16_t top_min = results.distance_mm[0];
+            int16_t _min = results.distance_mm[0];
 
             for (int i=(_size==5?6:19); i < (_size==4?13:51) ;i+=_size) {
-                top_min = min(top_min, results.distance_mm[i]);
-                top_min = min(top_min, results.distance_mm[i+1]);               
+                _min = min(_min, results.distance_mm[i]);
+                _min = min(_min, results.distance_mm[i+1]);               
             }
 
-            return top_min;
+            return _min;
+        }
+
+        // avgs
+
+        int get_avg_range_left_mm() {
+            update();
+
+            int16_t _avg = 0;
+            uint8_t n = 0;
+
+            for (int i=0; i < (_size==4?16:64) ;i+=_size) {
+                _avg += results.distance_mm[i];
+                n++;
+                if (_size==8) {
+                    _avg += results.distance_mm[i+1];
+                    n++;
+                }
+            }
+
+            return _avg/n;
+        }
+
+        int get_avg_range_right_mm() {
+            update();
+
+            int16_t _avg = 0;
+            uint8_t n = 0;
+
+            for (int i=(_size==4?3:6); i < (_size==4?16:64) ;i+=_size) {
+                _avg += results.distance_mm[i];
+                n++;
+                if (_size==8) {
+                    _avg += results.distance_mm[i+1];
+                    n++;
+                }
+            }
+
+            return _avg/n;
+        }
+
+        int get_avg_range_center_left_mm() {
+            update();
+
+            int16_t _avg = 0;
+            uint8_t n = 0;
+
+            for (int i=(_size==4?5:18); i < (_size==4?13:50) ;i+=_size) {
+                _avg += results.distance_mm[i];
+                n++;
+                if (_size==8) {
+                    _avg += results.distance_mm[i+1];
+                    n++;
+                }
+            }
+
+            return _avg/n;
+        }
+
+        int get_avg_range_center_right_mm() {
+            update();
+
+            int16_t _avg = 0;
+            uint8_t n = 0;
+
+            for (int i=(_size==4?6:20); i < (_size==4?14:52) ;i+=_size) {
+                _avg += results.distance_mm[i];
+                n++;
+                if (_size==8) {
+                    _avg += results.distance_mm[i+1];
+                    n++;
+                }
+            }
+
+            return _avg/n;
+        }
+
+        int get_avg_range_center_mm() {
+            update();
+
+            int16_t _avg = 0;
+            uint8_t n = 0;
+
+            for (int i=(_size==4?6:19); i < (_size==4?13:51) ;i+=_size) {
+                _avg += results.distance_mm[i];
+                n++;
+                _avg += results.distance_mm[i+1];
+                n++;
+            }
+
+            return _avg/n;
         }
 
 };
