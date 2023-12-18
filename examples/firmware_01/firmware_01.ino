@@ -80,7 +80,7 @@ void loop(){
         break;
       case 2:
         robot.updateAPDS();
-        msg_size = packeter.packetC3B('c', robot.getRed(), robot.getGreen(), robot.getBlue());
+        msg_size = packeter.packetC3I('c', robot.getRed(), robot.getGreen(), robot.getBlue());
         robot.serial->write(packeter.msg,msg_size);
         break;
       case 3:

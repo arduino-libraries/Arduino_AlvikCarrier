@@ -90,9 +90,9 @@ class Arduino_Robot_Firmware{
         void setIlluminator(uint8_t value);         // set white leds       
         void enableIlluminator();                   // white leds on
         void disableIlluminator();                  // white leds off
-        int getRed();                               // red value 0-255
-        int getGreen();                             // green value 0-255
-        int getBlue();                              // blue value 0-255
+        int getRed();                               // red value 0-4095
+        int getGreen();                             // green value 0-4095
+        int getBlue();                              // blue value 0-4095
         int getProximity();                         // proximity value 0-127
 
 
