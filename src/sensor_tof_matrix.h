@@ -21,6 +21,14 @@ class SensorTofMatrix{
         uint32_t _wire_base_clock;
         
     public:
+        int top;
+        int bottom;
+        int left;
+        int right;
+        int center_left;
+        int center_right;
+        int center;
+
         SensorTofMatrix(TwoWire * wire, const uint8_t lpn_pin, const uint8_t i2c_rst_pin, const int size=4, const int ranging_freq=-1, const bool wire_boost = true, const uint32_t wire_base_clock=WIRE_BASE_CLOCK){
             _wire=wire;
             _sensor = new VL53L7CX(_wire,lpn_pin,i2c_rst_pin);
@@ -106,8 +114,19 @@ class SensorTofMatrix{
             return return_value;
         }
 
+        bool update_rois() {
+            bool out = update();
+            top = get_avg_range_top_mm();
+            bottom = get_max_range_bottom_mm();
+            left = get_avg_range_left_mm();
+            right = get_avg_range_right_mm();
+            center_left = get_avg_range_center_left_mm();
+            center_right = get_avg_range_center_right_mm();
+            center = get_avg_range_center_mm();
+            return out;
+        }
+
         int get_min_range_top_mm() {
-            update();
 
             int16_t top_min = results.distance_mm[0];
 
@@ -118,8 +137,20 @@ class SensorTofMatrix{
             return top_min;
         }
 
+        int get_avg_range_top_mm() {
+
+            int16_t _avg = 0;
+            uint8_t n = 0;
+
+            for (int i=0; i < (_size==4?4:16) ;i++) {
+                _avg += results.distance_mm[i];
+                n++;
+            }
+
+            return _avg/n;
+        }
+
         int get_max_range_bottom_mm() {
-            update();
 
             int16_t bottom_max = results.distance_mm[0];
 
@@ -130,8 +161,20 @@ class SensorTofMatrix{
             return bottom_max;
         }
 
+        int get_avg_range_bottom_mm() {
+
+            int16_t _avg = 0;
+            uint8_t n = 0;
+
+            for (int i=(_size==4?12:48); i < (_size==4?15:63) ;i++) {
+                _avg += results.distance_mm[i];
+                n++;
+            }
+
+            return _avg/n;
+        }
+
         int get_min_range_left_mm() {
-            update();
 
             int16_t _min = results.distance_mm[0];
 
@@ -146,7 +189,6 @@ class SensorTofMatrix{
         }
 
         int get_min_range_right_mm() {
-            update();
 
             int16_t _min = results.distance_mm[0];
 
@@ -161,7 +203,6 @@ class SensorTofMatrix{
         }
 
         int get_min_range_center_left_mm() {
-            update();
 
             int16_t _min = results.distance_mm[0];
 
@@ -176,7 +217,6 @@ class SensorTofMatrix{
         }
 
         int get_min_range_center_right_mm() {
-            update();
 
             int16_t _min = results.distance_mm[0];
 
@@ -191,7 +231,6 @@ class SensorTofMatrix{
         }
 
         int get_min_range_center_mm() {
-            update();
 
             int16_t _min = results.distance_mm[0];
 
@@ -206,7 +245,6 @@ class SensorTofMatrix{
         // avgs
 
         int get_avg_range_left_mm() {
-            update();
 
             int16_t _avg = 0;
             uint8_t n = 0;
@@ -224,7 +262,6 @@ class SensorTofMatrix{
         }
 
         int get_avg_range_right_mm() {
-            update();
 
             int16_t _avg = 0;
             uint8_t n = 0;
@@ -242,7 +279,6 @@ class SensorTofMatrix{
         }
 
         int get_avg_range_center_left_mm() {
-            update();
 
             int16_t _avg = 0;
             uint8_t n = 0;
@@ -260,7 +296,6 @@ class SensorTofMatrix{
         }
 
         int get_avg_range_center_right_mm() {
-            update();
 
             int16_t _avg = 0;
             uint8_t n = 0;
@@ -278,7 +313,6 @@ class SensorTofMatrix{
         }
 
         int get_avg_range_center_mm() {
-            update();
 
             int16_t _avg = 0;
             uint8_t n = 0;
