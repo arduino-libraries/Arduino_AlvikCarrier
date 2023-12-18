@@ -97,7 +97,7 @@ void loop(){
     if (sensor_id>4){
       sensor_id=0;
     }
-  }
+  } 
 
   if (millis()-tmotor>10){
     tmotor=millis();

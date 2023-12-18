@@ -321,7 +321,7 @@ class SensorTofMatrix{
             int16_t _avg = 0;
             uint8_t n = 0;
 
-            for (int i=(_size==4?6:19); i < (_size==4?13:51) ;i+=_size) {
+            for (int i=(_size==4?5:19); i < (_size==4?13:51) ;i+=_size) {
                 _avg += results.distance_mm[i];
                 n++;
                 _avg += results.distance_mm[i+1];
