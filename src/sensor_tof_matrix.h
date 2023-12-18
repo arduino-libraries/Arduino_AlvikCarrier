@@ -33,14 +33,11 @@ class SensorTofMatrix{
         int begin(){
             int out = 0;
             _wire->begin();
-            Serial.println("wire begin done");
             if (_wire_boost){
                 _wire->setClock(WIRE_BOOST_CLOCK);
             }
             out |= _sensor->begin();
-            Serial.println("sensor begin done");
             out |= _sensor->init_sensor();
-            Serial.println("sensor begin done");
             if (_size == 8){
                 out |= _sensor->vl53l7cx_set_resolution(VL53L7CX_RESOLUTION_8X8);
                 if (_ranging_freq > 0 ) {
