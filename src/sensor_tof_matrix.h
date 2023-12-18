@@ -19,8 +19,7 @@ class SensorTofMatrix{
         int _ranging_freq;
         bool _wire_boost;
         uint32_t _wire_base_clock;
-        
-    public:
+
         int top;
         int bottom;
         int left;
@@ -28,6 +27,9 @@ class SensorTofMatrix{
         int center_left;
         int center_right;
         int center;
+        
+    public:
+
 
         SensorTofMatrix(TwoWire * wire, const uint8_t lpn_pin, const uint8_t i2c_rst_pin, const int size=4, const int ranging_freq=-1, const bool wire_boost = true, const uint32_t wire_base_clock=WIRE_BASE_CLOCK){
             _wire=wire;
@@ -69,6 +71,7 @@ class SensorTofMatrix{
             return out;
         }
 
+        /*
         void print(){
             VL53L7CX_ResultsData Results;
             uint8_t NewDataReady = 0;
@@ -89,6 +92,7 @@ class SensorTofMatrix{
                 Serial.println();
             }
         }
+        */
 
         bool update() {
             uint8_t NewDataReady = 0;
@@ -327,6 +331,34 @@ class SensorTofMatrix{
             return _avg/n;
         }
 
+
+        int getTop(){
+            return top;
+        }
+
+        int getLeft(){
+            return left;
+        }
+
+        int getCenterLeft(){
+            return center_left;
+        }
+
+        int getCenter(){
+            return center;
+        }
+
+        int getCenterRight(){
+            return center_right;
+        }
+
+        int getRight(){
+            return right;
+        }
+
+        int getBottom(){
+            return bottom;
+        }
 };
 
 #endif

@@ -110,7 +110,7 @@ class Arduino_Robot_Firmware{
 
 
         // BMS, MAX17332
-        int beginBMS();                             
+        int beginBMS();                                            
         void updateBMS();
         float getBatteryVoltage();
         float getBatteryChargePercentage();
@@ -123,25 +123,25 @@ class Arduino_Robot_Firmware{
         float getRpmLeft();
         bool setRpmRight(const float rpm);
         float getRpmRight();
-        bool setRpm(const float left, const float right);
-        void getRpm(float & left, float & right);
-        void setKPidRight(const float kp, const float ki, const float kd);
-        void setKPidLeft(const float kp, const float ki, const float kd);
+        bool setRpm(const float left, const float right);                             // sets RPMs on left and right wheels
+        void getRpm(float & left, float & right);                                     // get RPMs on left and right wheels
+        void setKPidRight(const float kp, const float ki, const float kd);            // set PID parameters for right wheel
+        void setKPidLeft(const float kp, const float ki, const float kd);             // set PID parameters for left wheel
 
 
         // Touch
-        int beginTouch();
-        void updateTouch();
-        bool getAnyTouchPressed();
-        bool getTouchKey(const uint8_t key);
-        uint8_t getTouchKeys();
-        bool getTouchUp();
-        bool getTouchRight();
-        bool getTouchDown();
-        bool getTouchLeft();
-        bool getTouchEnter();
-        bool getTouchOk();
-        bool getTouchDelete();
+        int beginTouch();                                                             // initialize touch
+        void updateTouch();                                                           // update touch status
+        bool getAnyTouchPressed();                                                    // get any touch pressed
+        bool getTouchKey(const uint8_t key);                                          // return true if key touch is pressed
+        uint8_t getTouchKeys();                                                       // return touched pads as byte
+        bool getTouchUp();                                                            // get nav pad up
+        bool getTouchRight();                                                         // get nav pad right
+        bool getTouchDown();                                                          // get nav pad down
+        bool getTouchLeft();                                                          // get nav pad left
+        bool getTouchEnter();                                                         // get nav pad enter (center circle)
+        bool getTouchOk();                                                            // get nav pad ok (right check)
+        bool getTouchDelete();                                                        // get nav pad delete (right x)
 
 
         // Leds
@@ -163,19 +163,19 @@ class Arduino_Robot_Firmware{
 
 
         // Imu
-        int beginImu();
-        void updateImu();
-        float getAccelerationX();
-        float getAccelerationY();
-        float getAccelerationZ();
-        float getAngularVelocityX();
-        float getAngularVelocityY();
-        float getAngularVelocityZ();
-        float getRoll();
-        float getPitch();
-        float getYaw();
+        int beginImu();                                                               // initialize LSD6DSOX-
+        void updateImu();                                                             // update accelerometer and gyroscope data. Update sensor fusion
+        float getAccelerationX();                                                     // get acceleration on x axis
+        float getAccelerationY();                                                     // get acceleration on y axis
+        float getAccelerationZ();                                                     // get acceleration on z axis
+        float getAngularVelocityX();                                                  // get angular velocity on x axis
+        float getAngularVelocityY();                                                  // get angular velocity on y axis
+        float getAngularVelocityZ();                                                  // get angular velocity on z axis
+        float getRoll();                                                              // get robot roll
+        float getPitch();                                                             // get robot pitch
+        float getYaw();                                                               // get robot yaw
 
-        void errorLed(const int error_code);
+        void errorLed(const int error_code);                                          // error routine, locks on code blinking led
 
 
 
