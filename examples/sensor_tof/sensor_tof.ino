@@ -49,13 +49,29 @@ void loop() {
       Serial.println(tof.get_min_range_center_mm());
       */
       Serial.print("\t");
+      Serial.print("L");
+      Serial.print("\t");
+      Serial.print("CL");
+      Serial.print("\t");
+      Serial.print("C");
+      Serial.print("\t");
+      Serial.print("CR");
+      Serial.print("\t");
+      Serial.print("R");
+      Serial.print("\t");
+      Serial.print("T");
+      Serial.print("\t");
+      Serial.print("B");
+      Serial.println("");
+
+      Serial.print("\t");
       Serial.print(tof.getLeft());
       Serial.print("\t");
-      Serial.print(tof.getLeftCenter());
+      Serial.print(tof.getCenterLeft());
       Serial.print("\t");
       Serial.print(tof.getCenter());
       Serial.print("\t");
-      Serial.print(tof.getRightCenter());
+      Serial.print(tof.getCenterRight());
       Serial.print("\t");
       Serial.print(tof.getRight());
       Serial.print("\t");
@@ -66,5 +82,5 @@ void loop() {
     }
     
 
-    delay(1000);
+    delay(10);
 }
