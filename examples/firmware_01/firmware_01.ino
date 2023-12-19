@@ -24,10 +24,15 @@ uint8_t leds;
 uint8_t sensor_id = 0;
 
 
+uint8_t pid;
+float kp, ki, kd;
+
+
 
 void setup(){
   Serial.begin(115200);
   robot.begin();
+  robot.setLedBuiltin(HIGH);
   line.begin();
   tof.begin();
 
@@ -35,6 +40,9 @@ void setup(){
   robot.getVersion(version[0], version[1], version[2]);
   msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
   robot.serial->write(packeter.msg,msg_size);
+
+  robot.setLedBuiltin(LOW);
+
 
   code=0;
   tmotor=millis();
@@ -61,6 +69,16 @@ void loop(){
       case 'L':
         packeter.unpacketC1B(code,leds);
         robot.setAllLeds(leds);
+        break;
+      
+      case 'P':
+        packeter.unpacketC1B3F(code,pid,kp,ki,kd);
+        if (pid=='L'){
+          robot.setKPidLeft(kp,ki,kd);
+        }
+        if (pid=='R'){
+          robot.setKPidRight(kp,ki,kd);
+        }
         break;
     }
   }
