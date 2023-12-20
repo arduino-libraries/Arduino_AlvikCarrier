@@ -121,9 +121,10 @@ void loop(){
         robot.serial->write(packeter.msg,msg_size);
         break;
       case 3:
-        tof.update();
-        msg_size = packeter.packetC7I('f', tof.getLeft(), tof.getCenterLeft(), tof.getCenter(), tof.getCenterRight(), tof.getRight(), tof.get_min_range_top_mm(), tof.get_max_range_bottom_mm());
-        robot.serial->write(packeter.msg,msg_size);
+        if (tof.update_rois()){
+          msg_size = packeter.packetC7I('f', tof.getLeft(), tof.getCenterLeft(), tof.getCenter(), tof.getCenterRight(), tof.getRight(), tof.get_min_range_top_mm(), tof.get_max_range_bottom_mm());
+          robot.serial->write(packeter.msg,msg_size);
+        }
         break;
       case 4:
         msg_size = packeter.packetC3F('q', robot.getRoll(), robot.getPitch(), robot.getYaw());
