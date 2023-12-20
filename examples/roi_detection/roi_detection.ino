@@ -17,19 +17,26 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "Arduino_Robot_Firmware.h"
+#include <Arduino.h>
+#include <Wire.h>
+#include "platform_config_custom.h"
+#include <vl53l7cx_class.h>
+#include "sensor_tof_matrix.h"
 
-Arduino_Robot_Firmware robot;
+TwoWire wire(PB7, PB8);
+#define DEV_I2C wire
 
-void setup(){
-    robot.begin();
+#define LPN_PIN PB1
+#define I2C_RST_PIN PB0
+
+SensorTofMatrix tof(&wire, LPN_PIN, I2C_RST_PIN);
+
+void setup() {
+    tof.begin();
 }
 
-void loop(){
-    for(int i=0; i<180; i++){
-        robot.setServoA(i);
-        robot.setServoB(i);
-        delay(15);
-    }
-    delay(5000);
+void loop() {
+    Serial.print("TOP MIN: ");
+    Serial.println(tof.get_min_range_top_mm());
+    delay(10);
 }

@@ -1,3 +1,22 @@
+/*
+  This file is part of the Arduino Alvik library.
+  Copyright (c) 2023 Arduino SA. All rights reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 #ifndef __PID_CONTROLLER_H__
 #define __PID_CONTROLLER_H__
 
@@ -54,6 +73,10 @@ class PidController{
             return ctrl_output;
         }
 
+        float getError(){
+            return error;
+        }
+
         void setKPid(const float _kp, const float _ki, const float _kd){
             kp=_kp;
             ki=_ki;
@@ -98,8 +121,13 @@ class PidController{
             error=0.0;
             error_sum=0.0;
             previous_error=0.0;
+            error_rate=0.0;
             reference=0.0;
             last_measure=0.0;
+            ctrl_p=0.0;
+            ctrl_i=0.0;
+            ctrl_d=0.0;
+            ctrl_output=0.0;
         }
 };
 

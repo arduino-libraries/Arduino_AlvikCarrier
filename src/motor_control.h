@@ -1,3 +1,22 @@
+/*
+  This file is part of the Arduino Alvik library.
+  Copyright (c) 2023 Arduino SA. All rights reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 #ifndef __MOTOR_CONTROL_H__
 #define __MOTOR_CONTROL_H__
 
@@ -20,18 +39,9 @@ class MotorControl{
         float reference;
 
         float controller_period;
-
+        float conversion_factor;
         float measure;
         float last_measure;
-        float error;
-        float error_sum;
-        float error_rate;
-        float conversion_factor;
-
-        float ctrl_p;
-        float ctrl_i;
-        float ctrl_d;
-        float actuation;
 
 
         float mean;
@@ -42,8 +52,10 @@ class MotorControl{
 
         DCmotor * motor;
         Encoder * encoder;
-        PidController * vel_pid;
     public:
+
+        PidController * vel_pid;
+
         MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd, const float _controller_period){
             motor = _motor;
             encoder = _encoder;
@@ -52,28 +64,18 @@ class MotorControl{
             ki = _ki;
             kd = _kd;
 
-            controller_period = 60.0*_controller_period;
+            controller_period = _controller_period;
 
             travel=0.0;
             reference = 0.0;
 
             measure = 0.0;
             last_measure = 0.0;
-            error = 0.0;
-            error_sum = 0.0;
-            error_rate = 0.0;
-
-
-            ctrl_p = 0.0;
-            ctrl_i = 0.0;
-            ctrl_d = 0.0;
-
-            actuation = 0.0;
 
             id_memory=0;
             mean=0.0;
 
-            conversion_factor = (1/MOTOR_RATIO)/(controller_period);
+            conversion_factor = 60.0*(1/MOTOR_RATIO)/(controller_period);
             vel_pid = new PidController(kp,ki,kd,controller_period,CONTROL_LIMIT);
         }
 
@@ -81,6 +83,7 @@ class MotorControl{
             motor->begin();
             encoder->begin();
             encoder->reset();
+            vel_pid->reset();
             clearMemory();
         }
 
@@ -88,6 +91,11 @@ class MotorControl{
             if ((ref<MOTOR_LIMIT)&&(ref>-MOTOR_LIMIT)){
                 reference = ref;
                 vel_pid->setReference(reference);
+                /*
+                if ((reference)<0.1&&(reference>-0.1)){
+                    vel_pid->reset();
+                }
+                */
                 return true;
             }
             return false;
@@ -184,27 +192,37 @@ class MotorControl{
        */
 
         void update(){
+
             measure = encoder->getCount();
             encoder->reset();
             measure = measure*conversion_factor;
+            addMemory(measure);
+            measure = meanMemory();
+
+            /*
+            measure = encoder->getCount();
+            encoder->reset();
+            measure = measure*conversion_factor;
+            */
+
             vel_pid->update(measure);
-            motor->setSpeed(-vel_pid->getControlOutput());
+            motor->setSpeed(vel_pid->getControlOutput());
         }
 
         void setKP(const float _kp){
-            kp=_kp;
+            vel_pid->setKp(_kp);
         }
 
         void setKI(const float _ki){
-            ki=_ki;
+            vel_pid->setKi(_ki);
         }
 
         void setKD(const float _kd){
-            kd=_kd;
+            vel_pid->setKd(_kd);
         }
 
         float getError(){
-            return error;
+            return vel_pid->getError();
         }
 
         

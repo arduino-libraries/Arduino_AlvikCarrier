@@ -1,3 +1,22 @@
+/*
+  This file is part of the Arduino Alvik library.
+  Copyright (c) 2023 Arduino SA. All rights reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 #ifndef __ROBOT_DEFINITIONS_H__
 #define __ROBOT_DEFINITIONS_H__
 
@@ -10,9 +29,9 @@
 
 const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 
-#define MOTOR_KP_RIGHT 60.0
-#define MOTOR_KI_RIGHT 0.01
-#define MOTOR_KD_RIGHT 0.4
+#define MOTOR_KP_RIGHT 120.0
+#define MOTOR_KI_RIGHT 300.0
+#define MOTOR_KD_RIGHT 1.0
 #define MOTOR_CONTROL_PERIOD 0.01
 
 
@@ -29,5 +48,10 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define GBIAS_ACC_TH_SC                 (2.0f*0.000765f)
 #define GBIAS_GYRO_TH_SC                (2.0f*0.002f)
 #define DECIMATION                      1U
+#define STATE_SIZE                      (size_t)(2432)
+
+#define VERSION_BYTE_HIGH 0
+#define VERSION_BYTE_MID 0
+#define VERSION_BYTE_LOW 5
 
 #endif

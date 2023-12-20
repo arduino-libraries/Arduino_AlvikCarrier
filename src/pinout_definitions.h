@@ -1,3 +1,22 @@
+/*
+  This file is part of the Arduino Alvik library.
+  Copyright (c) 2023 Arduino SA. All rights reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 #ifndef __PINOUT_DEFINITIONS_H__
 #define __PINOUT_DEFINITIONS_H__
 
@@ -5,14 +24,6 @@
 // Motors
 #define MOTORS_ENABLE PD2
 
-// Right Motor
-#define ENC_RIGHT_TIMER TIM5
-#define ENC_RIGHT_A PA0
-#define ENC_RIGHT_B PA1
-#define MOTOR_RIGHT_A PA2
-#define MOTOR_RIGHT_A_CH 3
-#define MOTOR_RIGHT_B PA15
-#define MOTOR_RIGHT_B_CH 1
 
 // Left Motor
 #define ENC_LEFT_TIMER TIM3
@@ -22,6 +33,19 @@
 #define MOTOR_LEFT_A_CH 4
 #define MOTOR_LEFT_B PB3
 #define MOTOR_LEFT_B_CH 2
+#define ENC_LEFT_FLIP false
+#define MOTOR_LEFT_FLIP true
+
+// Right Motor
+#define ENC_RIGHT_TIMER TIM5
+#define ENC_RIGHT_A PA0
+#define ENC_RIGHT_B PA1
+#define MOTOR_RIGHT_A PA2
+#define MOTOR_RIGHT_A_CH 3
+#define MOTOR_RIGHT_B PA15
+#define MOTOR_RIGHT_B_CH 1
+#define ENC_RIGHT_FLIP true
+#define MOTOR_RIGHT_FLIP false
 
 
 // Leds
@@ -75,7 +99,6 @@
 #define EXT_GPIO3 PB1
 
 
-
 // Uart
 #define UART_TX PA9
 #define UART_RX PA10
@@ -87,7 +110,6 @@
 #define ERROR_BMS 2
 #define ERROR_TOUCH 3
 #define ERROR_IMU 4
-
 
 
 #endif
