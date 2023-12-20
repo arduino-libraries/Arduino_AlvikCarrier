@@ -1,3 +1,22 @@
+/*
+  This file is part of the Arduino_GroveI2C_Ultrasonic library.
+  Copyright (c) 2023 Arduino SA. All rights reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 #include "Arduino_Robot_Firmware.h"
 #include "sensor_line.h"
 #include "sensor_tof_matrix.h"
@@ -103,7 +122,7 @@ void loop(){
         break;
       case 3:
         tof.update();
-        msg_size = packeter.packetC7I('f', tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm(), tof.get_min_range_top_mm());
+        msg_size = packeter.packetC7I('f', tof.getLeft(), tof.getCenterLeft(), tof.getCenter(), tof.getCenterRight(), tof.getRight(), tof.get_min_range_top_mm(), tof.get_max_range_bottom_mm());
         robot.serial->write(packeter.msg,msg_size);
         break;
       case 4:

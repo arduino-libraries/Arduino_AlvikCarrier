@@ -1,3 +1,22 @@
+/*
+  This file is part of the Arduino Alvik library.
+  Copyright (c) 2023 Arduino SA. All rights reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 #ifndef __SENSOR_TOF_MATRIX_H__
 #define __SENSOR_TOF_MATRIX_H__
 
@@ -361,9 +380,10 @@ class SensorTofMatrix{
         }
 
 
-        int test_center(){
-            if ((results.distance_mm[9]<150)||(results.distance_mm[10]<150)){
-                return max(results.distance_mm[1],results.distance_mm[2]);
+        int exp_center(){
+            if ((results.distance_mm[9]<200)||(results.distance_mm[10]<200)){
+                //return max(results.distance_mm[1],results.distance_mm[2]);
+                return (results.distance_mm[1]+results.distance_mm[2])/2;
             }
             else{
                 return (results.distance_mm[5]+results.distance_mm[6])/2;
