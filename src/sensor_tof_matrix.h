@@ -71,7 +71,7 @@ class SensorTofMatrix{
             return out;
         }
 
-        /*
+        
         void print(){
             VL53L7CX_ResultsData Results;
             uint8_t NewDataReady = 0;
@@ -92,7 +92,7 @@ class SensorTofMatrix{
                 Serial.println();
             }
         }
-        */
+        
 
         bool update() {
             uint8_t NewDataReady = 0;
@@ -358,6 +358,16 @@ class SensorTofMatrix{
 
         int getBottom(){
             return bottom;
+        }
+
+
+        int test_center(){
+            if ((results.distance_mm[9]<150)||(results.distance_mm[10]<150)){
+                return max(results.distance_mm[1],results.distance_mm[2]);
+            }
+            else{
+                return (results.distance_mm[5]+results.distance_mm[6])/2;
+            }
         }
 };
 
