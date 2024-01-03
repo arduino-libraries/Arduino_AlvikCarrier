@@ -23,7 +23,7 @@
 // Motor Control and mechanical parameters
 #define CONTROL_LIMIT 4096              // PWM resolution
 
-#define MOTOR_LIMIT 100.0               // Mechanical RPM limit speed of used motors
+#define MOTOR_LIMIT 80.0                // Mechanical RPM limit speed of used motors
 #define MOTOR_CPR 6.0                   // Resolution of the encoder
 #define MOTOR_GEAR_RATIO 150.0          // Gear ratio of the motor
 
