@@ -32,7 +32,7 @@ const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 #define MOTOR_KP_RIGHT 120.0
 #define MOTOR_KI_RIGHT 300.0
 #define MOTOR_KD_RIGHT 1.0
-#define MOTOR_CONTROL_PERIOD 0.01
+#define MOTOR_CONTROL_PERIOD 0.02
 
 
 // Sensor fusioning parameters

@@ -127,9 +127,9 @@ class MotorControl{
             return mean/float(MEM_SIZE);
         }                  
 
-        void clearMemory(){
+        void clearMemory(const float reset_value=0.0){
             for (i=0; i<MEM_SIZE; i++){
-                measure_memory[i]=0.0;
+                measure_memory[i]=reset_value;
             }
         }
 
@@ -196,7 +196,26 @@ class MotorControl{
             measure = encoder->getCount();
             encoder->reset();
             measure = measure*conversion_factor;
+
+            /* experimental
+            if (abs(measure)-abs(reference)>5){
+              clearMemory(reference);  
+            }
+            end */
+
+
             addMemory(measure);
+
+            /*
+            if (abs(reference)<1.0){
+                vel_pid->reset();
+                motor->setSpeed(0);
+                clearMemory();
+            }
+
+            */
+
+
             measure = meanMemory();
 
             /*
@@ -204,6 +223,9 @@ class MotorControl{
             encoder->reset();
             measure = measure*conversion_factor;
             */
+
+            
+
 
             vel_pid->update(measure);
             motor->setSpeed(vel_pid->getControlOutput());
