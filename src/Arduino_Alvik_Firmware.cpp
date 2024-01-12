@@ -368,7 +368,7 @@ uint8_t Arduino_Alvik_Firmware::getTouchKeys(){
         touch_value|=1;
         touch_value|=getTouchOk()<<1;
         touch_value|=getTouchDelete()<<2;
-        touch_value|=getTouchEnter()<<3;
+        touch_value|=getTouchCenter()<<3;
         touch_value|=getTouchUp()<<4;
         touch_value|=getTouchLeft()<<5;
         touch_value|=getTouchDown()<<6;
@@ -394,7 +394,7 @@ bool Arduino_Alvik_Firmware::getTouchLeft(){
 }
 
 bool Arduino_Alvik_Firmware::getTouchCenter(){
-    return getTouchKey(TOUCH_PAD_ENTER);
+    return getTouchKey(TOUCH_PAD_CENTER);
 }
 
 bool Arduino_Alvik_Firmware::getTouchOk(){

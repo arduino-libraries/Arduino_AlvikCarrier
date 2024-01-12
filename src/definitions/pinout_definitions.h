@@ -82,7 +82,7 @@
 #define TOUCH_PAD_RIGHT 4
 #define TOUCH_PAD_DOWN 9
 #define TOUCH_PAD_LEFT 10
-#define TOUCH_PAD_ENTER 8
+#define TOUCH_PAD_CENTER 8
 #define TOUCH_PAD_OK 6
 #define TOUCH_PAD_DELETE 5
 #define TOUCH_PAD_GUARD 1
