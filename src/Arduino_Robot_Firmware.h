@@ -21,11 +21,11 @@
 #define __ARDUINO_ROBOT_FIRMWARE_H__
 
 #include "Arduino.h"
-#include "pinout_definitions.h"
-#include "encoder.h"
+#include "./definitions/pinout_definitions.h"
+#include "./motor_control/encoder.h"
 #include "rgb_led.h"
-#include "dcmotor.h"
-#include "motor_control.h"
+#include "./motor_control/dcmotor.h"
+#include "./motor_control/motor_control.h"
 #include "Arduino_APDS9960.h"
 #include <Servo.h>
 #include "Arduino_MAX17332.h"
