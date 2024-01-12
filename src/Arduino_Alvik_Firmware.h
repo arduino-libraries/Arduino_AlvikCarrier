@@ -17,8 +17,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef __ARDUINO_ROBOT_FIRMWARE_H__
-#define __ARDUINO_ROBOT_FIRMWARE_H__
+#ifndef __ARDUINO_ALVIK_FIRMWARE_H__
+#define __ARDUINO_ALVIK_FIRMWARE_H__
 
 #include "Arduino.h"
 #include "./definitions/pinout_definitions.h"
@@ -34,7 +34,7 @@
 #include "motion_fx.h"
 
 
-class Arduino_Robot_Firmware{
+class Arduino_Alvik_Firmware{
     private:
         RGBled * led1;
         RGBled * led2;
@@ -80,7 +80,6 @@ class Arduino_Robot_Firmware{
         MotorControl * motor_control_left;
 
 
-
         DCmotor * motor_left;
         DCmotor * motor_right;
         Encoder * encoder_left;
@@ -93,7 +92,7 @@ class Arduino_Robot_Firmware{
 
 
 
-        Arduino_Robot_Firmware();
+        Arduino_Alvik_Firmware();
 
         int begin();
 

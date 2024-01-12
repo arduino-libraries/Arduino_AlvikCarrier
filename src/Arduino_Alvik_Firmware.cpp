@@ -17,12 +17,12 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "Arduino_Robot_Firmware.h"
+#include "Arduino_Alvik_Firmware.h"
 #include "HAL_custom_init.h"
 
 
 
-Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
+Arduino_Alvik_Firmware::Arduino_Alvik_Firmware(){
     // I2C internal bus
     wire = new TwoWire(I2C_1_SDA, I2C_1_SCL);
 
@@ -74,7 +74,7 @@ Arduino_Robot_Firmware::Arduino_Robot_Firmware(){
     version_low = VERSION_BYTE_LOW;
 }
 
-int Arduino_Robot_Firmware::begin(){
+int Arduino_Alvik_Firmware::begin(){
     beginLeds();
 
     serial->begin(UART_BAUD);
@@ -128,7 +128,7 @@ int Arduino_Robot_Firmware::begin(){
     return 0;
 }
 
-void Arduino_Robot_Firmware::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte){
+void Arduino_Alvik_Firmware::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte){
     high_byte=version_high;
     mid_byte=version_mid;
     low_byte=version_low;
@@ -139,7 +139,7 @@ void Arduino_Robot_Firmware::getVersion(uint8_t &high_byte, uint8_t &mid_byte, u
 /*                                      Color sensor, APDS9960                                        */
 /******************************************************************************************************/
 
-int Arduino_Robot_Firmware::beginAPDS(){
+int Arduino_Alvik_Firmware::beginAPDS(){
     pinMode(APDS_LED,OUTPUT);
     enableIlluminator();
     if (!apds9960->begin()){
@@ -148,7 +148,7 @@ int Arduino_Robot_Firmware::beginAPDS(){
     return 0;
 }
 
-void Arduino_Robot_Firmware::updateAPDS(){
+void Arduino_Alvik_Firmware::updateAPDS(){
     if (apds9960->proximityAvailable()){
         bottom_proximity=apds9960->readProximity();
     }
@@ -159,31 +159,31 @@ void Arduino_Robot_Firmware::updateAPDS(){
     //digitalWrite(APDS_LED,LOW);
 }
 
-void Arduino_Robot_Firmware::setIlluminator(uint8_t value){
+void Arduino_Alvik_Firmware::setIlluminator(uint8_t value){
     digitalWrite(APDS_LED,value);
 }
 
-void Arduino_Robot_Firmware::enableIlluminator(){
+void Arduino_Alvik_Firmware::enableIlluminator(){
     setIlluminator(HIGH);
 }
 
-void Arduino_Robot_Firmware::disableIlluminator(){
+void Arduino_Alvik_Firmware::disableIlluminator(){
     setIlluminator(LOW);
 }
 
-int Arduino_Robot_Firmware::getRed(){
+int Arduino_Alvik_Firmware::getRed(){
     return bottom_red;
 }
 
-int Arduino_Robot_Firmware::getGreen(){
+int Arduino_Alvik_Firmware::getGreen(){
     return bottom_green;
 }
 
-int Arduino_Robot_Firmware::getBlue(){
+int Arduino_Alvik_Firmware::getBlue(){
     return bottom_blue;
 }
 
-int Arduino_Robot_Firmware::getProximity(){
+int Arduino_Alvik_Firmware::getProximity(){
     return bottom_proximity;
 }
 
@@ -191,17 +191,17 @@ int Arduino_Robot_Firmware::getProximity(){
 /*                                        RC Servo A & B                                              */
 /******************************************************************************************************/
 
-int Arduino_Robot_Firmware::beginServo(){
+int Arduino_Alvik_Firmware::beginServo(){
     servo_A->attach(SERVO_A);
     servo_B->attach(SERVO_B);
     return 0;
 }
 
-void Arduino_Robot_Firmware::setServoA(int position){
+void Arduino_Alvik_Firmware::setServoA(int position){
     servo_A->write(position);
 }
 
-void Arduino_Robot_Firmware::setServoB(int position){
+void Arduino_Alvik_Firmware::setServoB(int position){
     servo_B->write(position);
 }
 
@@ -209,19 +209,19 @@ void Arduino_Robot_Firmware::setServoB(int position){
 /*                                        External I2C                                                */
 /******************************************************************************************************/
 
-int Arduino_Robot_Firmware::beginI2Cselect(){
+int Arduino_Alvik_Firmware::beginI2Cselect(){
     pinMode(SELECT_I2C_BUS,OUTPUT);
 }
 
-void Arduino_Robot_Firmware::setExternalI2C(uint8_t state){
+void Arduino_Alvik_Firmware::setExternalI2C(uint8_t state){
     digitalWrite(SELECT_I2C_BUS,state);
 }
 
-void Arduino_Robot_Firmware::connectExternalI2C(){
+void Arduino_Alvik_Firmware::connectExternalI2C(){
     setExternalI2C(LOW);
 }
 
-void Arduino_Robot_Firmware::disconnectExternalI2C(){
+void Arduino_Alvik_Firmware::disconnectExternalI2C(){
     setExternalI2C(HIGH);
 }
 
@@ -230,22 +230,22 @@ void Arduino_Robot_Firmware::disconnectExternalI2C(){
 /*                               Battery Management System, MAX17332                                  */
 /******************************************************************************************************/
 
-int Arduino_Robot_Firmware::beginBMS(){
+int Arduino_Alvik_Firmware::beginBMS(){
     bms->begin();
     return 0;
 }
 
-void Arduino_Robot_Firmware::updateBMS(){
+void Arduino_Alvik_Firmware::updateBMS(){
     voltage = bms->readVCell();
     state_of_charge = bms->readSoc();
 }
 
 
-float Arduino_Robot_Firmware::getBatteryVoltage(){
+float Arduino_Alvik_Firmware::getBatteryVoltage(){
     return voltage;
 }
 
-float Arduino_Robot_Firmware::getBatteryChargePercentage(){
+float Arduino_Alvik_Firmware::getBatteryChargePercentage(){
     return state_of_charge;
 }
 
@@ -254,7 +254,7 @@ float Arduino_Robot_Firmware::getBatteryChargePercentage(){
 /*                                            Motor controls                                          */
 /******************************************************************************************************/
 
-int Arduino_Robot_Firmware::beginMotors(){
+int Arduino_Alvik_Firmware::beginMotors(){
     motor_left->begin();
     motor_right->begin();
     motor_left->stop();
@@ -270,45 +270,45 @@ int Arduino_Robot_Firmware::beginMotors(){
     return 0;
 }
 
-void Arduino_Robot_Firmware::updateMotors(){
+void Arduino_Alvik_Firmware::updateMotors(){
     motor_control_left->update();
     motor_control_right->update();
 }
 
-bool Arduino_Robot_Firmware::setRpmLeft(const float rpm){
+bool Arduino_Alvik_Firmware::setRpmLeft(const float rpm){
     return motor_control_left->setRPM(rpm);
 }
 
-float Arduino_Robot_Firmware::getRpmLeft(){
+float Arduino_Alvik_Firmware::getRpmLeft(){
     return motor_control_left->getRPM();
 }
 
-bool Arduino_Robot_Firmware::setRpmRight(const float rpm){
+bool Arduino_Alvik_Firmware::setRpmRight(const float rpm){
     return motor_control_right->setRPM(rpm);
 }
 
-float Arduino_Robot_Firmware::getRpmRight(){
+float Arduino_Alvik_Firmware::getRpmRight(){
     return motor_control_right->getRPM();
 }
 
-bool Arduino_Robot_Firmware::setRpm(const float left, const float right){
+bool Arduino_Alvik_Firmware::setRpm(const float left, const float right){
     motor_control_left->setRPM(left);
     motor_control_right->setRPM(right);
     return true;
 }
 
-void Arduino_Robot_Firmware::getRpm(float & left, float & right){
+void Arduino_Alvik_Firmware::getRpm(float & left, float & right){
     left=motor_control_left->getRPM();
     right=motor_control_right->getRPM();
 }
 
-void Arduino_Robot_Firmware::setKPidRight(const float kp, const float ki, const float kd){
+void Arduino_Alvik_Firmware::setKPidRight(const float kp, const float ki, const float kd){
     motor_control_right->setKP(kp);
     motor_control_right->setKI(ki);
     motor_control_right->setKD(kd);
 }
 
-void Arduino_Robot_Firmware::setKPidLeft(const float kp, const float ki, const float kd){
+void Arduino_Alvik_Firmware::setKPidLeft(const float kp, const float ki, const float kd){
     motor_control_left->setKP(kp);
     motor_control_left->setKI(ki);
     motor_control_left->setKD(kd);
@@ -321,7 +321,7 @@ void Arduino_Robot_Firmware::setKPidLeft(const float kp, const float ki, const f
 /*                                           Touch pads                                               */
 /******************************************************************************************************/
 
-int Arduino_Robot_Firmware::beginTouch(){
+int Arduino_Alvik_Firmware::beginTouch(){
     touch_sensor->begin();
     if (!touch_sensor->communicating()){
         return ERROR_TOUCH;
@@ -344,25 +344,25 @@ int Arduino_Robot_Firmware::beginTouch(){
     return 0;
 }
 
-void Arduino_Robot_Firmware::updateTouch(){
+void Arduino_Alvik_Firmware::updateTouch(){
     touch_status = touch_sensor->getStatus();
 }
 
-bool Arduino_Robot_Firmware::getAnyTouchPressed(){
+bool Arduino_Alvik_Firmware::getAnyTouchPressed(){
     if (touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
         return true;
     }
     return false;
 }
 
-bool Arduino_Robot_Firmware::getTouchKey(const uint8_t key){
+bool Arduino_Alvik_Firmware::getTouchKey(const uint8_t key){
     if (touch_sensor->touched(touch_status,key)&&touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
         return true;
     }
     return false;
 }
 
-uint8_t Arduino_Robot_Firmware::getTouchKeys(){
+uint8_t Arduino_Alvik_Firmware::getTouchKeys(){
     touch_value=0;
     if (getAnyTouchPressed()){
         touch_value|=1;
@@ -377,31 +377,31 @@ uint8_t Arduino_Robot_Firmware::getTouchKeys(){
     return touch_value;
 }
 
-bool Arduino_Robot_Firmware::getTouchUp(){
+bool Arduino_Alvik_Firmware::getTouchUp(){
     return getTouchKey(TOUCH_PAD_UP);
 }
 
-bool Arduino_Robot_Firmware::getTouchRight(){
+bool Arduino_Alvik_Firmware::getTouchRight(){
     return getTouchKey(TOUCH_PAD_RIGHT);
 }
 
-bool Arduino_Robot_Firmware::getTouchDown(){
+bool Arduino_Alvik_Firmware::getTouchDown(){
     return getTouchKey(TOUCH_PAD_DOWN);
 }
 
-bool Arduino_Robot_Firmware::getTouchLeft(){
+bool Arduino_Alvik_Firmware::getTouchLeft(){
     return getTouchKey(TOUCH_PAD_LEFT);
 }
 
-bool Arduino_Robot_Firmware::getTouchEnter(){
+bool Arduino_Alvik_Firmware::getTouchEnter(){
     return getTouchKey(TOUCH_PAD_ENTER);
 }
 
-bool Arduino_Robot_Firmware::getTouchOk(){
+bool Arduino_Alvik_Firmware::getTouchOk(){
     return getTouchKey(TOUCH_PAD_OK);
 }
 
-bool Arduino_Robot_Firmware::getTouchDelete(){
+bool Arduino_Alvik_Firmware::getTouchDelete(){
     return getTouchKey(TOUCH_PAD_DELETE);
 }
 
@@ -410,7 +410,7 @@ bool Arduino_Robot_Firmware::getTouchDelete(){
 /*                                               Leds                                                 */
 /******************************************************************************************************/
 
-int Arduino_Robot_Firmware::beginLeds(){
+int Arduino_Alvik_Firmware::beginLeds(){
     pinMode(LED_BUILTIN,OUTPUT);
     // turn off leds
     led1->clear();
@@ -418,61 +418,61 @@ int Arduino_Robot_Firmware::beginLeds(){
     return 0;
 }
 
-void Arduino_Robot_Firmware::setLedBuiltin(const uint8_t value){
+void Arduino_Alvik_Firmware::setLedBuiltin(const uint8_t value){
     digitalWrite(LED_BUILTIN,value);
 }
 
-void Arduino_Robot_Firmware::setLedLeft(const uint32_t color){
+void Arduino_Alvik_Firmware::setLedLeft(const uint32_t color){
     led1->set(color); 
 }
 
-void Arduino_Robot_Firmware::setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue){
+void Arduino_Alvik_Firmware::setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue){
     led1->set(red,green,blue); 
 }
 
-void Arduino_Robot_Firmware::setLedLeftRed(const uint32_t red){
+void Arduino_Alvik_Firmware::setLedLeftRed(const uint32_t red){
     led1->setRed(red);
 }
 
-void Arduino_Robot_Firmware::setLedLeftGreen(const uint32_t green){
+void Arduino_Alvik_Firmware::setLedLeftGreen(const uint32_t green){
     led1->setGreen(green);
 }
 
-void Arduino_Robot_Firmware::setLedLeftBlue(const uint32_t blue){
+void Arduino_Alvik_Firmware::setLedLeftBlue(const uint32_t blue){
     led1->setBlue(blue);
 }
 
-void Arduino_Robot_Firmware::setLedRight(const uint32_t color){
+void Arduino_Alvik_Firmware::setLedRight(const uint32_t color){
     led2->set(color);
 }
 
-void Arduino_Robot_Firmware::setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue){
+void Arduino_Alvik_Firmware::setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue){
     led2->set(red,green,blue);
 }
 
-void Arduino_Robot_Firmware::setLedRightRed(const uint32_t red){
+void Arduino_Alvik_Firmware::setLedRightRed(const uint32_t red){
     led2->setRed(red);
 }
 
-void Arduino_Robot_Firmware::setLedRightGreen(const uint32_t green){
+void Arduino_Alvik_Firmware::setLedRightGreen(const uint32_t green){
     led2->setGreen(green);
 }
 
-void Arduino_Robot_Firmware::setLedRightBlue(const uint32_t blue){
+void Arduino_Alvik_Firmware::setLedRightBlue(const uint32_t blue){
     led2->setBlue(blue);
 }
 
-void Arduino_Robot_Firmware::setLeds(const uint32_t color){
+void Arduino_Alvik_Firmware::setLeds(const uint32_t color){
     setLedLeft(color);
     setLedRight(color);  
 }
 
-void Arduino_Robot_Firmware::setLeds(const uint32_t red, const uint32_t green, const uint32_t blue){
+void Arduino_Alvik_Firmware::setLeds(const uint32_t red, const uint32_t green, const uint32_t blue){
     setLedLeft(red,green,blue);
     setLedRight(red,green,blue);    
 }
 
-void Arduino_Robot_Firmware::setAllLeds(const uint8_t value){
+void Arduino_Alvik_Firmware::setAllLeds(const uint8_t value){
     setLedBuiltin(value&1);
     setIlluminator((value>>1)&1);
     setLedLeftRed(((value>>2)&1));
@@ -488,7 +488,7 @@ void Arduino_Robot_Firmware::setAllLeds(const uint8_t value){
 /*                                                IMU                                                 */
 /******************************************************************************************************/
 
-int Arduino_Robot_Firmware::beginImu(){
+int Arduino_Alvik_Firmware::beginImu(){
     imu->begin();
     imu->Set_X_ODR(100.0);
     imu->Set_X_FS(4);
@@ -524,7 +524,7 @@ int Arduino_Robot_Firmware::beginImu(){
     return 0;
 }
 
-void Arduino_Robot_Firmware::updateImu(){
+void Arduino_Alvik_Firmware::updateImu(){
     imu->Get_X_Axes(accelerometer);
     imu->Get_G_Axes(gyroscope);
     imu_data.gyro[0] = (float)gyroscope[0] * FROM_MDPS_TO_DPS;
@@ -543,39 +543,39 @@ void Arduino_Robot_Firmware::updateImu(){
 
 }
 
-float Arduino_Robot_Firmware::getAccelerationX(){
+float Arduino_Alvik_Firmware::getAccelerationX(){
     return -imu_data.acc[1];
 }
 
-float Arduino_Robot_Firmware::getAccelerationY(){
+float Arduino_Alvik_Firmware::getAccelerationY(){
     return -imu_data.acc[0];
 }
 
-float Arduino_Robot_Firmware::getAccelerationZ(){
+float Arduino_Alvik_Firmware::getAccelerationZ(){
     return imu_data.acc[2];
 }
 
-float Arduino_Robot_Firmware::getAngularVelocityX(){
+float Arduino_Alvik_Firmware::getAngularVelocityX(){
     return imu_data.gyro[1];
 }
 
-float Arduino_Robot_Firmware::getAngularVelocityY(){
+float Arduino_Alvik_Firmware::getAngularVelocityY(){
     return imu_data.gyro[0];
 }
 
-float Arduino_Robot_Firmware::getAngularVelocityZ(){
+float Arduino_Alvik_Firmware::getAngularVelocityZ(){
     return -imu_data.gyro[2];
 }
 
-float Arduino_Robot_Firmware::getRoll(){
+float Arduino_Alvik_Firmware::getRoll(){
     return -filter_data.rotation[1];
 }
 
-float Arduino_Robot_Firmware::getPitch(){
+float Arduino_Alvik_Firmware::getPitch(){
     return -filter_data.rotation[2];
 }
 
-float Arduino_Robot_Firmware::getYaw(){
+float Arduino_Alvik_Firmware::getYaw(){
     return 360.0-filter_data.rotation[0];
 }
 
@@ -585,7 +585,7 @@ float Arduino_Robot_Firmware::getYaw(){
 /*                                               Error                                                */
 /******************************************************************************************************/
 
-void Arduino_Robot_Firmware::errorLed(const int error_code){
+void Arduino_Alvik_Firmware::errorLed(const int error_code){
     while(true){
         for (int i = 0; i<error_code; i++){
             setLedBuiltin(HIGH);

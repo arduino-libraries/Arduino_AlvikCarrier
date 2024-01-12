@@ -17,9 +17,9 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "Arduino_Robot_Firmware.h"
+#include "Arduino_Alvik_Firmware.h"
 
-Arduino_Robot_Firmware robot;
+Arduino_Alvik_Firmware robot;
 
 unsigned long t=0;
 unsigned long t_change = 0;
@@ -33,7 +33,7 @@ void setup(){
   t=millis();
   t_change=millis();
   robot.setRpmRight(reference);
-  robot.setKPidRight(30.0, 0.1, 0.4);
+  //robot.setKPidRight(30.0, 0.1, 0.4);
   Serial.print("reference");
   Serial.print(" ");
   Serial.println("measure");
@@ -63,16 +63,20 @@ void loop(){
           break;
     }
     status++;
-    if (status>1){
+    if (status>5){
       status=0;
     }
     robot.setRpmRight(reference);
+    robot.setRpmLeft(reference);
   }
   if (millis()-t>20){
     t=millis();
     robot.updateMotors();
+    
     Serial.print(reference);
     Serial.print(" ");
-    Serial.println(robot.getRpmRight());
+    Serial.print(robot.getRpmRight());
+    Serial.print(" ");
+    Serial.println(robot.getRpmLeft());
   }
 }
