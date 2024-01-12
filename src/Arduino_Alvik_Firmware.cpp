@@ -45,9 +45,8 @@ Arduino_Alvik_Firmware::Arduino_Alvik_Firmware(){
     encoder_right = new Encoder(TIM5,ENC_RIGHT_FLIP);
 
     // motor control
-    motor_control_right = new MotorControl(motor_right,encoder_right,MOTOR_KP_RIGHT,MOTOR_KI_RIGHT,MOTOR_KD_RIGHT,MOTOR_CONTROL_PERIOD);
-    motor_control_left = new MotorControl(motor_left,encoder_left,MOTOR_KP_RIGHT,MOTOR_KI_RIGHT,MOTOR_KD_RIGHT,MOTOR_CONTROL_PERIOD);
-
+    motor_control_left = new MotorControl(motor_left,encoder_left,MOTOR_KP_DEFAULT,MOTOR_KI_DEFAULT,MOTOR_KD_DEFAULT,MOTOR_CONTROL_PERIOD);
+    motor_control_right = new MotorControl(motor_right,encoder_right,MOTOR_KP_DEFAULT,MOTOR_KI_DEFAULT,MOTOR_KD_DEFAULT,MOTOR_CONTROL_PERIOD);
 
     // color sensor
     apds9960 = new APDS9960(*wire,APDS_INT);
@@ -205,6 +204,8 @@ void Arduino_Alvik_Firmware::setServoB(int position){
     servo_B->write(position);
 }
 
+
+
 /******************************************************************************************************/
 /*                                        External I2C                                                */
 /******************************************************************************************************/
@@ -224,6 +225,7 @@ void Arduino_Alvik_Firmware::connectExternalI2C(){
 void Arduino_Alvik_Firmware::disconnectExternalI2C(){
     setExternalI2C(HIGH);
 }
+
 
 
 /******************************************************************************************************/
@@ -248,6 +250,7 @@ float Arduino_Alvik_Firmware::getBatteryVoltage(){
 float Arduino_Alvik_Firmware::getBatteryChargePercentage(){
     return state_of_charge;
 }
+
 
 
 /******************************************************************************************************/
@@ -313,7 +316,6 @@ void Arduino_Alvik_Firmware::setKPidLeft(const float kp, const float ki, const f
     motor_control_left->setKI(ki);
     motor_control_left->setKD(kd);
 }
-
 
 
 
@@ -406,6 +408,7 @@ bool Arduino_Alvik_Firmware::getTouchDelete(){
 }
 
 
+
 /******************************************************************************************************/
 /*                                               Leds                                                 */
 /******************************************************************************************************/
@@ -482,6 +485,7 @@ void Arduino_Alvik_Firmware::setAllLeds(const uint8_t value){
     setLedRightGreen(((value>>6)&1));
     setLedRightBlue(((value>>7)&1));
 }
+
 
 
 /******************************************************************************************************/

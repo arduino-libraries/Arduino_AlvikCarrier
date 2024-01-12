@@ -23,15 +23,15 @@
 // Motor Control and mechanical parameters
 #define CONTROL_LIMIT 4096              // PWM resolution
 
-#define MOTOR_LIMIT 80.0                // Mechanical RPM limit speed of used motors
+#define MOTOR_LIMIT 70.0                // Mechanical RPM limit speed of used motors
 #define MOTOR_CPR 6.0                   // Resolution of the encoder
 #define MOTOR_GEAR_RATIO 150.0          // Gear ratio of the motor
 
 const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 
-#define MOTOR_KP_RIGHT 32.0
-#define MOTOR_KI_RIGHT 450.0
-#define MOTOR_KD_RIGHT 0.0
+#define MOTOR_KP_DEFAULT 32.0
+#define MOTOR_KI_DEFAULT 450.0
+#define MOTOR_KD_DEFAULT 0.0
 
 //30, 450, 0.0
 //120,300,1,0

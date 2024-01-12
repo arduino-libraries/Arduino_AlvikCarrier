@@ -32,8 +32,8 @@ void setup(){
   robot.begin();
   t=millis();
   t_change=millis();
-  robot.setRpmRight(reference);
-  //robot.setKPidRight(30.0, 0.1, 0.4);
+  robot.setRpm(reference,reference);
+
   Serial.print("reference");
   Serial.print(" ");
   Serial.println("measure");
@@ -50,13 +50,13 @@ void loop(){
           reference=30.0;
           break;
       case 2:
-          reference=60.0;
+          reference=70.0;
           break;
       case 3:
-          reference=-10.0;
+          reference=-70.0;
           break;
       case 4:
-          reference=-60.0;
+          reference=-10.0;
           break;
       case 5:
           reference=20.0;
@@ -66,8 +66,7 @@ void loop(){
     if (status>5){
       status=0;
     }
-    robot.setRpmRight(reference);
-    robot.setRpmLeft(reference);
+    robot.setRpm(reference,reference);
   }
   if (millis()-t>20){
     t=millis();

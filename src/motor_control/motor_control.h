@@ -218,7 +218,7 @@ class MotorControl{
 
 
         bool setRPM(const float ref){
-            if ((ref<MOTOR_LIMIT)&&(ref>-MOTOR_LIMIT)){
+            if ((ref<=MOTOR_LIMIT)&&(ref>=-MOTOR_LIMIT)){
                 reference = ref;
                 if (control_mode==CONTROL_MODE_LINEAR){
                     start_value=interpolation;
