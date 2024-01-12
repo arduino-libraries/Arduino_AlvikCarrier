@@ -23,20 +23,35 @@
 #include "Arduino.h"
 #include "dcmotor.h"
 #include "encoder.h"
-#include "robot_definitions.h"
+#include "../definitions/robot_definitions.h"
 #include "pid_controller.h"
 
 #define CONTROL_LIMIT 4095
 #define MEM_SIZE 5
+#define CONTROL_MODE_NORMAL 0
+#define CONTROL_MODE_LINEAR 1
+
 
 class MotorControl{
     private:
+
+        uint8_t control_mode;
+
         float kp;
         float ki;
         float kd;
         
         float travel;
         float reference;
+
+        float trip;
+        float iterations;
+        float start_value;
+        float end_value;
+        float step_size;
+        float step;
+        int step_index;
+        float interpolation;
 
         float controller_period;
         float conversion_factor;
@@ -56,10 +71,15 @@ class MotorControl{
 
         PidController * vel_pid;
 
-        MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd, const float _controller_period){
+        MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd,
+                                       const float _controller_period,
+                                       const uint8_t _control_mode = CONTROL_MODE_LINEAR, const float _step_size=5.0){
             motor = _motor;
             encoder = _encoder;
             
+            control_mode = _control_mode;
+
+
             kp = _kp;
             ki = _ki;
             kd = _kd;
@@ -68,6 +88,15 @@ class MotorControl{
 
             travel=0.0;
             reference = 0.0;
+
+            trip=0.0;
+            iterations=0.0;
+            start_value=0.0;
+            end_value=0.0;
+            step_size=_step_size;
+            step=0.0;
+            step_index=0;
+            interpolation=0.0;
 
             measure = 0.0;
             last_measure = 0.0;
@@ -86,20 +115,16 @@ class MotorControl{
             vel_pid->reset();
             clearMemory();
         }
-
+/*
         bool setRPM(const float ref){
             if ((ref<MOTOR_LIMIT)&&(ref>-MOTOR_LIMIT)){
                 reference = ref;
                 vel_pid->setReference(reference);
-                /*
-                if ((reference)<0.1&&(reference>-0.1)){
-                    vel_pid->reset();
-                }
-                */
                 return true;
             }
             return false;
         }
+*/
 
         float checkLimits(float value){
             if (value>CONTROL_LIMIT){
@@ -127,9 +152,9 @@ class MotorControl{
             return mean/float(MEM_SIZE);
         }                  
 
-        void clearMemory(){
+        void clearMemory(const float reset_value=0.0){
             for (i=0; i<MEM_SIZE; i++){
-                measure_memory[i]=0.0;
+                measure_memory[i]=reset_value;
             }
         }
 
@@ -191,12 +216,51 @@ class MotorControl{
 
        */
 
+
+        bool setRPM(const float ref){
+            if ((ref<=MOTOR_LIMIT)&&(ref>=-MOTOR_LIMIT)){
+                reference = ref;
+                if (control_mode==CONTROL_MODE_LINEAR){
+                    start_value=interpolation;
+                    end_value=reference;
+                    trip=0.0;
+                    iterations=abs(end_value-start_value)/step_size;
+                    step=1.0/iterations;
+                    step_index=0;
+                }
+                else if(control_mode==CONTROL_MODE_NORMAL){
+                    vel_pid->setReference(reference);
+                }
+                return true;
+            }
+            return false;
+        }
+
         void update(){
 
             measure = encoder->getCount();
             encoder->reset();
             measure = measure*conversion_factor;
+
+            /* experimental
+            if (abs(measure)-abs(reference)>5){
+              clearMemory(reference);  
+            }
+            end */
+
+
             addMemory(measure);
+
+            /*
+            if (abs(reference)<1.0){
+                vel_pid->reset();
+                motor->setSpeed(0);
+                clearMemory();
+            }
+
+            */
+
+
             measure = meanMemory();
 
             /*
@@ -204,6 +268,27 @@ class MotorControl{
             encoder->reset();
             measure = measure*conversion_factor;
             */
+
+
+            //vel_pid->update(measure);
+            //motor->setSpeed(vel_pid->getControlOutput());
+
+
+            if (control_mode==CONTROL_MODE_LINEAR){
+                if (step_index<iterations){
+                    step_index++;
+                    trip+=step;
+                    interpolation=trip*(end_value-start_value)+start_value;
+                    if (abs(interpolation)>abs(reference)){
+                        interpolation=reference;
+                    }
+                }
+                vel_pid->setReference(interpolation);
+            }            
+            else if(control_mode==CONTROL_MODE_NORMAL){
+                vel_pid->setReference(reference);
+            }
+
 
             vel_pid->update(measure);
             motor->setSpeed(vel_pid->getControlOutput());
@@ -223,6 +308,22 @@ class MotorControl{
 
         float getError(){
             return vel_pid->getError();
+        }
+
+        void brake(){
+            reference=0.0;
+            trip=0.0;
+            iterations=0.0;
+            start_value=0.0;
+            end_value=0.0;
+            step=0.0;
+            step_index=0;
+            interpolation=0.0;
+            clearMemory();
+
+            motor->setSpeed(0);
+            vel_pid->setReference(0.0);
+            vel_pid->reset();
         }
 
         

@@ -23,16 +23,19 @@
 // Motor Control and mechanical parameters
 #define CONTROL_LIMIT 4096              // PWM resolution
 
-#define MOTOR_LIMIT 100.0               // Mechanical RPM limit speed of used motors
+#define MOTOR_LIMIT 70.0                // Mechanical RPM limit speed of used motors
 #define MOTOR_CPR 6.0                   // Resolution of the encoder
 #define MOTOR_GEAR_RATIO 150.0          // Gear ratio of the motor
 
 const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 
-#define MOTOR_KP_RIGHT 120.0
-#define MOTOR_KI_RIGHT 300.0
-#define MOTOR_KD_RIGHT 1.0
-#define MOTOR_CONTROL_PERIOD 0.01
+#define MOTOR_KP_DEFAULT 32.0
+#define MOTOR_KI_DEFAULT 450.0
+#define MOTOR_KD_DEFAULT 0.0
+
+//30, 450, 0.0
+//120,300,1,0
+#define MOTOR_CONTROL_PERIOD 0.02
 
 
 // Sensor fusioning parameters
@@ -52,6 +55,6 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 
 #define VERSION_BYTE_HIGH 0
 #define VERSION_BYTE_MID 0
-#define VERSION_BYTE_LOW 5
+#define VERSION_BYTE_LOW 6
 
 #endif

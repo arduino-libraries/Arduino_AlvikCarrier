@@ -17,15 +17,15 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef __ARDUINO_ROBOT_FIRMWARE_H__
-#define __ARDUINO_ROBOT_FIRMWARE_H__
+#ifndef __ARDUINO_ALVIK_FIRMWARE_H__
+#define __ARDUINO_ALVIK_FIRMWARE_H__
 
 #include "Arduino.h"
-#include "pinout_definitions.h"
-#include "encoder.h"
+#include "./definitions/pinout_definitions.h"
+#include "./motor_control/encoder.h"
 #include "rgb_led.h"
-#include "dcmotor.h"
-#include "motor_control.h"
+#include "./motor_control/dcmotor.h"
+#include "./motor_control/motor_control.h"
 #include "Arduino_APDS9960.h"
 #include <Servo.h>
 #include "Arduino_MAX17332.h"
@@ -34,7 +34,7 @@
 #include "motion_fx.h"
 
 
-class Arduino_Robot_Firmware{
+class Arduino_Alvik_Firmware{
     private:
         RGBled * led1;
         RGBled * led2;
@@ -80,7 +80,6 @@ class Arduino_Robot_Firmware{
         MotorControl * motor_control_left;
 
 
-
         DCmotor * motor_left;
         DCmotor * motor_right;
         Encoder * encoder_left;
@@ -93,7 +92,7 @@ class Arduino_Robot_Firmware{
 
 
 
-        Arduino_Robot_Firmware();
+        Arduino_Alvik_Firmware();
 
         int begin();
 
@@ -158,7 +157,7 @@ class Arduino_Robot_Firmware{
         bool getTouchRight();                                                         // get nav pad right
         bool getTouchDown();                                                          // get nav pad down
         bool getTouchLeft();                                                          // get nav pad left
-        bool getTouchEnter();                                                         // get nav pad enter (center circle)
+        bool getTouchCenter();                                                         // get nav pad enter (center circle)
         bool getTouchOk();                                                            // get nav pad ok (right check)
         bool getTouchDelete();                                                        // get nav pad delete (right x)
 

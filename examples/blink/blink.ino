@@ -17,19 +17,21 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "Arduino_Robot_Firmware.h"
+
+// This example makes the rear orange led blink. It is also called LED_BUILTIN
+
+#include "Arduino_Alvik_Firmware.h"
 
 
-Arduino_Robot_Firmware robot;
+Arduino_Alvik_Firmware alvik;
 
 void setup(){
-    Serial.begin(115200);
-    robot.begin();
+    alvik.begin();
 }
 
 void loop(){
-    robot.setLedBuiltin(HIGH);
+    alvik.setLedBuiltin(HIGH);
     delay(100);
-    robot.setLedBuiltin(LOW);
+    alvik.setLedBuiltin(LOW);
     delay(1000);
 }

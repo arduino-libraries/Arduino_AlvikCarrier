@@ -117,7 +117,6 @@ class PidController{
         }
 
         void reset(){
-            ctrl_output=0.0;
             error=0.0;
             error_sum=0.0;
             previous_error=0.0;

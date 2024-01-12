@@ -17,12 +17,12 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "Arduino_Robot_Firmware.h"
+#include "Arduino_Alvik_Firmware.h"
 #include "sensor_line.h"
 #include "sensor_tof_matrix.h"
 #include "ucPack.h"
 
-Arduino_Robot_Firmware robot;
+Arduino_Alvik_Firmware robot;
 SensorLine line(EXT_A2,EXT_A1,EXT_A0);
 SensorTofMatrix tof(robot.wire, EXT_GPIO3, EXT_GPIO2);
 
@@ -35,6 +35,7 @@ uint8_t msg_size;
 unsigned long tmotor=0;
 unsigned long tsend=0;
 unsigned long tsensor=0;
+unsigned long timu=0;
 
 
 float left, right;
@@ -67,6 +68,7 @@ void setup(){
   tmotor=millis();
   tsend=millis();
   tsensor=millis();
+  timu=millis();
 }
 
 void loop(){
@@ -137,12 +139,18 @@ void loop(){
     }
   } 
 
-  if (millis()-tmotor>10){
+  if (millis()-tmotor>20){
     tmotor=millis();
     robot.updateMotors();
     robot.updateImu();
     msg_size = packeter.packetC2F('j', robot.getRpmLeft(),robot.getRpmRight());
     robot.serial->write(packeter.msg,msg_size);
+   
+  }
+
+  if (millis()-timu>10){
+    timu=millis();
+    robot.updateImu();
     msg_size = packeter.packetC6F('i', robot.getAccelerationX(), robot.getAccelerationY(), robot.getAccelerationZ(), robot.getAngularVelocityX(), robot.getAngularVelocityY(), robot.getAngularVelocityZ());
     robot.serial->write(packeter.msg,msg_size);
   }
