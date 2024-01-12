@@ -393,7 +393,7 @@ bool Arduino_Alvik_Firmware::getTouchLeft(){
     return getTouchKey(TOUCH_PAD_LEFT);
 }
 
-bool Arduino_Alvik_Firmware::getTouchEnter(){
+bool Arduino_Alvik_Firmware::getTouchCenter(){
     return getTouchKey(TOUCH_PAD_ENTER);
 }
 

@@ -157,7 +157,7 @@ class Arduino_Alvik_Firmware{
         bool getTouchRight();                                                         // get nav pad right
         bool getTouchDown();                                                          // get nav pad down
         bool getTouchLeft();                                                          // get nav pad left
-        bool getTouchEnter();                                                         // get nav pad enter (center circle)
+        bool getTouchCenter();                                                         // get nav pad enter (center circle)
         bool getTouchOk();                                                            // get nav pad ok (right check)
         bool getTouchDelete();                                                        // get nav pad delete (right x)
 
