@@ -16,10 +16,12 @@ class Kinematics{
         float rpm_to_rads;
         float rads_to_degs;
         float degs_to_rads;
+        float w;
 
 
     public:
         Kinematics(const float _wheel_track, const float _wheel_diameter){
+            w=0.0;
             left_velocity=0.0;
             right_velocity=0.0;
             linear_velocity=0.0;
@@ -37,8 +39,11 @@ class Kinematics{
         }
 
         void forward(const float linear, const float angular){
-            left_velocity=(2*linear-angular*wheel_track)/(wheel_diameter);
-            right_velocity=(2*linear+angular*wheel_track)/(wheel_diameter);
+            w = angular*degs_to_rads;
+            left_velocity=(2*linear-w*wheel_track)/(wheel_diameter);
+            left_velocity=rads_to_rpm*left_velocity;
+            right_velocity=(2*linear+w*wheel_track)/(wheel_diameter);
+            right_velocity=rads_to_rpm*right_velocity;
         }
 
         void inverse(const float left_vel, const float right_vel){

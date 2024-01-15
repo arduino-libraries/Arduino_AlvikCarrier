@@ -608,4 +608,5 @@ void Arduino_Alvik_Firmware::errorLed(const int error_code){
 
 void Arduino_Alvik_Firmware::drive(const float linear, const float angular){
     kinematics->forward(linear, angular);
+    setRpm(kinematics->getLeftVelocity(),kinematics->getRightVelocity());
 }
