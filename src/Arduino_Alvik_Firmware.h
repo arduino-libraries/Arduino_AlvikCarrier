@@ -75,11 +75,11 @@ class Arduino_Alvik_Firmware{
         uint8_t version_mid;
         uint8_t version_low;
 
-        Kinematics * kinematics;
 
 
     public:        
-    
+        Kinematics * kinematics;
+
         MotorControl * motor_control_right;
         MotorControl * motor_control_left;
 
@@ -203,6 +203,7 @@ class Arduino_Alvik_Firmware{
         // Kinematics
         void drive(const float linear, const float angular);
 
+        void rotate(const float angle);
 
         
 

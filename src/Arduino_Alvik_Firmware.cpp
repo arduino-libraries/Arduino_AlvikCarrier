@@ -606,7 +606,35 @@ void Arduino_Alvik_Firmware::errorLed(const int error_code){
 }
 
 
+
+/******************************************************************************************************/
+/*                                             Kinematics                                             */
+/******************************************************************************************************/
+
 void Arduino_Alvik_Firmware::drive(const float linear, const float angular){
     kinematics->forward(linear, angular);
     setRpm(kinematics->getLeftVelocity(),kinematics->getRightVelocity());
 }
+
+void Arduino_Alvik_Firmware::rotate(const float angle){
+    float initial_angle=kinematics->getTheta();
+    float error=angle-initial_angle;
+    unsigned long t=millis();
+    while(abs(error)>0){
+        if (millis()-t>20){
+            t=millis();
+            updateMotors();
+        }
+        if (error>0){
+            drive(0,90);
+        }else{
+            drive(0,-90);
+        }
+        kinematics->updatePose(motor_control_left->getTravel(),motor_control_right->getTravel());
+        error=kinematics->getTheta()-initial_angle;
+        Serial.println(error);
+    }
+    drive(0,0);
+    updateMotors();
+}
+
