@@ -71,6 +71,10 @@ Arduino_Alvik_Firmware::Arduino_Alvik_Firmware(){
     version_high = VERSION_BYTE_HIGH;
     version_mid = VERSION_BYTE_MID;
     version_low = VERSION_BYTE_LOW;
+
+    // kinematics
+    kinematics = new Kinematics(WHEEL_TRACK_MM,WHEEL_DIAMETER_MM);
+
 }
 
 int Arduino_Alvik_Firmware::begin(){
@@ -599,4 +603,9 @@ void Arduino_Alvik_Firmware::errorLed(const int error_code){
         }
         delay(5000);
     }
+}
+
+
+void Arduino_Alvik_Firmware::drive(const float linear, const float angular){
+    kinematics->forward(linear, angular);
 }

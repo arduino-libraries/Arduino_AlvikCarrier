@@ -32,6 +32,8 @@
 #include "AT42QT2120.h"
 #include "LSM6DSOSensor.h"
 #include "motion_fx.h"
+#include "./robotics/kinematics.h"
+
 
 
 class Arduino_Alvik_Firmware{
@@ -72,6 +74,8 @@ class Arduino_Alvik_Firmware{
         uint8_t version_high;
         uint8_t version_mid;
         uint8_t version_low;
+
+        Kinematics * kinematics;
 
 
     public:        
@@ -196,6 +200,8 @@ class Arduino_Alvik_Firmware{
         void errorLed(const int error_code);                                          // error routine, locks on code blinking led
 
 
+        // Kinematics
+        void drive(const float linear, const float angular);
 
 
         

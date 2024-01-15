@@ -57,4 +57,9 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define VERSION_BYTE_MID 0
 #define VERSION_BYTE_LOW 6
 
+
+
+#define WHEEL_TRACK_MM 89
+#define WHEEL_DIAMETER_MM 34
+
 #endif
