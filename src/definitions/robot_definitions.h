@@ -25,7 +25,7 @@
 
 #define MOTOR_LIMIT 70.0                // Mechanical RPM limit speed of used motors
 #define MOTOR_CPR 6.0                   // Resolution of the encoder
-#define MOTOR_GEAR_RATIO 150.0          // Gear ratio of the motor
+#define MOTOR_GEAR_RATIO 150.0          // Gear ratio of the motor, maybe 150.58?
 
 const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 

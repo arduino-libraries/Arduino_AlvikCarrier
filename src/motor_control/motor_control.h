@@ -55,6 +55,7 @@ class MotorControl{
 
         float controller_period;
         float conversion_factor;
+        float conversion_factor_travel;
         float measure;
         float last_measure;
 
@@ -104,7 +105,8 @@ class MotorControl{
             id_memory=0;
             mean=0.0;
 
-            conversion_factor = 60.0*(1/MOTOR_RATIO)/(controller_period);
+            conversion_factor_travel = (1.0/MOTOR_RATIO);
+            conversion_factor = 60.0*(1.0/MOTOR_RATIO)/(controller_period);
             vel_pid = new PidController(kp,ki,kd,controller_period,CONTROL_LIMIT);
         }
 
@@ -115,16 +117,6 @@ class MotorControl{
             vel_pid->reset();
             clearMemory();
         }
-/*
-        bool setRPM(const float ref){
-            if ((ref<MOTOR_LIMIT)&&(ref>-MOTOR_LIMIT)){
-                reference = ref;
-                vel_pid->setReference(reference);
-                return true;
-            }
-            return false;
-        }
-*/
 
         float checkLimits(float value){
             if (value>CONTROL_LIMIT){
@@ -160,14 +152,6 @@ class MotorControl{
 
         float getRPM(){
             return measure;
-        }
-
-
-        void test(){
-            motor->setSpeed(2000);
-            delay(1000);
-            motor->setSpeed(-2000);
-            delay(1000); 
         }
 
 
@@ -240,6 +224,7 @@ class MotorControl{
 
             measure = encoder->getCount();
             encoder->reset();
+            travel += measure*conversion_factor_travel;
             measure = measure*conversion_factor;
 
             /* experimental
@@ -247,7 +232,6 @@ class MotorControl{
               clearMemory(reference);  
             }
             end */
-
 
             addMemory(measure);
 
@@ -257,22 +241,12 @@ class MotorControl{
                 motor->setSpeed(0);
                 clearMemory();
             }
-
             */
-
 
             measure = meanMemory();
 
-            /*
-            measure = encoder->getCount();
-            encoder->reset();
-            measure = measure*conversion_factor;
-            */
-
-
             //vel_pid->update(measure);
             //motor->setSpeed(vel_pid->getControlOutput());
-
 
             if (control_mode==CONTROL_MODE_LINEAR){
                 if (step_index<iterations){
@@ -288,7 +262,6 @@ class MotorControl{
             else if(control_mode==CONTROL_MODE_NORMAL){
                 vel_pid->setReference(reference);
             }
-
 
             vel_pid->update(measure);
             motor->setSpeed(vel_pid->getControlOutput());
@@ -324,6 +297,14 @@ class MotorControl{
             motor->setSpeed(0);
             vel_pid->setReference(0.0);
             vel_pid->reset();
+        }
+
+        void resetTravel(){
+            travel=0;
+        }
+
+        float getTravel(){
+            return travel;
         }
 
         
