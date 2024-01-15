@@ -104,7 +104,7 @@ class Kinematics{
         void resetPose(const float initial_x=0.0, const float initial_y=0.0, const float initial_theta=0.0){
             x=initial_x;
             y=initial_y;
-            theta=initial_theta;
+            theta=degs_to_rads*initial_theta;
             travel=0.0;
             delta_x=0.0;
             delta_y=0.0;
@@ -124,7 +124,7 @@ class Kinematics{
         }
 
         float getTheta(){
-            return theta;
+            return rads_to_degs*theta;
         }
 
         float getTravel(){
@@ -140,7 +140,7 @@ class Kinematics{
         }
 
         float getDeltaTheta(){
-            return delta_theta;
+            return rads_to_degs*delta_theta;
         }
 
 
