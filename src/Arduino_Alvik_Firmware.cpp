@@ -620,19 +620,20 @@ void Arduino_Alvik_Firmware::rotate(const float angle){
     float initial_angle=kinematics->getTheta();
     float error=angle-initial_angle;
     unsigned long t=millis();
-    while(abs(error)>0){
+    while(abs(error)>2){
         if (millis()-t>20){
             t=millis();
             updateMotors();
+            kinematics->updatePose(motor_control_left->getAngle(),motor_control_right->getAngle());
+            error=angle-kinematics->getTheta();
+            Serial.println(error);
         }
         if (error>0){
-            drive(0,90);
+            drive(0,40);
         }else{
-            drive(0,-90);
+            drive(0,-40);
         }
-        kinematics->updatePose(motor_control_left->getTravel(),motor_control_right->getTravel());
-        error=kinematics->getTheta()-initial_angle;
-        Serial.println(error);
+
     }
     drive(0,0);
     updateMotors();

@@ -42,6 +42,7 @@ class MotorControl{
         float kd;
         
         float travel;
+        float angle;
         float reference;
 
         float trip;
@@ -88,6 +89,7 @@ class MotorControl{
             controller_period = _controller_period;
 
             travel=0.0;
+            angle=0.0;
             reference = 0.0;
 
             trip=0.0;
@@ -224,7 +226,8 @@ class MotorControl{
 
             measure = encoder->getCount();
             encoder->reset();
-            travel += measure*conversion_factor_travel;
+            angle = measure*conversion_factor_travel;
+            travel += angle;
             measure = measure*conversion_factor;
 
             /* experimental
@@ -305,6 +308,10 @@ class MotorControl{
 
         float getTravel(){
             return travel;
+        }
+
+        float getAngle(){
+            return angle;
         }
 
         
