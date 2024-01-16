@@ -98,6 +98,7 @@ class Kinematics{
             delta_y=delta_travel*sin(theta+delta_theta/2.0);
             x+=delta_x;
             y+=delta_y;
+            theta+=delta_theta;
             travel+=delta_travel;
         }
 
