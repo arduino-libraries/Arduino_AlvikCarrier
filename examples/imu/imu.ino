@@ -1,30 +1,23 @@
 /*
-  This file is part of the Arduino Alvik library.
-  Copyright (c) 2023 Arduino SA. All rights reserved.
+    This file is part of the Arduino_AlvikCarrier library.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+    Copyright (c) 2023 Arduino SA
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+    
 */
+
 
 
 // This example shows IMU data, accelerations are in Gs, angular velocities in deg/s and orientation is in degrees.
 
-#include "Arduino_Alvik_Firmware.h"
+#include "Arduino_AlvikCarrier.h"
 
 unsigned long time_imu_update=0;
 
-Arduino_Alvik_Firmware alvik;
+Arduino_AlvikCarrier alvik;
 
 void setup(){
     Serial.begin(115200);

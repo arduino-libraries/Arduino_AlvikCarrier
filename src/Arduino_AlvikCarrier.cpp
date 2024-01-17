@@ -1,28 +1,20 @@
 /*
-  This file is part of the Arduino Alvik library.
-  Copyright (c) 2023 Arduino SA. All rights reserved.
+    This file is part of the Arduino_AlvikCarrier library.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+    Copyright (c) 2023 Arduino SA
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+    
 */
 
-#include "Arduino_Alvik_Firmware.h"
-#include "HAL_custom_init.h"
+#include "Arduino_AlvikCarrier.h"
+#include "./utilities/HAL_custom_init.h"
 
 
 
-Arduino_Alvik_Firmware::Arduino_Alvik_Firmware(){
+Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     // I2C internal bus
     wire = new TwoWire(I2C_1_SDA, I2C_1_SCL);
 
@@ -71,9 +63,13 @@ Arduino_Alvik_Firmware::Arduino_Alvik_Firmware(){
     version_high = VERSION_BYTE_HIGH;
     version_mid = VERSION_BYTE_MID;
     version_low = VERSION_BYTE_LOW;
+
+    // kinematics
+    kinematics = new Kinematics(WHEEL_TRACK_MM,WHEEL_DIAMETER_MM);
+
 }
 
-int Arduino_Alvik_Firmware::begin(){
+int Arduino_AlvikCarrier::begin(){
     beginLeds();
 
     serial->begin(UART_BAUD);
@@ -127,7 +123,7 @@ int Arduino_Alvik_Firmware::begin(){
     return 0;
 }
 
-void Arduino_Alvik_Firmware::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte){
+void Arduino_AlvikCarrier::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte){
     high_byte=version_high;
     mid_byte=version_mid;
     low_byte=version_low;
@@ -138,7 +134,7 @@ void Arduino_Alvik_Firmware::getVersion(uint8_t &high_byte, uint8_t &mid_byte, u
 /*                                      Color sensor, APDS9960                                        */
 /******************************************************************************************************/
 
-int Arduino_Alvik_Firmware::beginAPDS(){
+int Arduino_AlvikCarrier::beginAPDS(){
     pinMode(APDS_LED,OUTPUT);
     enableIlluminator();
     if (!apds9960->begin()){
@@ -147,7 +143,7 @@ int Arduino_Alvik_Firmware::beginAPDS(){
     return 0;
 }
 
-void Arduino_Alvik_Firmware::updateAPDS(){
+void Arduino_AlvikCarrier::updateAPDS(){
     if (apds9960->proximityAvailable()){
         bottom_proximity=apds9960->readProximity();
     }
@@ -158,31 +154,31 @@ void Arduino_Alvik_Firmware::updateAPDS(){
     //digitalWrite(APDS_LED,LOW);
 }
 
-void Arduino_Alvik_Firmware::setIlluminator(uint8_t value){
+void Arduino_AlvikCarrier::setIlluminator(uint8_t value){
     digitalWrite(APDS_LED,value);
 }
 
-void Arduino_Alvik_Firmware::enableIlluminator(){
+void Arduino_AlvikCarrier::enableIlluminator(){
     setIlluminator(HIGH);
 }
 
-void Arduino_Alvik_Firmware::disableIlluminator(){
+void Arduino_AlvikCarrier::disableIlluminator(){
     setIlluminator(LOW);
 }
 
-int Arduino_Alvik_Firmware::getRed(){
+int Arduino_AlvikCarrier::getRed(){
     return bottom_red;
 }
 
-int Arduino_Alvik_Firmware::getGreen(){
+int Arduino_AlvikCarrier::getGreen(){
     return bottom_green;
 }
 
-int Arduino_Alvik_Firmware::getBlue(){
+int Arduino_AlvikCarrier::getBlue(){
     return bottom_blue;
 }
 
-int Arduino_Alvik_Firmware::getProximity(){
+int Arduino_AlvikCarrier::getProximity(){
     return bottom_proximity;
 }
 
@@ -190,17 +186,17 @@ int Arduino_Alvik_Firmware::getProximity(){
 /*                                        RC Servo A & B                                              */
 /******************************************************************************************************/
 
-int Arduino_Alvik_Firmware::beginServo(){
+int Arduino_AlvikCarrier::beginServo(){
     servo_A->attach(SERVO_A);
     servo_B->attach(SERVO_B);
     return 0;
 }
 
-void Arduino_Alvik_Firmware::setServoA(int position){
+void Arduino_AlvikCarrier::setServoA(int position){
     servo_A->write(position);
 }
 
-void Arduino_Alvik_Firmware::setServoB(int position){
+void Arduino_AlvikCarrier::setServoB(int position){
     servo_B->write(position);
 }
 
@@ -210,19 +206,19 @@ void Arduino_Alvik_Firmware::setServoB(int position){
 /*                                        External I2C                                                */
 /******************************************************************************************************/
 
-int Arduino_Alvik_Firmware::beginI2Cselect(){
+int Arduino_AlvikCarrier::beginI2Cselect(){
     pinMode(SELECT_I2C_BUS,OUTPUT);
 }
 
-void Arduino_Alvik_Firmware::setExternalI2C(uint8_t state){
+void Arduino_AlvikCarrier::setExternalI2C(uint8_t state){
     digitalWrite(SELECT_I2C_BUS,state);
 }
 
-void Arduino_Alvik_Firmware::connectExternalI2C(){
+void Arduino_AlvikCarrier::connectExternalI2C(){
     setExternalI2C(LOW);
 }
 
-void Arduino_Alvik_Firmware::disconnectExternalI2C(){
+void Arduino_AlvikCarrier::disconnectExternalI2C(){
     setExternalI2C(HIGH);
 }
 
@@ -232,22 +228,22 @@ void Arduino_Alvik_Firmware::disconnectExternalI2C(){
 /*                               Battery Management System, MAX17332                                  */
 /******************************************************************************************************/
 
-int Arduino_Alvik_Firmware::beginBMS(){
+int Arduino_AlvikCarrier::beginBMS(){
     bms->begin();
     return 0;
 }
 
-void Arduino_Alvik_Firmware::updateBMS(){
+void Arduino_AlvikCarrier::updateBMS(){
     voltage = bms->readVCell();
     state_of_charge = bms->readSoc();
 }
 
 
-float Arduino_Alvik_Firmware::getBatteryVoltage(){
+float Arduino_AlvikCarrier::getBatteryVoltage(){
     return voltage;
 }
 
-float Arduino_Alvik_Firmware::getBatteryChargePercentage(){
+float Arduino_AlvikCarrier::getBatteryChargePercentage(){
     return state_of_charge;
 }
 
@@ -257,7 +253,7 @@ float Arduino_Alvik_Firmware::getBatteryChargePercentage(){
 /*                                            Motor controls                                          */
 /******************************************************************************************************/
 
-int Arduino_Alvik_Firmware::beginMotors(){
+int Arduino_AlvikCarrier::beginMotors(){
     motor_left->begin();
     motor_right->begin();
     motor_left->stop();
@@ -273,45 +269,45 @@ int Arduino_Alvik_Firmware::beginMotors(){
     return 0;
 }
 
-void Arduino_Alvik_Firmware::updateMotors(){
+void Arduino_AlvikCarrier::updateMotors(){
     motor_control_left->update();
     motor_control_right->update();
 }
 
-bool Arduino_Alvik_Firmware::setRpmLeft(const float rpm){
+bool Arduino_AlvikCarrier::setRpmLeft(const float rpm){
     return motor_control_left->setRPM(rpm);
 }
 
-float Arduino_Alvik_Firmware::getRpmLeft(){
+float Arduino_AlvikCarrier::getRpmLeft(){
     return motor_control_left->getRPM();
 }
 
-bool Arduino_Alvik_Firmware::setRpmRight(const float rpm){
+bool Arduino_AlvikCarrier::setRpmRight(const float rpm){
     return motor_control_right->setRPM(rpm);
 }
 
-float Arduino_Alvik_Firmware::getRpmRight(){
+float Arduino_AlvikCarrier::getRpmRight(){
     return motor_control_right->getRPM();
 }
 
-bool Arduino_Alvik_Firmware::setRpm(const float left, const float right){
+bool Arduino_AlvikCarrier::setRpm(const float left, const float right){
     motor_control_left->setRPM(left);
     motor_control_right->setRPM(right);
     return true;
 }
 
-void Arduino_Alvik_Firmware::getRpm(float & left, float & right){
+void Arduino_AlvikCarrier::getRpm(float & left, float & right){
     left=motor_control_left->getRPM();
     right=motor_control_right->getRPM();
 }
 
-void Arduino_Alvik_Firmware::setKPidRight(const float kp, const float ki, const float kd){
+void Arduino_AlvikCarrier::setKPidRight(const float kp, const float ki, const float kd){
     motor_control_right->setKP(kp);
     motor_control_right->setKI(ki);
     motor_control_right->setKD(kd);
 }
 
-void Arduino_Alvik_Firmware::setKPidLeft(const float kp, const float ki, const float kd){
+void Arduino_AlvikCarrier::setKPidLeft(const float kp, const float ki, const float kd){
     motor_control_left->setKP(kp);
     motor_control_left->setKI(ki);
     motor_control_left->setKD(kd);
@@ -323,7 +319,7 @@ void Arduino_Alvik_Firmware::setKPidLeft(const float kp, const float ki, const f
 /*                                           Touch pads                                               */
 /******************************************************************************************************/
 
-int Arduino_Alvik_Firmware::beginTouch(){
+int Arduino_AlvikCarrier::beginTouch(){
     touch_sensor->begin();
     if (!touch_sensor->communicating()){
         return ERROR_TOUCH;
@@ -346,25 +342,25 @@ int Arduino_Alvik_Firmware::beginTouch(){
     return 0;
 }
 
-void Arduino_Alvik_Firmware::updateTouch(){
+void Arduino_AlvikCarrier::updateTouch(){
     touch_status = touch_sensor->getStatus();
 }
 
-bool Arduino_Alvik_Firmware::getAnyTouchPressed(){
+bool Arduino_AlvikCarrier::getAnyTouchPressed(){
     if (touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
         return true;
     }
     return false;
 }
 
-bool Arduino_Alvik_Firmware::getTouchKey(const uint8_t key){
+bool Arduino_AlvikCarrier::getTouchKey(const uint8_t key){
     if (touch_sensor->touched(touch_status,key)&&touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
         return true;
     }
     return false;
 }
 
-uint8_t Arduino_Alvik_Firmware::getTouchKeys(){
+uint8_t Arduino_AlvikCarrier::getTouchKeys(){
     touch_value=0;
     if (getAnyTouchPressed()){
         touch_value|=1;
@@ -379,31 +375,31 @@ uint8_t Arduino_Alvik_Firmware::getTouchKeys(){
     return touch_value;
 }
 
-bool Arduino_Alvik_Firmware::getTouchUp(){
+bool Arduino_AlvikCarrier::getTouchUp(){
     return getTouchKey(TOUCH_PAD_UP);
 }
 
-bool Arduino_Alvik_Firmware::getTouchRight(){
+bool Arduino_AlvikCarrier::getTouchRight(){
     return getTouchKey(TOUCH_PAD_RIGHT);
 }
 
-bool Arduino_Alvik_Firmware::getTouchDown(){
+bool Arduino_AlvikCarrier::getTouchDown(){
     return getTouchKey(TOUCH_PAD_DOWN);
 }
 
-bool Arduino_Alvik_Firmware::getTouchLeft(){
+bool Arduino_AlvikCarrier::getTouchLeft(){
     return getTouchKey(TOUCH_PAD_LEFT);
 }
 
-bool Arduino_Alvik_Firmware::getTouchCenter(){
+bool Arduino_AlvikCarrier::getTouchCenter(){
     return getTouchKey(TOUCH_PAD_CENTER);
 }
 
-bool Arduino_Alvik_Firmware::getTouchOk(){
+bool Arduino_AlvikCarrier::getTouchOk(){
     return getTouchKey(TOUCH_PAD_OK);
 }
 
-bool Arduino_Alvik_Firmware::getTouchDelete(){
+bool Arduino_AlvikCarrier::getTouchDelete(){
     return getTouchKey(TOUCH_PAD_DELETE);
 }
 
@@ -413,7 +409,7 @@ bool Arduino_Alvik_Firmware::getTouchDelete(){
 /*                                               Leds                                                 */
 /******************************************************************************************************/
 
-int Arduino_Alvik_Firmware::beginLeds(){
+int Arduino_AlvikCarrier::beginLeds(){
     pinMode(LED_BUILTIN,OUTPUT);
     // turn off leds
     led1->clear();
@@ -421,61 +417,61 @@ int Arduino_Alvik_Firmware::beginLeds(){
     return 0;
 }
 
-void Arduino_Alvik_Firmware::setLedBuiltin(const uint8_t value){
+void Arduino_AlvikCarrier::setLedBuiltin(const uint8_t value){
     digitalWrite(LED_BUILTIN,value);
 }
 
-void Arduino_Alvik_Firmware::setLedLeft(const uint32_t color){
+void Arduino_AlvikCarrier::setLedLeft(const uint32_t color){
     led1->set(color); 
 }
 
-void Arduino_Alvik_Firmware::setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue){
+void Arduino_AlvikCarrier::setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue){
     led1->set(red,green,blue); 
 }
 
-void Arduino_Alvik_Firmware::setLedLeftRed(const uint32_t red){
+void Arduino_AlvikCarrier::setLedLeftRed(const uint32_t red){
     led1->setRed(red);
 }
 
-void Arduino_Alvik_Firmware::setLedLeftGreen(const uint32_t green){
+void Arduino_AlvikCarrier::setLedLeftGreen(const uint32_t green){
     led1->setGreen(green);
 }
 
-void Arduino_Alvik_Firmware::setLedLeftBlue(const uint32_t blue){
+void Arduino_AlvikCarrier::setLedLeftBlue(const uint32_t blue){
     led1->setBlue(blue);
 }
 
-void Arduino_Alvik_Firmware::setLedRight(const uint32_t color){
+void Arduino_AlvikCarrier::setLedRight(const uint32_t color){
     led2->set(color);
 }
 
-void Arduino_Alvik_Firmware::setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue){
+void Arduino_AlvikCarrier::setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue){
     led2->set(red,green,blue);
 }
 
-void Arduino_Alvik_Firmware::setLedRightRed(const uint32_t red){
+void Arduino_AlvikCarrier::setLedRightRed(const uint32_t red){
     led2->setRed(red);
 }
 
-void Arduino_Alvik_Firmware::setLedRightGreen(const uint32_t green){
+void Arduino_AlvikCarrier::setLedRightGreen(const uint32_t green){
     led2->setGreen(green);
 }
 
-void Arduino_Alvik_Firmware::setLedRightBlue(const uint32_t blue){
+void Arduino_AlvikCarrier::setLedRightBlue(const uint32_t blue){
     led2->setBlue(blue);
 }
 
-void Arduino_Alvik_Firmware::setLeds(const uint32_t color){
+void Arduino_AlvikCarrier::setLeds(const uint32_t color){
     setLedLeft(color);
     setLedRight(color);  
 }
 
-void Arduino_Alvik_Firmware::setLeds(const uint32_t red, const uint32_t green, const uint32_t blue){
+void Arduino_AlvikCarrier::setLeds(const uint32_t red, const uint32_t green, const uint32_t blue){
     setLedLeft(red,green,blue);
     setLedRight(red,green,blue);    
 }
 
-void Arduino_Alvik_Firmware::setAllLeds(const uint8_t value){
+void Arduino_AlvikCarrier::setAllLeds(const uint8_t value){
     setLedBuiltin(value&1);
     setIlluminator((value>>1)&1);
     setLedLeftRed(((value>>2)&1));
@@ -492,7 +488,7 @@ void Arduino_Alvik_Firmware::setAllLeds(const uint8_t value){
 /*                                                IMU                                                 */
 /******************************************************************************************************/
 
-int Arduino_Alvik_Firmware::beginImu(){
+int Arduino_AlvikCarrier::beginImu(){
     imu->begin();
     imu->Set_X_ODR(100.0);
     imu->Set_X_FS(4);
@@ -519,7 +515,7 @@ int Arduino_Alvik_Firmware::beginImu(){
 
     ipKnobs->output_type = MFX_ENGINE_OUTPUT_ENU;
     ipKnobs->LMode = 1;
-    ipKnobs->modx = DECIMATION;
+    ipKnobs->modx = MOTION_FX_DECIMATION;
 
     MotionFX_setKnobs(mfxstate, ipKnobs);
     MotionFX_enable_6X(mfxstate, MFX_ENGINE_ENABLE);
@@ -528,7 +524,7 @@ int Arduino_Alvik_Firmware::beginImu(){
     return 0;
 }
 
-void Arduino_Alvik_Firmware::updateImu(){
+void Arduino_AlvikCarrier::updateImu(){
     imu->Get_X_Axes(accelerometer);
     imu->Get_G_Axes(gyroscope);
     imu_data.gyro[0] = (float)gyroscope[0] * FROM_MDPS_TO_DPS;
@@ -538,7 +534,7 @@ void Arduino_Alvik_Firmware::updateImu(){
     imu_data.acc[1] = (float)accelerometer[1] * FROM_MG_TO_G;
     imu_data.acc[2] = (float)accelerometer[2] * FROM_MG_TO_G;
 
-    if (sample_to_discard>SAMPLETODISCARD){
+    if (sample_to_discard>MOTION_FX_SAMPLETODISCARD){
         MotionFX_propagate(mfxstate, &filter_data, &imu_data, &imu_delta_time);
         MotionFX_update(mfxstate, &filter_data, &imu_data, &imu_delta_time, NULL);
     }else{
@@ -547,39 +543,39 @@ void Arduino_Alvik_Firmware::updateImu(){
 
 }
 
-float Arduino_Alvik_Firmware::getAccelerationX(){
+float Arduino_AlvikCarrier::getAccelerationX(){
     return -imu_data.acc[1];
 }
 
-float Arduino_Alvik_Firmware::getAccelerationY(){
+float Arduino_AlvikCarrier::getAccelerationY(){
     return -imu_data.acc[0];
 }
 
-float Arduino_Alvik_Firmware::getAccelerationZ(){
+float Arduino_AlvikCarrier::getAccelerationZ(){
     return imu_data.acc[2];
 }
 
-float Arduino_Alvik_Firmware::getAngularVelocityX(){
+float Arduino_AlvikCarrier::getAngularVelocityX(){
     return imu_data.gyro[1];
 }
 
-float Arduino_Alvik_Firmware::getAngularVelocityY(){
+float Arduino_AlvikCarrier::getAngularVelocityY(){
     return imu_data.gyro[0];
 }
 
-float Arduino_Alvik_Firmware::getAngularVelocityZ(){
+float Arduino_AlvikCarrier::getAngularVelocityZ(){
     return -imu_data.gyro[2];
 }
 
-float Arduino_Alvik_Firmware::getRoll(){
+float Arduino_AlvikCarrier::getRoll(){
     return -filter_data.rotation[1];
 }
 
-float Arduino_Alvik_Firmware::getPitch(){
+float Arduino_AlvikCarrier::getPitch(){
     return -filter_data.rotation[2];
 }
 
-float Arduino_Alvik_Firmware::getYaw(){
+float Arduino_AlvikCarrier::getYaw(){
     return 360.0-filter_data.rotation[0];
 }
 
@@ -589,7 +585,7 @@ float Arduino_Alvik_Firmware::getYaw(){
 /*                                               Error                                                */
 /******************************************************************************************************/
 
-void Arduino_Alvik_Firmware::errorLed(const int error_code){
+void Arduino_AlvikCarrier::errorLed(const int error_code){
     while(true){
         for (int i = 0; i<error_code; i++){
             setLedBuiltin(HIGH);
@@ -600,3 +596,38 @@ void Arduino_Alvik_Firmware::errorLed(const int error_code){
         delay(5000);
     }
 }
+
+
+
+/******************************************************************************************************/
+/*                                             Kinematics                                             */
+/******************************************************************************************************/
+
+void Arduino_AlvikCarrier::drive(const float linear, const float angular){
+    kinematics->forward(linear, angular);
+    setRpm(kinematics->getLeftVelocity(),kinematics->getRightVelocity());
+}
+
+void Arduino_AlvikCarrier::rotate(const float angle){
+    float initial_angle=kinematics->getTheta();
+    float error=angle-initial_angle;
+    unsigned long t=millis();
+    while(abs(error)>2){
+        if (millis()-t>20){
+            t=millis();
+            updateMotors();
+            kinematics->updatePose(motor_control_left->getAngle(),motor_control_right->getAngle());
+            error=angle-kinematics->getTheta();
+            Serial.println(error);
+        }
+        if (error>0){
+            drive(0,40);
+        }else{
+            drive(0,-40);
+        }
+
+    }
+    drive(0,0);
+    updateMotors();
+}
+

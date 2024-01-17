@@ -1,21 +1,14 @@
 /*
-  This file is part of the Arduino Alvik library.
-  Copyright (c) 2023 Arduino SA. All rights reserved.
+    This file is part of the Arduino_AlvikCarrier library.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+    Copyright (c) 2023 Arduino SA
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+    
 */
+
 
 #ifndef __ROBOT_DEFINITIONS_H__
 #define __ROBOT_DEFINITIONS_H__
@@ -25,7 +18,7 @@
 
 #define MOTOR_LIMIT 70.0                // Mechanical RPM limit speed of used motors
 #define MOTOR_CPR 6.0                   // Resolution of the encoder
-#define MOTOR_GEAR_RATIO 150.0          // Gear ratio of the motor
+#define MOTOR_GEAR_RATIO 150.0          // Gear ratio of the motor, maybe 150.58?
 
 const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 
@@ -47,14 +40,19 @@ const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define MOTION_FX_ENGINE_DELTATIME  0.01f
 #define STATE_SIZE                      (size_t)(2432)
-#define SAMPLETODISCARD                 15
+#define MOTION_FX_SAMPLETODISCARD                 15
 #define GBIAS_ACC_TH_SC                 (2.0f*0.000765f)
 #define GBIAS_GYRO_TH_SC                (2.0f*0.002f)
-#define DECIMATION                      1U
-#define STATE_SIZE                      (size_t)(2432)
+#define MOTION_FX_DECIMATION                      1U
+//#define STATE_SIZE                      (size_t)(2432)
 
 #define VERSION_BYTE_HIGH 0
-#define VERSION_BYTE_MID 0
-#define VERSION_BYTE_LOW 6
+#define VERSION_BYTE_MID 1
+#define VERSION_BYTE_LOW 0
+
+
+
+#define WHEEL_TRACK_MM 89
+#define WHEEL_DIAMETER_MM 34
 
 #endif

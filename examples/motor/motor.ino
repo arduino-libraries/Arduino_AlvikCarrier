@@ -1,25 +1,18 @@
 /*
-  This file is part of the Arduino Alvik library.
-  Copyright (c) 2023 Arduino SA. All rights reserved.
+    This file is part of the Arduino_AlvikCarrier library.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+    Copyright (c) 2023 Arduino SA
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+    
 */
 
-#include "Arduino_Alvik_Firmware.h"
 
-Arduino_Alvik_Firmware robot;
+#include "Arduino_AlvikCarrier.h"
+
+Arduino_AlvikCarrier alvik;
 
 unsigned long t=0;
 unsigned long t_change = 0;
@@ -29,10 +22,10 @@ float reference = 0.0;
 
 void setup(){ 
   Serial.begin(115200);
-  robot.begin();
+  alvik.begin();
   t=millis();
   t_change=millis();
-  robot.setRpm(reference,reference);
+  alvik.setRpm(reference,reference);
 
   Serial.print("reference");
   Serial.print(" ");
@@ -66,16 +59,16 @@ void loop(){
     if (status>5){
       status=0;
     }
-    robot.setRpm(reference,reference);
+    alvik.setRpm(reference,reference);
   }
   if (millis()-t>20){
     t=millis();
-    robot.updateMotors();
+    alvik.updateMotors();
     
     Serial.print(reference);
     Serial.print(" ");
-    Serial.print(robot.getRpmRight());
+    Serial.print(alvik.getRpmRight());
     Serial.print(" ");
-    Serial.println(robot.getRpmLeft());
+    Serial.println(alvik.getRpmLeft());
   }
 }
