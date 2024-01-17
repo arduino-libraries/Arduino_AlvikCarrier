@@ -159,7 +159,7 @@ class Arduino_AlvikCarrier{
 
         // Leds
         int beginLeds();
-        void setLed_Builtin(const uint8_t value);
+        void setLedBuiltin(const uint8_t value);
         void setLedLeft(const uint32_t color);
         void setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue);
         void setLedLeftRed(const uint32_t red);

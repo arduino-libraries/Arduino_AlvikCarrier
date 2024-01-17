@@ -39,7 +39,7 @@ const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 #define MOTION_FX_FREQ  100U
 const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define MOTION_FX_ENGINE_DELTATIME  0.01f
-//#define STATE_SIZE                      (size_t)(2432)
+#define STATE_SIZE                      (size_t)(2432)
 #define MOTION_FX_SAMPLETODISCARD                 15
 #define GBIAS_ACC_TH_SC                 (2.0f*0.000765f)
 #define GBIAS_GYRO_TH_SC                (2.0f*0.002f)

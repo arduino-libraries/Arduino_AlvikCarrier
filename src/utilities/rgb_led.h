@@ -30,70 +30,16 @@ class RGBled{
         uint8_t G;
         uint8_t B;
     public:
-        RGBled(const uint8_t _Red, const uint8_t _Green, const uint8_t _Blue){
-            R=_Red;
-            G=_Green;
-            B=_Blue;
-            pinMode(R,OUTPUT);
-            pinMode(G,OUTPUT);
-            pinMode(B,OUTPUT);
-            digitalWrite(R,LOW);
-            digitalWrite(G,LOW);
-            digitalWrite(B,LOW);
-        }
+        RGBled(const uint8_t _Red, const uint8_t _Green, const uint8_t _Blue);
 
-        void setRed(const uint32_t red){
-            digitalWrite(R, red);
-        }
+        void setRed(const uint32_t red);
+        void setGreen(const uint32_t green);
+        void setBlue(const uint32_t blue);
 
-        void setGreen(const uint32_t green){
-            digitalWrite(G, green);
-        }
+        void set(const uint32_t red, const uint32_t green, const uint32_t blue);
+        void set(const uint32_t color);
 
-        void setBlue(const uint32_t blue){
-            digitalWrite(B, blue);
-        }
-
-        void set(const uint32_t red, const uint32_t green, const uint32_t blue){
-            setRed(red);
-            setGreen(green);
-            setBlue(blue);
-        }
-
-        void set(const uint32_t color){
-            switch(color){
-                case COLOR_RED:
-                    set(HIGH,LOW,LOW);
-                    break;
-                case COLOR_GREEN:
-                    set(LOW,HIGH,LOW);
-                    break;
-                case COLOR_BLUE:
-                    set(LOW,LOW,HIGH);
-                    break;
-                case COLOR_ORANGE:
-                    set(HIGH,HIGH,LOW);
-                    break;
-                case COLOR_VIOLET:
-                    set(HIGH,LOW,HIGH);
-                    break;
-                case COLOR_TEAL:
-                    set(LOW,HIGH,HIGH);
-                    break;
-                case COLOR_WHITE:
-                    set(HIGH,HIGH,HIGH);
-                    break;
-                case COLOR_BLACK:
-                default:
-                    set(LOW,LOW,LOW);
-            }
-        }
-
-        void clear(){
-            setRed(0);
-            setGreen(0);
-            setBlue(0);
-        }
+        void clear();
 };
 
 
