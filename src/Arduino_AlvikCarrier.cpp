@@ -515,7 +515,7 @@ int Arduino_AlvikCarrier::beginImu(){
 
     ipKnobs->output_type = MFX_ENGINE_OUTPUT_ENU;
     ipKnobs->LMode = 1;
-    ipKnobs->modx = DECIMATION;
+    ipKnobs->modx = MOTION_FX_DECIMATION;
 
     MotionFX_setKnobs(mfxstate, ipKnobs);
     MotionFX_enable_6X(mfxstate, MFX_ENGINE_ENABLE);
@@ -534,7 +534,7 @@ void Arduino_AlvikCarrier::updateImu(){
     imu_data.acc[1] = (float)accelerometer[1] * FROM_MG_TO_G;
     imu_data.acc[2] = (float)accelerometer[2] * FROM_MG_TO_G;
 
-    if (sample_to_discard>SAMPLETODISCARD){
+    if (sample_to_discard>MOTION_FX_SAMPLETODISCARD){
         MotionFX_propagate(mfxstate, &filter_data, &imu_data, &imu_delta_time);
         MotionFX_update(mfxstate, &filter_data, &imu_data, &imu_delta_time, NULL);
     }else{

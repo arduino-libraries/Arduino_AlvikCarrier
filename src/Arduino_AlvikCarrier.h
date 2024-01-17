@@ -89,15 +89,13 @@ class Arduino_AlvikCarrier{
 
 
 
-        Arduino_Alvik_Firmware();
+        Arduino_AlvikCarrier();
 
         int begin();
 
 
         void getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte);
 
-
-        //custom class????
 
         // Color sensor, APDS9960
         int beginAPDS();                            // initialize all components required by color detection
@@ -161,7 +159,7 @@ class Arduino_AlvikCarrier{
 
         // Leds
         int beginLeds();
-        void setLedBuiltin(const uint8_t value);
+        void setLed_Builtin(const uint8_t value);
         void setLedLeft(const uint32_t color);
         void setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue);
         void setLedLeftRed(const uint32_t red);
