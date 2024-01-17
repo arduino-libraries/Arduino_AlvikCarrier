@@ -1,5 +1,5 @@
 /*
-    This file is part of the Arduino Alvik library.
+    This file is part of the Arduino_AlvikCarrier library.
 
     Copyright (c) 2023 Arduino SA
 
@@ -9,10 +9,11 @@
     
 */
 
+// WIP
 
-#include "Arduino_Alvik_Firmware.h"
+#include "Arduino_AlvikCarrier.h"
 
-Arduino_Alvik_Firmware alvik;
+Arduino_AlvikCarrier alvik;
 
 unsigned long tmotor=0;
 unsigned long ttask=0;

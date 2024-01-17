@@ -1,5 +1,5 @@
 /*
-    This file is part of the Arduino Alvik library.
+    This file is part of the Arduino_AlvikCarrier library.
 
     Copyright (c) 2023 Arduino SA
 
@@ -10,13 +10,13 @@
 */
 
 
-#ifndef __ARDUINO_ALVIK_FIRMWARE_H__
-#define __ARDUINO_ALVIK_FIRMWARE_H__
+#ifndef __ARDUINO_ALVIKCARRIER_H__
+#define __ARDUINO_ALVIKCARRIER_H__
 
 #include "Arduino.h"
 #include "./definitions/pinout_definitions.h"
 #include "./motor_control/encoder.h"
-#include "rgb_led.h"
+#include "./utilities/rgb_led.h"
 #include "./motor_control/dcmotor.h"
 #include "./motor_control/motor_control.h"
 #include "Arduino_APDS9960.h"
@@ -29,7 +29,7 @@
 
 
 
-class Arduino_Alvik_Firmware{
+class Arduino_AlvikCarrier{
     private:
         RGBled * led1;
         RGBled * led2;

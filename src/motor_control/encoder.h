@@ -1,5 +1,5 @@
 /*
-    This file is part of the Arduino Alvik library.
+    This file is part of the Arduino_AlvikCarrier library.
 
     Copyright (c) 2023 Arduino SA
 

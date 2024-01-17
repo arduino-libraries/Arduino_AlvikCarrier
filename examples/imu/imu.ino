@@ -1,5 +1,5 @@
 /*
-    This file is part of the Arduino Alvik library.
+    This file is part of the Arduino_AlvikCarrier library.
 
     Copyright (c) 2023 Arduino SA
 
@@ -13,11 +13,11 @@
 
 // This example shows IMU data, accelerations are in Gs, angular velocities in deg/s and orientation is in degrees.
 
-#include "Arduino_Alvik_Firmware.h"
+#include "Arduino_AlvikCarrier.h"
 
 unsigned long time_imu_update=0;
 
-Arduino_Alvik_Firmware alvik;
+Arduino_AlvikCarrier alvik;
 
 void setup(){
     Serial.begin(115200);

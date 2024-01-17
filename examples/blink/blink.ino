@@ -1,5 +1,5 @@
 /*
-    This file is part of the Arduino Alvik library.
+    This file is part of the Arduino_AlvikCarrier library.
 
     Copyright (c) 2023 Arduino SA
 
@@ -13,10 +13,10 @@
 
 // This example makes the rear orange led blink. It is also called LED_BUILTIN
 
-#include "Arduino_Alvik_Firmware.h"
+#include "Arduino_AlvikCarrier.h"
 
 
-Arduino_Alvik_Firmware alvik;
+Arduino_AlvikCarrier alvik;
 
 void setup(){
     alvik.begin();

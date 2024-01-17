@@ -1,5 +1,5 @@
 /*
-    This file is part of the Arduino Alvik library.
+    This file is part of the Arduino_AlvikCarrier library.
 
     Copyright (c) 2023 Arduino SA
 
@@ -28,6 +28,8 @@ class Kinematics{
         float rpm_to_rads;
         float rads_to_degs;
         float degs_to_rads;
+        float rotations_to_rads;
+        float rads_to_rotations;
         float w;
 
         float theta, delta_theta;
@@ -56,6 +58,9 @@ class Kinematics{
 
             rads_to_degs=180.0/PI;
             degs_to_rads=PI/180.0;
+
+            rads_to_rotations=1/(2.0*PI);
+            rotations_to_rads=2.0*PI;
 
             theta=0.0;
             x=0.0;
