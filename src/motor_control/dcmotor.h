@@ -13,6 +13,7 @@
 #define __DC_MOTOR_H__
 
 #include "Arduino.h"
+#include "../definitions/pinout_definitions.h"
 
 class DCmotor{
     private:
@@ -30,49 +31,15 @@ class DCmotor{
 
     public:
         DCmotor(const uint32_t _pinA, const uint32_t _chA, const uint32_t _pinB, const uint32_t _chB, 
-                const bool flip=false, TIM_TypeDef * _tim = TIM2, const uint32_t _frequency=20000){
-            if (!flip){
-                pinA=_pinA;
-                chA=_chA;
-                pinB=_pinB;
-                chB=_chB; 
-            }
-            else{
-                pinA=_pinB;
-                chA=_chB;
-                pinB=_pinA;
-                chB=_chA;                
-            }
-            htimX.Instance = _tim; 
-            frequency=_frequency;
-            pinMode(MOTORS_ENABLE,OUTPUT);
-        }
+                const bool flip=false, TIM_TypeDef * _tim = TIM2, const uint32_t _frequency=20000);
 
-        void begin(){
-            timX = new HardwareTimer(htimX.Instance);
-            timX->setPWM(chA, pinA, frequency, 0);  
-            timX->setPWM(chB, pinB, frequency, 0);
-            digitalWrite(MOTORS_ENABLE,HIGH);
-        }
+        void begin();
 
-        void disable(){
-            digitalWrite(MOTORS_ENABLE,LOW);
-        }
+        void disable();
 
-        void setSpeed(const int speed){
-            if (speed>=0){
-                pwmWrite(chA,speed);
-                pwmWrite(chB,0);
-            }
-            else{
-                pwmWrite(chA,0);
-                pwmWrite(chB,-speed);
-            } 
-        }
+        void setSpeed(const int speed);
 
-        void stop(){
-            setSpeed(0);
-        }
+        void stop();
 };
 
 #endif
