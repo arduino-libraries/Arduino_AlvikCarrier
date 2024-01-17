@@ -91,108 +91,111 @@ class Arduino_AlvikCarrier{
 
         Arduino_AlvikCarrier();
 
-        int begin();
+        int begin();                                                                    // initialize the robot
 
 
-        void getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte);
+        void getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte);      // get firmware version
 
 
         // Color sensor, APDS9960
-        int beginAPDS();                            // initialize all components required by color detection
-        void updateAPDS();                          // refresh data
-        void setIlluminator(uint8_t value);         // set white leds       
-        void enableIlluminator();                   // white leds on
-        void disableIlluminator();                  // white leds off
-        int getRed();                               // red value 0-4095
-        int getGreen();                             // green value 0-4095
-        int getBlue();                              // blue value 0-4095
-        int getProximity();                         // proximity value 0-127
+        int beginAPDS();                                                                // initialize all components required by color detection
+        void updateAPDS();                                                              // refresh data
+        void setIlluminator(uint8_t value);                                             // set white leds       
+        void enableIlluminator();                                                       // white leds on
+        void disableIlluminator();                                                      // white leds off
+        int getRed();                                                                   // red value 0-4095
+        int getGreen();                                                                 // green value 0-4095
+        int getBlue();                                                                  // blue value 0-4095
+        int getProximity();                                                             // proximity value 0-127
 
 
         // Servo
-        int beginServo();                           // initialize Servo interfaces
-        void setServoA(int position);               // 0°-180° servo position
-        void setServoB(int position);               // 0°-180° servo position
+        int beginServo();                                                               // initialize Servo interfaces
+        void setServoA(int position);                                                   // 0°-180° servo position
+        void setServoB(int position);                                                   // 0°-180° servo position
 
 
         // I2C select
-        int beginI2Cselect();                       // initialize I2C bus selector
-        void setExternalI2C(uint8_t state);         // set A4,A5 connection on I2C bus 2
-        void connectExternalI2C();                  // allow A4,A5 on nano connector to be attached to I2C bus 2
-        void disconnectExternalI2C();               // disable the connection on A4,A5
+        int beginI2Cselect();                                                           // initialize I2C bus selector
+        void setExternalI2C(uint8_t state);                                             // set A4,A5 connection on I2C bus 2
+        void connectExternalI2C();                                                      // allow A4,A5 on nano connector to be attached to I2C bus 2
+        void disconnectExternalI2C();                                                   // disable the connection on A4,A5
 
 
         // BMS, MAX17332
-        int beginBMS();                                            
-        void updateBMS();
-        float getBatteryVoltage();
-        float getBatteryChargePercentage();
+        int beginBMS();                                                                 // initialize BMS                        
+        void updateBMS();                                                               // update the BMS
+        float getBatteryVoltage();                                                      // get Voltage
+        float getBatteryChargePercentage();                                             // get battery percentage
+
 
 
         // Motors
-        int beginMotors();
-        void updateMotors();
-        bool setRpmLeft(const float rpm);
-        float getRpmLeft();
-        bool setRpmRight(const float rpm);
-        float getRpmRight();
-        bool setRpm(const float left, const float right);                             // sets RPMs on left and right wheels
-        void getRpm(float & left, float & right);                                     // get RPMs on left and right wheels
-        void setKPidRight(const float kp, const float ki, const float kd);            // set PID parameters for right wheel
-        void setKPidLeft(const float kp, const float ki, const float kd);             // set PID parameters for left wheel
+        int beginMotors();                                                              // initialize motor controls
+        void updateMotors();                                                            // update motor control
+        bool setRpmLeft(const float rpm);                                               // set RPM of left motor
+        float getRpmLeft();                                                             // get RPM of left motor
+        bool setRpmRight(const float rpm);                                              // set RPM of right motor
+        float getRpmRight();                                                            // get RPM of right motor
+        bool setRpm(const float left, const float right);                               // sets RPMs on left and right wheels
+        void getRpm(float & left, float & right);                                       // get RPMs on left and right wheels
+        void setKPidRight(const float kp, const float ki, const float kd);              // set PID parameters for right wheel
+        void setKPidLeft(const float kp, const float ki, const float kd);               // set PID parameters for left wheel
+
 
 
         // Touch
-        int beginTouch();                                                             // initialize touch
-        void updateTouch();                                                           // update touch status
-        bool getAnyTouchPressed();                                                    // get any touch pressed
-        bool getTouchKey(const uint8_t key);                                          // return true if key touch is pressed
-        uint8_t getTouchKeys();                                                       // return touched pads as byte
-        bool getTouchUp();                                                            // get nav pad up
-        bool getTouchRight();                                                         // get nav pad right
-        bool getTouchDown();                                                          // get nav pad down
-        bool getTouchLeft();                                                          // get nav pad left
-        bool getTouchCenter();                                                         // get nav pad enter (center circle)
-        bool getTouchOk();                                                            // get nav pad ok (right check)
-        bool getTouchDelete();                                                        // get nav pad delete (right x)
+        int beginTouch();                                                               // initialize touch
+        void updateTouch();                                                             // update touch status
+        bool getAnyTouchPressed();                                                      // get any touch pressed
+        bool getTouchKey(const uint8_t key);                                            // return true if key touch is pressed
+        uint8_t getTouchKeys();                                                         // return touched pads as byte
+        bool getTouchUp();                                                              // get nav pad up
+        bool getTouchRight();                                                           // get nav pad right
+        bool getTouchDown();                                                            // get nav pad down
+        bool getTouchLeft();                                                            // get nav pad left
+        bool getTouchCenter();                                                          // get nav pad enter (center circle)
+        bool getTouchOk();                                                              // get nav pad ok (right check)
+        bool getTouchDelete();                                                          // get nav pad delete (right x)
+
 
 
         // Leds
-        int beginLeds();
-        void setLedBuiltin(const uint8_t value);
-        void setLedLeft(const uint32_t color);
-        void setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue);
-        void setLedLeftRed(const uint32_t red);
-        void setLedLeftGreen(const uint32_t green);
-        void setLedLeftBlue(const uint32_t blue);
-        void setLedRight(const uint32_t color);
-        void setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue);
-        void setLedRightRed(const uint32_t red);
-        void setLedRightGreen(const uint32_t green);
-        void setLedRightBlue(const uint32_t blue);
-        void setLeds(const uint32_t color);
-        void setLeds(const uint32_t red, const uint32_t green, const uint32_t blue);
-        void setAllLeds(const uint8_t value);
+        int beginLeds();                                                                // initialize leds
+        void setLedBuiltin(const uint8_t value);                                        // set built-in led
+        void setLedLeft(const uint32_t color);                                          // set left led by color
+        void setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue); // set left led by RGB (only boolean values)
+        void setLedLeftRed(const uint32_t red);                                         // set red left led
+        void setLedLeftGreen(const uint32_t green);                                     // set green left led
+        void setLedLeftBlue(const uint32_t blue);                                       // set blue left led
+        void setLedRight(const uint32_t color);                                         // set right led by color
+        void setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue);// set right led by RGB (only boolean values)
+        void setLedRightRed(const uint32_t red);                                        // set red right led
+        void setLedRightGreen(const uint32_t green);                                    // set green right led
+        void setLedRightBlue(const uint32_t blue);                                      // set blue right led
+        void setLeds(const uint32_t color);                                             // set both leds by color
+        void setLeds(const uint32_t red, const uint32_t green, const uint32_t blue);    // set both leds by RGB (only boolean values)
+        void setAllLeds(const uint8_t value);                                           // set all leds by a byte
 
 
         // Imu
-        int beginImu();                                                               // initialize LSD6DSOX-
-        void updateImu();                                                             // update accelerometer and gyroscope data. Update sensor fusion
-        float getAccelerationX();                                                     // get acceleration on x axis
-        float getAccelerationY();                                                     // get acceleration on y axis
-        float getAccelerationZ();                                                     // get acceleration on z axis
-        float getAngularVelocityX();                                                  // get angular velocity on x axis
-        float getAngularVelocityY();                                                  // get angular velocity on y axis
-        float getAngularVelocityZ();                                                  // get angular velocity on z axis
-        float getRoll();                                                              // get robot roll
-        float getPitch();                                                             // get robot pitch
-        float getYaw();                                                               // get robot yaw
+        int beginImu();                                                                 // initialize LSD6DSOX-
+        void updateImu();                                                               // update accelerometer and gyroscope data. Update sensor fusion
+        float getAccelerationX();                                                       // get acceleration on x axis
+        float getAccelerationY();                                                       // get acceleration on y axis
+        float getAccelerationZ();                                                       // get acceleration on z axis
+        float getAngularVelocityX();                                                    // get angular velocity on x axis
+        float getAngularVelocityY();                                                    // get angular velocity on y axis
+        float getAngularVelocityZ();                                                    // get angular velocity on z axis
+        float getRoll();                                                                // get robot roll
+        float getPitch();                                                               // get robot pitch
+        float getYaw();                                                                 // get robot yaw
 
-        void errorLed(const int error_code);                                          // error routine, locks on code blinking led
+        void errorLed(const int error_code);                                            // error routine, locks on code blinking led
 
 
         // Kinematics
-        void drive(const float linear, const float angular);
+        void drive(const float linear, const float angular);                            // set mm/s and deg/s of the robot
 
         void rotate(const float angle);
 
