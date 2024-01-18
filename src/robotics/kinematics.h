@@ -94,7 +94,6 @@ class Kinematics{
             delta_right=0.0;
             delta_travel=0.0;
             travel=0.0;
-
         }
 
         void forward(const float linear, const float angular){
@@ -172,11 +171,11 @@ class Kinematics{
         }
 
         float getX(){
-            return x;
+            return m_to_mm(x);
         }
 
         float getY(){
-            return y;
+            return m_to_mm(y);
         }
 
         float getTheta(){
@@ -188,11 +187,11 @@ class Kinematics{
         }
 
         float getDeltaX(){
-            return delta_x;
+            return m_to_mm(delta_x);
         }
 
         float getDeltaY(){
-            return delta_y;
+            return m_to_mm(delta_y);
         }
 
         float getDeltaTheta(){
