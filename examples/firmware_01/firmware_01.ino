@@ -135,7 +135,6 @@ void loop(){
   if (millis()-tmotor>20){
     tmotor=millis();
     alvik.updateMotors();
-    alvik.updateImu();
     msg_size = packeter.packetC2F('j', alvik.getRpmLeft(),alvik.getRpmRight());
     alvik.serial->write(packeter.msg,msg_size);
    

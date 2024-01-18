@@ -632,3 +632,29 @@ void Arduino_AlvikCarrier::rotate(const float angle){
     updateMotors();
 }
 
+/*
+void Arduino_AlvikCarrier::move(const float distance){
+    float initial_distance=kinematics->get();
+    float final_distance=distance+initial_distance;
+    float error=distance;
+    unsigned long t=millis();
+    while(abs(error)>2){
+        if (millis()-t>20){
+            t=millis();
+            updateMotors();
+            kinematics->inverse(motor_control_left->getRPM(),motor_control_right->getRPM());
+            kinematics->updatePose();
+            error=final_distance-kinematics->getTheta();
+            Serial.println(error);
+        }
+        if (error>0){
+            drive(40,0);
+        }else{
+            drive(-40,0);
+        }
+    }
+    drive(0,0);
+    updateMotors();
+    */
+}
+
