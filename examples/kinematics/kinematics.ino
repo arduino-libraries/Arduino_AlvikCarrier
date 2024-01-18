@@ -31,11 +31,16 @@ void loop() {
   if (millis()-tmotor>20){
     tmotor=millis();
     alvik.updateMotors();
-    alvik.kinematics->updatePose(alvik.motor_control_left->getTravel(), alvik.motor_control_right->getTravel());
+    alvik.kinematics->inverse(alvik.motor_control_left->getRPM(),alvik.motor_control_right->getRPM());
+    alvik.kinematics->updatePose();
     Serial.print("\t");
-    Serial.print(alvik.kinematics->getDeltaX());
+    Serial.print(alvik.kinematics->getLinearVelocity());
     Serial.print("\t");
-    Serial.print(alvik.kinematics->getDeltaY());
+    Serial.print(alvik.kinematics->getAngularVelocity());
+    Serial.print("\t");
+    Serial.print(alvik.kinematics->getX());
+    Serial.print("\t");
+    Serial.print(alvik.kinematics->getY());
     Serial.print("\t");
     Serial.print(alvik.kinematics->getTheta());
     Serial.print("\n");
@@ -45,16 +50,16 @@ void loop() {
     ttask=millis();
     switch (task){
       case 0:
-        alvik.drive(50,0);
+        alvik.rotate(90);
         break;
       case 1:
-        alvik.drive(0,0);
+        alvik.drive(40,0);
         break;
       case 2:
-        alvik.drive(0,-90);
+        alvik.rotate(-90);
         break;
       case 3:
-        alvik.drive(0,0);
+        alvik.drive(-40,0);
         break;
     }
     task++;

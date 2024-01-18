@@ -197,7 +197,7 @@ class Arduino_AlvikCarrier{
         // Kinematics
         void drive(const float linear, const float angular);                            // set mm/s and deg/s of the robot
 
-        void rotate(const float angle);
+        void rotate(const float angle);                                                 // set degrees
 
         
 

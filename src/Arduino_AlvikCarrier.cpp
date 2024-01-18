@@ -610,22 +610,23 @@ void Arduino_AlvikCarrier::drive(const float linear, const float angular){
 
 void Arduino_AlvikCarrier::rotate(const float angle){
     float initial_angle=kinematics->getTheta();
-    float error=angle-initial_angle;
+    float final_angle=angle+initial_angle;
+    float error=angle;
     unsigned long t=millis();
     while(abs(error)>2){
         if (millis()-t>20){
             t=millis();
             updateMotors();
-            kinematics->updatePose(motor_control_left->getAngle(),motor_control_right->getAngle());
-            error=angle-kinematics->getTheta();
+            kinematics->inverse(motor_control_left->getRPM(),motor_control_right->getRPM());
+            kinematics->updatePose();
+            error=final_angle-kinematics->getTheta();
             Serial.println(error);
         }
         if (error>0){
-            drive(0,40);
+            drive(0,60);
         }else{
-            drive(0,-40);
+            drive(0,-60);
         }
-
     }
     drive(0,0);
     updateMotors();
