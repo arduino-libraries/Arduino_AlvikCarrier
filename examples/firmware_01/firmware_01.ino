@@ -23,6 +23,8 @@ SensorTofMatrix tof(alvik.wire, EXT_GPIO3, EXT_GPIO2);
 ucPack packeter(200);
 
 uint8_t code;
+uint8_t label;
+uint8_t control_type;
 uint8_t msg_size;
 
 unsigned long tmotor=0;
@@ -31,7 +33,7 @@ unsigned long tsensor=0;
 unsigned long timu=0;
 
 
-float left, right;
+float left, right, value;
 uint8_t leds;
 
 uint8_t sensor_id = 0;
@@ -74,6 +76,17 @@ void loop(){
       case 'J':
         packeter.unpacketC2F(code,left,right);
         alvik.setRpm(left, right);
+        break;
+      case 'W':
+        packeter.unpacketC2B1F(code,label,control_type,value);
+        if ((label == 'L') && (control_type == 'V')) {
+          alvik.motor_control_left->setRPM(value);
+        }
+        else if ((label == 'R') && (control_type == 'V'))
+        {
+          alvik.motor_control_right->setRPM(value);
+        }
+        
         break;
       /*
       case 'S':
