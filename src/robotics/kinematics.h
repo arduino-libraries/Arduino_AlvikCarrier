@@ -98,7 +98,7 @@ class Kinematics{
             delta_travel=0.0;
             travel=0.0;
 
-            control_period=_control_period*0.001;                       // convert ms to s
+            control_period = _control_period;
         }
 
         void forward(const float linear, const float angular){

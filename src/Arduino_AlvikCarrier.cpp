@@ -637,7 +637,7 @@ void Arduino_AlvikCarrier::rotate(const float angle){
 
 
 void Arduino_AlvikCarrier::move(const float distance){
-    float initial_travel=1000.0*kinematics->getTravel();
+    float initial_travel=kinematics->getTravel();
     float final_travel=abs(distance)+initial_travel;
     float error=abs(distance);
     unsigned long t=millis();
@@ -648,7 +648,7 @@ void Arduino_AlvikCarrier::move(const float distance){
             updateMotors();
             kinematics->inverse(motor_control_left->getRPM(),motor_control_right->getRPM());
             kinematics->updatePose();
-            error=final_travel-1000.0*kinematics->getTravel();
+            error=final_travel-kinematics->getTravel();
             Serial.println(kinematics->getTravel());
         }
         if (distance>0){
