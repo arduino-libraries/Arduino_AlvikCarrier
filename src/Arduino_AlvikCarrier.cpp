@@ -66,6 +66,7 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
 
     // kinematics
     kinematics = new Kinematics(WHEEL_TRACK_MM,WHEEL_DIAMETER_MM);
+    kinematics_movement=0;
 
 }
 
@@ -603,6 +604,13 @@ void Arduino_AlvikCarrier::errorLed(const int error_code){
 /*                                             Kinematics                                             */
 /******************************************************************************************************/
 
+
+
+
+
+
+
+
 void Arduino_AlvikCarrier::drive(const float linear, const float angular){
     kinematics->forward(linear, angular);
     setRpm(kinematics->getLeftVelocity(),kinematics->getRightVelocity());
@@ -620,7 +628,6 @@ void Arduino_AlvikCarrier::rotate(const float angle){
             kinematics->inverse(motor_control_left->getRPM(),motor_control_right->getRPM());
             kinematics->updatePose();
             error=final_angle-kinematics->getTheta();
-            Serial.println(error);
         }
         if (angle>0){
             drive(0,40);
@@ -649,7 +656,6 @@ void Arduino_AlvikCarrier::move(const float distance){
             kinematics->inverse(motor_control_left->getRPM(),motor_control_right->getRPM());
             kinematics->updatePose();
             error=final_travel-kinematics->getTravel();
-            Serial.println(kinematics->getTravel());
         }
         if (distance>0){
             drive(40,0);
@@ -663,3 +669,13 @@ void Arduino_AlvikCarrier::move(const float distance){
     motor_control_right->brake();
 }
 
+
+
+
+void Arduino_AlvikCarrier::updateKinematics(){
+    kinematics->inverse(motor_control_left->getRPM(),motor_control_right->getRPM());
+    kinematics->updatePose();
+    if (kinematics_movement!=0){
+        // do controls
+    }
+}
