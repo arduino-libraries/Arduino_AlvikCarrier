@@ -13,6 +13,7 @@
 #define __KINEMATICS_H__
 
 #include "Arduino.h"
+#include "../definitions/robot_definitions.h"
 
 class Kinematics{
     private:
@@ -34,6 +35,8 @@ class Kinematics{
         float delta_travel;
         float delta_x, delta_y;
         float travel;
+
+        float control_period;
 
 
         float mm_to_m(const float mm){
@@ -70,7 +73,7 @@ class Kinematics{
 
 
     public:
-        Kinematics(const float _wheel_track, const float _wheel_diameter){
+        Kinematics(const float _wheel_track, const float _wheel_diameter, const float _control_period=MOTOR_CONTROL_PERIOD){
             w=0.0;
             left_velocity=0.0;
             right_velocity=0.0;
@@ -94,6 +97,8 @@ class Kinematics{
             delta_right=0.0;
             delta_travel=0.0;
             travel=0.0;
+
+            control_period=_control_period*0.001;                       // convert ms to s
         }
 
         void forward(const float linear, const float angular){
@@ -148,12 +153,14 @@ class Kinematics{
         */
 
         void updatePose(){
-            delta_theta=angular_velocity*0.02;
-            delta_x=linear_velocity*cos(theta)*0.02;
-            delta_y=linear_velocity*sin(theta)*0.02;
+            delta_theta=angular_velocity*control_period;
+            delta_x=linear_velocity*cos(theta)*control_period;
+            delta_y=linear_velocity*sin(theta)*control_period;
+            delta_travel=sqrt(delta_x*delta_x+delta_y*delta_y);
             x+=delta_x;
             y+=delta_y;
             theta+=delta_theta;
+            travel+=delta_travel;
         }
 
         void resetPose(const float initial_x=0.0, const float initial_y=0.0, const float initial_theta=0.0){
@@ -183,7 +190,7 @@ class Kinematics{
         }
 
         float getTravel(){
-            return travel;
+            return m_to_mm(travel);
         }
 
         float getDeltaX(){
