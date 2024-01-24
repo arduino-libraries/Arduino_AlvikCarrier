@@ -323,6 +323,53 @@ void Arduino_AlvikCarrier::setKPidLeft(const float kp, const float ki, const flo
     motor_control_left->setKD(kd);
 }
 
+void Arduino_AlvikCarrier::setPositionLeft(const float degrees){
+    motor_control_left->setPosition(degrees);
+}
+
+float Arduino_AlvikCarrier::getPositionLeft(){
+    return motor_control_left->getPosition();
+}
+
+void Arduino_AlvikCarrier::setPositionRight(const float degrees){
+    motor_control_right->setPosition(degrees);
+}  
+
+float Arduino_AlvikCarrier::getPositionRight(){
+    return motor_control_right->getPosition();
+}
+
+void Arduino_AlvikCarrier::setPosition(const float left_deg, const float right_deg){
+    setPositionLeft(left_deg);
+    setPositionRight(right_deg);
+}
+
+void Arduino_AlvikCarrier::getPosition(float & left_deg, float & right_deg){
+    left_deg = getPositionLeft();
+    right_deg = getPositionRight();
+}
+
+void Arduino_AlvikCarrier::resetPositionLeft(const float initial_position){
+    motor_control_left->resetPosition(initial_position);
+}
+
+void Arduino_AlvikCarrier::resetPositionRight(const float initial_position){
+    motor_control_right->resetPosition(initial_position);
+}
+
+void Arduino_AlvikCarrier::disablePositionControlLeft(){
+    motor_control_left->disablePositionControl();
+}
+
+void Arduino_AlvikCarrier::disablePositionControlRight(){
+    motor_control_right->disablePositionControl();
+}
+
+void Arduino_AlvikCarrier::disablePositionControl(){
+    disablePositionControlLeft();
+    disablePositionControlRight();
+} 
+
 
 
 /******************************************************************************************************/
