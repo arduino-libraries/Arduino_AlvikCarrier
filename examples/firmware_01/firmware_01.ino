@@ -9,6 +9,8 @@
     
 */
 
+// WIP -> preliminary firmware
+
 
 #include "Arduino_AlvikCarrier.h"
 #include "sensor_line.h"
@@ -35,6 +37,7 @@ unsigned long timu=0;
 
 
 float left, right, value;
+float linear, angular;
 uint8_t leds;
 
 uint8_t sensor_id = 0;
@@ -77,20 +80,48 @@ void loop(){
     switch (code){
       case 'J':
         packeter.unpacketC2F(code,left,right);
+        alvik.disablePositionControl();
         alvik.setRpm(left, right);
         break;
-      case 'W':
-        packeter.unpacketC2B1F(code,label,control_type,value);
-        if ((label == 'L') && (control_type == 'V')) {
-          alvik.motor_control_left->setRPM(value);
-        }
-        else if ((label == 'R') && (control_type == 'V'))
-        {
-          alvik.motor_control_right->setRPM(value);
-        }
-        
+
+      case 'V':
+        packeter.unpacketC2F(code,linear,angular);
+        alvik.disablePositionControl();
+        alvik.drive(linear,angular);
         break;
 
+      case 'W':
+        packeter.unpacketC2B1F(code,label,control_type,value);
+        if (label=='L'){
+          switch (control_type){
+            case 'V':
+              alvik.disablePositionControlLeft();
+              alvik.setRpmLeft(value);
+              break;
+            case 'P':
+              alvik.setPositionLeft(value);
+              break;
+            case 'Z':
+              alvik.resetPositionLeft(value);
+              break;
+          }
+        }
+        if (label=='R'){
+          switch (control_type){
+            case 'V':
+              alvik.disablePositionControlRight();
+              alvik.setRpmRight(value);
+              break;
+            case 'P':
+              alvik.setPositionRight(value);
+              break;
+            case 'Z':
+              alvik.resetPositionRight(value);
+              break;
+          }
+        }
+        break;
+      
       case 'S':
         packeter.unpacketC2B(code,servo_A,servo_B);
         alvik.setServoA(servo_A);
@@ -154,7 +185,8 @@ void loop(){
     alvik.updateMotors();
     msg_size = packeter.packetC2F('j', alvik.getRpmLeft(),alvik.getRpmRight());
     alvik.serial->write(packeter.msg,msg_size);
-   
+    msg_size = packeter.packetC2F('w', alvik.getPositionLeft(),alvik.getPositionRight());
+    alvik.serial->write(packeter.msg,msg_size);
   }
 
   if (millis()-timu>10){
