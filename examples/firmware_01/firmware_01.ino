@@ -27,6 +27,7 @@ uint8_t label;
 uint8_t control_type;
 uint8_t msg_size;
 
+
 unsigned long tmotor=0;
 unsigned long tsend=0;
 unsigned long tsensor=0;
@@ -42,6 +43,7 @@ uint8_t sensor_id = 0;
 uint8_t pid;
 float kp, ki, kd;
 
+uint8_t servo_A, servo_B;
 
 
 void setup(){
@@ -88,11 +90,13 @@ void loop(){
         }
         
         break;
-      /*
+
       case 'S':
-        alvik.setRpm(0,0);
+        packeter.unpacketC2B(code,servo_A,servo_B);
+        alvik.setServoA(servo_A);
+        alvik.setServoB(servo_B);
         break;
-      */
+      
       case 'L':
         packeter.unpacketC1B(code,leds);
         alvik.setAllLeds(leds);
