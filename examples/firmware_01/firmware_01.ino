@@ -23,7 +23,10 @@ SensorTofMatrix tof(alvik.wire, EXT_GPIO3, EXT_GPIO2);
 ucPack packeter(200);
 
 uint8_t code;
+uint8_t label;
+uint8_t control_type;
 uint8_t msg_size;
+
 
 unsigned long tmotor=0;
 unsigned long tsend=0;
@@ -31,7 +34,7 @@ unsigned long tsensor=0;
 unsigned long timu=0;
 
 
-float left, right;
+float left, right, value;
 uint8_t leds;
 
 uint8_t sensor_id = 0;
@@ -40,6 +43,7 @@ uint8_t sensor_id = 0;
 uint8_t pid;
 float kp, ki, kd;
 
+uint8_t servo_A, servo_B;
 
 
 void setup(){
@@ -75,11 +79,24 @@ void loop(){
         packeter.unpacketC2F(code,left,right);
         alvik.setRpm(left, right);
         break;
-      /*
-      case 'S':
-        alvik.setRpm(0,0);
+      case 'W':
+        packeter.unpacketC2B1F(code,label,control_type,value);
+        if ((label == 'L') && (control_type == 'V')) {
+          alvik.motor_control_left->setRPM(value);
+        }
+        else if ((label == 'R') && (control_type == 'V'))
+        {
+          alvik.motor_control_right->setRPM(value);
+        }
+        
         break;
-      */
+      
+      case 'S':
+        packeter.unpacketC2B(code,servo_A,servo_B);
+        alvik.setServoA(servo_A);
+        alvik.setServoB(servo_B);
+        break;
+      
       case 'L':
         packeter.unpacketC1B(code,leds);
         alvik.setAllLeds(leds);
@@ -135,7 +152,6 @@ void loop(){
   if (millis()-tmotor>20){
     tmotor=millis();
     alvik.updateMotors();
-    alvik.updateImu();
     msg_size = packeter.packetC2F('j', alvik.getRpmLeft(),alvik.getRpmRight());
     alvik.serial->write(packeter.msg,msg_size);
    
