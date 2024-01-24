@@ -19,29 +19,38 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     wire = new TwoWire(I2C_1_SDA, I2C_1_SCL);
 
     // I2C external bus
-    ext_wire = new TwoWire(I2C_2_SDA,I2C_2_SCL);
+    ext_wire = new TwoWire(I2C_2_SDA, I2C_2_SCL);
 
     // uart to esp32
-    serial = new HardwareSerial(UART_RX,UART_TX);
+    serial = new HardwareSerial(UART_RX, UART_TX);
 
     // RGB leds
-    led1 = new RGBled(LED_1_RED,LED_1_GREEN,LED_1_BLUE);
-    led2 = new RGBled(LED_2_RED,LED_2_GREEN,LED_2_BLUE);
+    led1 = new RGBled(LED_1_RED, LED_1_GREEN, LED_1_BLUE);
+    led2 = new RGBled(LED_2_RED, LED_2_GREEN, LED_2_BLUE);
 
     // motors
-    motor_left = new DCmotor(MOTOR_LEFT_A,MOTOR_LEFT_A_CH, MOTOR_LEFT_B, MOTOR_LEFT_B_CH,MOTOR_LEFT_FLIP);
-    motor_right = new DCmotor(MOTOR_RIGHT_A,MOTOR_RIGHT_A_CH,MOTOR_RIGHT_B,MOTOR_RIGHT_B_CH,MOTOR_RIGHT_FLIP);
+    motor_left = new DCmotor(MOTOR_LEFT_A, MOTOR_LEFT_A_CH, MOTOR_LEFT_B, MOTOR_LEFT_B_CH, MOTOR_LEFT_FLIP);
+    motor_right = new DCmotor(MOTOR_RIGHT_A, MOTOR_RIGHT_A_CH, MOTOR_RIGHT_B, MOTOR_RIGHT_B_CH, MOTOR_RIGHT_FLIP);
 
     // encoders
-    encoder_left = new Encoder(TIM3,ENC_LEFT_FLIP);
-    encoder_right = new Encoder(TIM5,ENC_RIGHT_FLIP);
+    encoder_left = new Encoder(TIM3, ENC_LEFT_FLIP);
+    encoder_right = new Encoder(TIM5, ENC_RIGHT_FLIP);
 
     // motor control
-    motor_control_left = new MotorControl(motor_left,encoder_left,MOTOR_KP_DEFAULT,MOTOR_KI_DEFAULT,MOTOR_KD_DEFAULT,MOTOR_CONTROL_PERIOD);
-    motor_control_right = new MotorControl(motor_right,encoder_right,MOTOR_KP_DEFAULT,MOTOR_KI_DEFAULT,MOTOR_KD_DEFAULT,MOTOR_CONTROL_PERIOD);
+    motor_control_left = new MotorControl(motor_left, encoder_left,
+                                          MOTOR_KP_DEFAULT, MOTOR_KI_DEFAULT, MOTOR_KD_DEFAULT,
+                                          MOTOR_CONTROL_PERIOD, CONTROL_MODE_LINEAR, MOTOR_CONTROL_STEP,
+                                          POSITION_KP_DEFAULT, POSITION_KI_DEFAULT, POSITION_KD_DEFAULT,
+                                          POSITION_CONTROL_PERIOD, POSITION_MAX_SPEED);
+
+    motor_control_right = new MotorControl(motor_right, encoder_right, 
+                                          MOTOR_KP_DEFAULT, MOTOR_KI_DEFAULT, MOTOR_KD_DEFAULT,
+                                          MOTOR_CONTROL_PERIOD, CONTROL_MODE_LINEAR, MOTOR_CONTROL_STEP,
+                                          POSITION_KP_DEFAULT, POSITION_KI_DEFAULT, POSITION_KD_DEFAULT,
+                                          POSITION_CONTROL_PERIOD, POSITION_MAX_SPEED);
 
     // color sensor
-    apds9960 = new APDS9960(*wire,APDS_INT);
+    apds9960 = new APDS9960(*wire, APDS_INT);
 
     // servo
     servo_A = new Servo();
@@ -57,7 +66,7 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     imu = new LSM6DSOSensor(wire, LSM6DSO_I2C_ADD_L);
     ipKnobs = &iKnobs;
     imu_delta_time = MOTION_FX_ENGINE_DELTATIME;
-    sample_to_discard=0;
+    sample_to_discard = 0;
 
     // version
     version_high = VERSION_BYTE_HIGH;
@@ -65,8 +74,8 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     version_low = VERSION_BYTE_LOW;
 
     // kinematics
-    kinematics = new Kinematics(WHEEL_TRACK_MM,WHEEL_DIAMETER_MM);
-    kinematics_movement=0;
+    kinematics = new Kinematics(WHEEL_TRACK_MM, WHEEL_DIAMETER_MM);
+    kinematics_movement = 0;
 
 }
 
@@ -125,9 +134,9 @@ int Arduino_AlvikCarrier::begin(){
 }
 
 void Arduino_AlvikCarrier::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte){
-    high_byte=version_high;
-    mid_byte=version_mid;
-    low_byte=version_low;
+    high_byte = version_high;
+    mid_byte = version_mid;
+    low_byte = version_low;
 }
 
 
@@ -136,7 +145,7 @@ void Arduino_AlvikCarrier::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uin
 /******************************************************************************************************/
 
 int Arduino_AlvikCarrier::beginAPDS(){
-    pinMode(APDS_LED,OUTPUT);
+    pinMode(APDS_LED, OUTPUT);
     enableIlluminator();
     if (!apds9960->begin()){
         return ERROR_APDS;
@@ -150,13 +159,13 @@ void Arduino_AlvikCarrier::updateAPDS(){
     }
     //digitalWrite(APDS_LED,HIGH);
     if (apds9960->colorAvailable()){
-        apds9960->readColor(bottom_red,bottom_green,bottom_blue,bottom_clear);
+        apds9960->readColor(bottom_red, bottom_green, bottom_blue, bottom_clear);
     }
     //digitalWrite(APDS_LED,LOW);
 }
 
 void Arduino_AlvikCarrier::setIlluminator(uint8_t value){
-    digitalWrite(APDS_LED,value);
+    digitalWrite(APDS_LED, value);
 }
 
 void Arduino_AlvikCarrier::enableIlluminator(){
@@ -208,11 +217,11 @@ void Arduino_AlvikCarrier::setServoB(int position){
 /******************************************************************************************************/
 
 int Arduino_AlvikCarrier::beginI2Cselect(){
-    pinMode(SELECT_I2C_BUS,OUTPUT);
+    pinMode(SELECT_I2C_BUS, OUTPUT);
 }
 
 void Arduino_AlvikCarrier::setExternalI2C(uint8_t state){
-    digitalWrite(SELECT_I2C_BUS,state);
+    digitalWrite(SELECT_I2C_BUS, state);
 }
 
 void Arduino_AlvikCarrier::connectExternalI2C(){
@@ -348,14 +357,14 @@ void Arduino_AlvikCarrier::updateTouch(){
 }
 
 bool Arduino_AlvikCarrier::getAnyTouchPressed(){
-    if (touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
+    if (touch_sensor->touched(touch_status, TOUCH_PAD_GUARD)){
         return true;
     }
     return false;
 }
 
 bool Arduino_AlvikCarrier::getTouchKey(const uint8_t key){
-    if (touch_sensor->touched(touch_status,key)&&touch_sensor->touched(touch_status,TOUCH_PAD_GUARD)){
+    if (touch_sensor->touched(touch_status, key)&&touch_sensor->touched(touch_status, TOUCH_PAD_GUARD)){
         return true;
     }
     return false;
@@ -411,7 +420,7 @@ bool Arduino_AlvikCarrier::getTouchDelete(){
 /******************************************************************************************************/
 
 int Arduino_AlvikCarrier::beginLeds(){
-    pinMode(LED_BUILTIN,OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
     // turn off leds
     led1->clear();
     led2->clear();
@@ -419,7 +428,7 @@ int Arduino_AlvikCarrier::beginLeds(){
 }
 
 void Arduino_AlvikCarrier::setLedBuiltin(const uint8_t value){
-    digitalWrite(LED_BUILTIN,value);
+    digitalWrite(LED_BUILTIN, value);
 }
 
 void Arduino_AlvikCarrier::setLedLeft(const uint32_t color){
@@ -427,7 +436,7 @@ void Arduino_AlvikCarrier::setLedLeft(const uint32_t color){
 }
 
 void Arduino_AlvikCarrier::setLedLeft(const uint32_t red, const uint32_t green, const uint32_t blue){
-    led1->set(red,green,blue); 
+    led1->set(red, green, blue); 
 }
 
 void Arduino_AlvikCarrier::setLedLeftRed(const uint32_t red){
@@ -447,7 +456,7 @@ void Arduino_AlvikCarrier::setLedRight(const uint32_t color){
 }
 
 void Arduino_AlvikCarrier::setLedRight(const uint32_t red, const uint32_t green, const uint32_t blue){
-    led2->set(red,green,blue);
+    led2->set(red, green, blue);
 }
 
 void Arduino_AlvikCarrier::setLedRightRed(const uint32_t red){
@@ -468,8 +477,8 @@ void Arduino_AlvikCarrier::setLeds(const uint32_t color){
 }
 
 void Arduino_AlvikCarrier::setLeds(const uint32_t red, const uint32_t green, const uint32_t blue){
-    setLedLeft(red,green,blue);
-    setLedRight(red,green,blue);    
+    setLedLeft(red, green, blue);
+    setLedRight(red, green, blue);    
 }
 
 void Arduino_AlvikCarrier::setAllLeds(const uint8_t value){
@@ -613,26 +622,26 @@ void Arduino_AlvikCarrier::errorLed(const int error_code){
 
 void Arduino_AlvikCarrier::drive(const float linear, const float angular){
     kinematics->forward(linear, angular);
-    setRpm(kinematics->getLeftVelocity(),kinematics->getRightVelocity());
+    setRpm(kinematics->getLeftVelocity(), kinematics->getRightVelocity());
 }
 
 void Arduino_AlvikCarrier::rotate(const float angle){
-    float initial_angle=kinematics->getTheta();
-    float final_angle=angle+initial_angle;
-    float error=angle;
-    unsigned long t=millis();
+    float initial_angle = kinematics->getTheta();
+    float final_angle = angle+initial_angle;
+    float error = angle;
+    unsigned long t = millis();
     while(abs(error)>2){
         if (millis()-t>20){
-            t=millis();
+            t = millis();
             updateMotors();
             kinematics->inverse(motor_control_left->getRPM(),motor_control_right->getRPM());
             kinematics->updatePose();
-            error=final_angle-kinematics->getTheta();
+            error = final_angle-kinematics->getTheta();
         }
         if (angle>0){
-            drive(0,40);
+            drive(0, 40);
         }else{
-            drive(0,-40);
+            drive(0, -40);
         }
     }
     drive(0,0);
@@ -644,26 +653,26 @@ void Arduino_AlvikCarrier::rotate(const float angle){
 
 
 void Arduino_AlvikCarrier::move(const float distance){
-    float initial_travel=kinematics->getTravel();
-    float final_travel=abs(distance)+initial_travel;
-    float error=abs(distance);
-    unsigned long t=millis();
+    float initial_travel = kinematics->getTravel();
+    float final_travel = abs(distance)+initial_travel;
+    float error = abs(distance);
+    unsigned long t = millis();
 
     while(error>2){
         if (millis()-t>20){
-            t=millis();
+            t = millis();
             updateMotors();
-            kinematics->inverse(motor_control_left->getRPM(),motor_control_right->getRPM());
+            kinematics->inverse(motor_control_left->getRPM(), motor_control_right->getRPM());
             kinematics->updatePose();
-            error=final_travel-kinematics->getTravel();
+            error = final_travel-kinematics->getTravel();
         }
         if (distance>0){
-            drive(40,0);
+            drive(40, 0);
         }else{
-            drive(-40,0);
+            drive(-40, 0);
         }
     }
-    drive(0,0);
+    drive(0, 0);
     updateMotors();
     motor_control_left->brake();
     motor_control_right->brake();
@@ -673,7 +682,7 @@ void Arduino_AlvikCarrier::move(const float distance){
 
 
 void Arduino_AlvikCarrier::updateKinematics(){
-    kinematics->inverse(motor_control_left->getRPM(),motor_control_right->getRPM());
+    kinematics->inverse(motor_control_left->getRPM(), motor_control_right->getRPM());
     kinematics->updatePose();
     if (kinematics_movement!=0){
         // do controls

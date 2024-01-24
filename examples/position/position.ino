@@ -15,60 +15,73 @@
 
 Arduino_AlvikCarrier alvik;
 
-PidController pid(1.2,0,1.0,20,50);
-
-
 unsigned long tmotor=0;
 unsigned long ttask=0;
 uint8_t task=0;
 float reference;
 float position;
-float error;
 
 void setup() {
   Serial.begin(115200);
   alvik.begin();
-  ttask=millis();
-  tmotor=millis();
-  task=0;
-  reference=0;
-  position=0;
-  error=0;
+  ttask = millis();
+  tmotor = millis();
+  task = 0;
+  reference = 0;
+  position = 0;
 }
 
 void loop() {
   if (millis()-tmotor>20){
-    tmotor=millis();
+    tmotor = millis();
     alvik.updateMotors();
-    position=alvik.motor_control_left->getTravel()*360.0;
-    pid.update(position);
-    alvik.motor_control_left->setRPM(pid.getControlOutput());
+    position = alvik.motor_control_left->getPosition();
     Serial.print(reference);
     Serial.print("\t");
-    Serial.println(position);
+    Serial.print(position);
+    Serial.print("\n");
   }
 
   if (millis()-ttask>5000){
-    ttask=millis();
+    ttask = millis();
     switch (task){
       case 0:
-        reference=90;
+        reference = 90;
         break;
       case 1:
-        reference=0;
+        reference = 0;
         break;
       case 2:
-        reference=-90;
+        reference = -90;
         break;
       case 3:
-        reference=0;
+        reference = 0;
+        break;
+      case 4:
+        reference = 360;
+        break;
+      case 5:
+        reference = 45;
+        break;
+      case 6:
+        reference = -270;
+        break;
+      case 7:
+        reference = 0;
+        break;
+      case 8:
+        reference = 5;
+        break;
+      case 9:
+        reference = 10;
         break;
     }
-    pid.setReference(reference);
+    alvik.motor_control_left->setPosition(reference);
     task++;
-    if (task>3){
+    if (task>9){
       task=0;
     }
   }
   
 }
+

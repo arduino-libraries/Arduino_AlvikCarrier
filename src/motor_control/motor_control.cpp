@@ -13,7 +13,10 @@
 
 MotorControl::MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd,
                                        const float _controller_period,
-                                       const uint8_t _control_mode, const float _step_size){
+                                       const uint8_t _control_mode, const float _step_size,
+                                       const float _kp_pos, const float _ki_pos, const float _kd_pos,
+                                       const float _pos_controller_period,
+                                       const float _pos_max_velocity){
     motor = _motor;
     encoder = _encoder;
     
@@ -26,28 +29,39 @@ MotorControl::MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp
 
     controller_period = _controller_period;
 
-    travel=0.0;
-    angle=0.0;
+    kp_pos = _kp_pos;
+    ki_pos = _ki_pos;
+    kd_pos = _kd_pos;
+    pos_controller_period = _pos_controller_period;
+    pos_max_velocity = _pos_max_velocity;
+    position_control_enabled = false;
+
+
+
+    position = 0.0;
+    angle = 0.0;
     reference = 0.0;
 
-    trip=0.0;
-    iterations=0.0;
-    start_value=0.0;
-    end_value=0.0;
-    step_size=_step_size;
-    step=0.0;
-    step_index=0;
-    interpolation=0.0;
+    trip = 0.0;
+    iterations = 0.0;
+    start_value = 0.0;
+    end_value = 0.0;
+    step_size = _step_size;
+    step = 0.0;
+    step_index = 0;
+    interpolation = 0.0;
 
     measure = 0.0;
     last_measure = 0.0;
 
-    id_memory=0;
-    mean=0.0;
+    id_memory = 0;
+    mean = 0.0;
 
-    conversion_factor_travel = (1.0/MOTOR_RATIO);
+    conversion_factor_angle = (1.0/MOTOR_RATIO)*360.0;
     conversion_factor = 60.0*(1.0/MOTOR_RATIO)/(controller_period);
+
     vel_pid = new PidController(kp,ki,kd,controller_period,CONTROL_LIMIT);
+    pos_pid = new PidController(kp_pos, ki_pos, kd_pos, pos_controller_period, pos_max_velocity);
 }
 
 void MotorControl::begin(){
@@ -55,6 +69,7 @@ void MotorControl::begin(){
     encoder->begin();
     encoder->reset();
     vel_pid->reset();
+    pos_pid->reset();
     clearMemory();
 }
 
@@ -118,38 +133,19 @@ void MotorControl::update(){
 
     measure = encoder->getCount();
     encoder->reset();
-    angle = measure*conversion_factor_travel;
-    travel += angle;
+    angle = measure*conversion_factor_angle;
+    position+=angle;
     measure = measure*conversion_factor;
-
-    /* experimental
-    if (abs(measure)-abs(reference)>5){
-        clearMemory(reference);  
-    }
-    end */
-
     addMemory(measure);
-
-    /*
-    if (abs(reference)<1.0){
-        vel_pid->reset();
-        motor->setSpeed(0);
-        clearMemory();
-    }
-    */
-
     measure = meanMemory();
-
-    //vel_pid->update(measure);
-    //motor->setSpeed(vel_pid->getControlOutput());
 
     if (control_mode==CONTROL_MODE_LINEAR){
         if (step_index<iterations){
             step_index++;
             trip+=step;
-            interpolation=trip*(end_value-start_value)+start_value;
+            interpolation = trip*(end_value-start_value)+start_value;
             if (abs(interpolation)>abs(reference)){
-                interpolation=reference;
+                interpolation = reference;
             }
         }
         vel_pid->setReference(interpolation);
@@ -160,6 +156,11 @@ void MotorControl::update(){
 
     vel_pid->update(measure);
     motor->setSpeed(vel_pid->getControlOutput());
+
+    if (position_control_enabled){
+        pos_pid->update(position);
+        setRPM(round(pos_pid->getControlOutput()/10.0)*10);
+    }
 }
 
 void MotorControl::setKP(const float _kp){
@@ -179,14 +180,14 @@ float MotorControl::getError(){
 }
 
 void MotorControl::brake(){
-    reference=0.0;
-    trip=0.0;
-    iterations=0.0;
-    start_value=0.0;
-    end_value=0.0;
-    step=0.0;
-    step_index=0;
-    interpolation=0.0;
+    reference = 0.0;
+    trip = 0.0;
+    iterations = 0.0;
+    start_value = 0.0;
+    end_value = 0.0;
+    step = 0.0;
+    step_index = 0;
+    interpolation = 0.0;
     clearMemory();
 
     motor->setSpeed(0);
@@ -194,14 +195,29 @@ void MotorControl::brake(){
     vel_pid->reset();
 }
 
-void MotorControl::resetTravel(){
-    travel=0;
+
+void MotorControl::enablePositionControl(){
+    position_control_enabled = true;
 }
 
-float MotorControl::getTravel(){
-    return travel;
+void MotorControl::disablePositionControl(){
+    position_control_enabled = false;
 }
 
-float MotorControl::getAngle(){
-    return angle;
+bool MotorControl::isPositionControlEnabled(){
+    return position_control_enabled;
 }
+
+void MotorControl::resetPosition(const float p0){
+    position=p0;
+}
+
+float MotorControl::getPosition(){
+    return position;
+}
+
+void MotorControl::setPosition(const float degree){
+    pos_pid->setReference(degree);
+    enablePositionControl();
+}
+
