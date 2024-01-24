@@ -9,7 +9,6 @@
     
 */
 
-// WIP
 
 #include "Arduino_AlvikCarrier.h"
 
@@ -18,54 +17,67 @@ Arduino_AlvikCarrier alvik;
 unsigned long tmotor=0;
 unsigned long ttask=0;
 uint8_t task=0;
+float reference;
 
 void setup() {
   Serial.begin(115200);
   alvik.begin();
-  ttask=millis();
-  tmotor=millis();
-  task=0;
+  task = 0;
+  reference = 0;
+  ttask = millis();
+  tmotor = millis();
 }
 
 void loop() {
   if (millis()-tmotor>20){
-    tmotor=millis();
+    tmotor = millis();
     alvik.updateMotors();
-    alvik.kinematics->inverse(alvik.motor_control_left->getRPM(),alvik.motor_control_right->getRPM());
-    alvik.kinematics->updatePose();
+    Serial.print(reference);
     Serial.print("\t");
-    Serial.print(alvik.kinematics->getLinearVelocity());
-    Serial.print("\t");
-    Serial.print(alvik.kinematics->getAngularVelocity());
-    Serial.print("\t");
-    Serial.print(alvik.kinematics->getX());
-    Serial.print("\t");
-    Serial.print(alvik.kinematics->getY());
-    Serial.print("\t");
-    Serial.print(alvik.kinematics->getTheta());
+    Serial.print(alvik.getPositionLeft());
     Serial.print("\n");
   }
 
-  if (millis()-ttask>2000){
-    ttask=millis();
+  if (millis()-ttask>5000){
+    ttask = millis();
     switch (task){
       case 0:
-        alvik.rotate(90);
+        reference = 90;
         break;
       case 1:
-        alvik.drive(40,0);
+        reference = 0;
         break;
       case 2:
-        alvik.rotate(-90);
+        reference = -90;
         break;
       case 3:
-        alvik.drive(-40,0);
+        reference = 0;
+        break;
+      case 4:
+        reference = 360;
+        break;
+      case 5:
+        reference = 45;
+        break;
+      case 6:
+        reference = -270;
+        break;
+      case 7:
+        reference = 0;
+        break;
+      case 8:
+        reference = 5;
+        break;
+      case 9:
+        reference = 10;
         break;
     }
+    alvik.setPositionLeft(reference);
     task++;
-    if (task>3){
-      task=0;
+    if (task>9){
+      task = 0;
     }
   }
   
 }
+

@@ -69,6 +69,9 @@ class Arduino_AlvikCarrier{
         uint8_t version_low;
 
 
+        uint8_t kinematics_movement;
+
+
 
     public:        
         Kinematics * kinematics;
@@ -139,8 +142,20 @@ class Arduino_AlvikCarrier{
         float getRpmRight();                                                            // get RPM of right motor
         bool setRpm(const float left, const float right);                               // sets RPMs on left and right wheels
         void getRpm(float & left, float & right);                                       // get RPMs on left and right wheels
-        void setKPidRight(const float kp, const float ki, const float kd);              // set PID parameters for right wheel
         void setKPidLeft(const float kp, const float ki, const float kd);               // set PID parameters for left wheel
+        void setKPidRight(const float kp, const float ki, const float kd);              // set PID parameters for right wheel
+        void setPositionLeft(const float degrees);                                      // set position in degrees on left wheel
+        float getPositionLeft();                                                        // get left wheel position in degrees
+        void setPositionRight(const float degrees);                                     // set position in degrees on right wheel
+        float getPositionRight();                                                       // get right wheel position in degrees
+        void setPosition(const float left_deg, const float right_deg);                  // set positions on both wheels
+        void getPosition(float & left_deg, float & right_deg);                          // get both wheels position
+        void resetPositionLeft(const float initial_position=0.0);                       // reset/set value of position for left wheel
+        void resetPositionRight(const float initial_position=0.0);                      // reset/set value of position for right wheel
+        void disablePositionControlLeft();                                              // disable the position control on left wheel
+        void disablePositionControlRight();                                             // disable the position control on right wheel
+        void disablePositionControl();                                                  // disable the position control on both wheels
+
 
 
 
@@ -195,9 +210,11 @@ class Arduino_AlvikCarrier{
 
 
         // Kinematics
+        void updateKinematics();
         void drive(const float linear, const float angular);                            // set mm/s and deg/s of the robot
 
-        void rotate(const float angle);
+        void move(const float distance);                                                // move of distance millimeters
+        void rotate(const float angle);                                                 // rotate of angle degrees
 
         
 

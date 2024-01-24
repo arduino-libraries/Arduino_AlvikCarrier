@@ -90,7 +90,7 @@ void loop(){
         }
         
         break;
-      
+
       case 'S':
         packeter.unpacketC2B(code,servo_A,servo_B);
         alvik.setServoA(servo_A);
