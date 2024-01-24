@@ -33,10 +33,20 @@ class MotorControl{
         float kp;
         float ki;
         float kd;
+        float controller_period;
+
+        float kp_pos;
+        float ki_pos;
+        float kd_pos;
+        float pos_controller_period;
+        float pos_max_velocity;
+        bool position_control_enabled;
         
-        float travel;
+        float position;
         float angle;
         float reference;
+        float reference_position;
+
 
         float trip;
         float iterations;
@@ -47,41 +57,42 @@ class MotorControl{
         int step_index;
         float interpolation;
 
-        float controller_period;
         float conversion_factor;
-        float conversion_factor_travel;
+        float conversion_factor_angle;
         float measure;
         float last_measure;
-
 
         float mean;
         int i;
         int id_memory;
         float measure_memory[MEM_SIZE];
 
-
         DCmotor * motor;
         Encoder * encoder;
+
+
     public:
 
         PidController * vel_pid;
+        PidController * pos_pid;
 
-        MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp, const float _ki, const float _kd,
+        MotorControl(DCmotor * _motor, Encoder * _encoder,
+                                       const float _kp, const float _ki, const float _kd,
                                        const float _controller_period,
-                                       const uint8_t _control_mode = CONTROL_MODE_LINEAR, const float _step_size=5.0);
+                                       const uint8_t _control_mode = CONTROL_MODE_LINEAR, const float _step_size=5.0,
+                                       const float _kp_pos=0.0, const float _ki_pos=0.0, const float _kd_pos=0.0,
+                                       const float _pos_controller_period=0.0,
+                                       const float _pos_max_velocity=0.0
+                                    );
 
         void begin();
 
         float checkLimits(float value);
-
         void addMemory(float _val);
-
         float meanMemory();               
-
         void clearMemory(const float reset_value=0.0);
 
         float getRPM();
-
         bool setRPM(const float ref);
 
         void update();
@@ -90,16 +101,17 @@ class MotorControl{
         void setKI(const float _ki);
         void setKD(const float _kd);
 
-        float getError();
 
         void brake();
 
-        void resetTravel();
+        void enablePositionControl();
+        void disablePositionControl();
+        bool isPositionControlEnabled();
+        void setPosition(const float degree);                          // set the reference for position control
+        float getPosition();                                            // get the actual angle in degrees of motor
+        void  resetPosition(const float p0=0.0);                        // reset/set the position value
 
-        float getTravel();
-
-        float getAngle();
-
+        float getError();
         
 };
 
