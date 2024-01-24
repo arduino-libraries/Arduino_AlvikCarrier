@@ -9,7 +9,6 @@
     
 */
 
-// WIP
 
 #include "Arduino_AlvikCarrier.h"
 
@@ -19,26 +18,23 @@ unsigned long tmotor=0;
 unsigned long ttask=0;
 uint8_t task=0;
 float reference;
-float position;
 
 void setup() {
   Serial.begin(115200);
   alvik.begin();
-  ttask = millis();
-  tmotor = millis();
   task = 0;
   reference = 0;
-  position = 0;
+  ttask = millis();
+  tmotor = millis();
 }
 
 void loop() {
   if (millis()-tmotor>20){
     tmotor = millis();
     alvik.updateMotors();
-    position = alvik.motor_control_left->getPosition();
     Serial.print(reference);
     Serial.print("\t");
-    Serial.print(position);
+    Serial.print(alvik.getPositionLeft());
     Serial.print("\n");
   }
 
@@ -76,10 +72,10 @@ void loop() {
         reference = 10;
         break;
     }
-    alvik.motor_control_left->setPosition(reference);
+    alvik.setPositionLeft(reference);
     task++;
     if (task>9){
-      task=0;
+      task = 0;
     }
   }
   
