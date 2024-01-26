@@ -34,6 +34,13 @@ const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 #define POSITION_CONTROL_PERIOD 0.02
 #define POSITION_MAX_SPEED 30.0
 
+#define ROTATE_KP_DEFAULT 5.0
+#define ROTATE_KI_DEFAULT 0.0
+#define ROTATE_KD_DEFAULT 0.001
+#define ROTATE_CONTROL_PERIOD 0.02
+#define ROTATE_MAX_SPEED 45
+
+
 
 // Sensor fusioning parameters
 #define FROM_MG_TO_G  0.001f

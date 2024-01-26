@@ -76,6 +76,7 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     // kinematics
     kinematics = new Kinematics(WHEEL_TRACK_MM, WHEEL_DIAMETER_MM);
     kinematics_movement = 0;
+    rotate_pid = new PidController(ROTATE_KP_DEFAULT, ROTATE_KI_DEFAULT, ROTATE_KD_DEFAULT, ROTATE_CONTROL_PERIOD, ROTATE_MAX_SPEED);
 
 }
 
@@ -672,7 +673,8 @@ void Arduino_AlvikCarrier::drive(const float linear, const float angular){
     setRpm(kinematics->getLeftVelocity(), kinematics->getRightVelocity());
 }
 
-void Arduino_AlvikCarrier::rotate(const float angle){
+
+void Arduino_AlvikCarrier::lockingRotate(const float angle){
     float initial_angle = kinematics->getTheta();
     float final_angle = angle+initial_angle;
     float error = angle;
@@ -695,6 +697,13 @@ void Arduino_AlvikCarrier::rotate(const float angle){
     updateMotors();
     motor_control_left->brake();
     motor_control_right->brake();
+}
+
+
+void Arduino_AlvikCarrier::rotate(const float angle){
+    rotate_pid->reset();
+    rotate_pid->setReference(kinematics->getTheta()+angle);
+    kinematics_movement=1;
 }
 
 
@@ -732,6 +741,13 @@ void Arduino_AlvikCarrier::updateKinematics(){
     kinematics->inverse(motor_control_left->getRPM(), motor_control_right->getRPM());
     kinematics->updatePose();
     if (kinematics_movement!=0){
-        // do controls
+        if (kinematics_movement==1){
+            rotate_pid->update(kinematics->getTheta());
+            drive(0,round(rotate_pid->getControlOutput()/10.0)*10);
+        }
     }
+}
+
+void Arduino_AlvikCarrier::disableKinematicsMovement(){
+    kinematics_movement=0;
 }
