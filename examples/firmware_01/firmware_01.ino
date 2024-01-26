@@ -52,6 +52,8 @@ uint8_t servo_A, servo_B;
 void setup(){
   Serial.begin(115200);
   alvik.begin();
+  alvik.disableIlluminator();
+  alvik.setLeds(COLOR_ORANGE);
   alvik.setLedBuiltin(HIGH);
   line.begin();
   tof.begin();
@@ -62,6 +64,7 @@ void setup(){
   alvik.serial->write(packeter.msg,msg_size);
 
   alvik.setLedBuiltin(LOW);
+  alvik.setLeds(COLOR_BLACK);
 
 
   code=0;
