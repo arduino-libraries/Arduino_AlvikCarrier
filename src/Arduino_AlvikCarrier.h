@@ -72,6 +72,7 @@ class Arduino_AlvikCarrier{
         uint8_t kinematics_movement;
         PidController * rotate_pid;
         PidController * move_pid;
+        bool kinematics_achieved;
 
 
 
@@ -220,8 +221,10 @@ class Arduino_AlvikCarrier{
         
         
         void lockingRotate(const float angle);                                                 
+        void lockingMove(const float distance);                                                // move of distance millimeters
 
         void disableKinematicsMovement();
+        bool isTargetReached();
 
 
 };
