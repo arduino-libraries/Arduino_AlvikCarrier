@@ -75,10 +75,12 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
 
     // kinematics
     kinematics = new Kinematics(WHEEL_TRACK_MM, WHEEL_DIAMETER_MM);
-    kinematics_movement = 0;
+    kinematics_movement = MOVEMENT_DISABLED;
     kinematics_achieved = false;
+    previous_travel = 0.0;
+    move_direction = 0.0;
     rotate_pid = new PidController(ROTATE_KP_DEFAULT, ROTATE_KI_DEFAULT, ROTATE_KD_DEFAULT, ROTATE_CONTROL_PERIOD, ROTATE_MAX_SPEED);
-
+    move_pid = new PidController(MOVE_KP_DEFAULT, MOTOR_KI_DEFAULT, MOVE_KD_DEFAULT, MOVE_CONTROL_PERIOD, MOVE_MAX_SPEED);
 }
 
 int Arduino_AlvikCarrier::begin(){
@@ -148,7 +150,8 @@ void Arduino_AlvikCarrier::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uin
 
 int Arduino_AlvikCarrier::beginAPDS(){
     pinMode(APDS_LED, OUTPUT);
-    enableIlluminator();
+    //enableIlluminator();
+    disableIlluminator();
     if (!apds9960->begin()){
         return ERROR_APDS;
     }
@@ -704,7 +707,7 @@ void Arduino_AlvikCarrier::lockingRotate(const float angle){
 void Arduino_AlvikCarrier::rotate(const float angle){
     rotate_pid->reset();
     rotate_pid->setReference(kinematics->getTheta()+angle);
-    kinematics_movement=1;
+    kinematics_movement=MOVEMENT_ROTATE;
     kinematics_achieved=false;
 }
 
@@ -739,17 +742,34 @@ void Arduino_AlvikCarrier::lockingMove(const float distance){
 
 void Arduino_AlvikCarrier::move(const float distance){
     move_pid->reset();
-    //move_pid->setReference()
+    previous_travel=kinematics->getTravel();
+    if (distance<0){
+        move_direction=-1.0;
+    }
+    else{
+        move_direction=1.0;
+    }
+    move_pid->setReference(distance);
+    kinematics_movement=MOVEMENT_MOVE;
+    kinematics_achieved=false;
 }
 
 void Arduino_AlvikCarrier::updateKinematics(){
     kinematics->inverse(motor_control_left->getRPM(), motor_control_right->getRPM());
     kinematics->updatePose();
-    if (kinematics_movement!=0){
-        if (kinematics_movement==1){
+    if (kinematics_movement!=MOVEMENT_DISABLED){
+        if (kinematics_movement==MOVEMENT_ROTATE){
             rotate_pid->update(kinematics->getTheta());
-            drive(0,round(rotate_pid->getControlOutput()/10.0)*10);
+            drive(0, round(rotate_pid->getControlOutput()/10.0)*10);
             if (abs(rotate_pid->getError())<ROTATE_THREASHOLD){
+                kinematics_achieved=true;
+            }
+        }
+        if (kinematics_movement==MOVEMENT_MOVE){
+            move_pid->update((kinematics->getTravel()-previous_travel)*move_direction);
+            drive(round(move_pid->getControlOutput()/10.0)*10, 0);
+            
+            if (abs(move_pid->getError())<MOVE_THREADSHOLD){
                 kinematics_achieved=true;
             }
         }
@@ -757,7 +777,7 @@ void Arduino_AlvikCarrier::updateKinematics(){
 }
 
 void Arduino_AlvikCarrier::disableKinematicsMovement(){
-    kinematics_movement=0;
+    kinematics_movement=MOVEMENT_DISABLED;
 }
 
 bool Arduino_AlvikCarrier::isTargetReached(){

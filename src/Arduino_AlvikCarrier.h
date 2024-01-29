@@ -70,9 +70,12 @@ class Arduino_AlvikCarrier{
 
 
         uint8_t kinematics_movement;
+        bool kinematics_achieved;
+        float previous_travel;
+        float move_direction;
+
         PidController * rotate_pid;
         PidController * move_pid;
-        bool kinematics_achieved;
 
 
 

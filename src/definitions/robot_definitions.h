@@ -13,6 +13,10 @@
 #ifndef __ROBOT_DEFINITIONS_H__
 #define __ROBOT_DEFINITIONS_H__
 
+// Robot parameters
+#define WHEEL_TRACK_MM 89.0
+#define WHEEL_DIAMETER_MM 34.0
+
 // Motor Control and mechanical parameters
 #define CONTROL_LIMIT 4096              // PWM resolution
 
@@ -34,12 +38,27 @@ const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 #define POSITION_CONTROL_PERIOD 0.02
 #define POSITION_MAX_SPEED 30.0
 
+
+
+// Kinematics control
 #define ROTATE_KP_DEFAULT 5.0
 #define ROTATE_KI_DEFAULT 0.0
 #define ROTATE_KD_DEFAULT 0.001
 #define ROTATE_CONTROL_PERIOD 0.02
-#define ROTATE_MAX_SPEED 45
+#define ROTATE_MAX_SPEED 45.0
 #define ROTATE_THREASHOLD 3
+
+#define MOVE_KP_DEFAULT 5.0
+#define MOVE_KI_DEFAULT 0.0
+#define MOVE_KD_DEFAULT 0.001
+#define MOVE_CONTROL_PERIOD 0.02
+#define MOVE_MAX_SPEED 45.0
+#define MOVE_THREADSHOLD 3
+
+#define MOVEMENT_DISABLED 0
+#define MOVEMENT_ROTATE 1
+#define MOVEMENT_MOVE 2
+
 
 
 
@@ -56,15 +75,13 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define GBIAS_ACC_TH_SC                 (2.0f*0.000765f)
 #define GBIAS_GYRO_TH_SC                (2.0f*0.002f)
 #define MOTION_FX_DECIMATION                      1U
-//#define STATE_SIZE                      (size_t)(2432)
 
+
+// Library version
 #define VERSION_BYTE_HIGH 0
 #define VERSION_BYTE_MID 1
 #define VERSION_BYTE_LOW 2
 
 
-
-#define WHEEL_TRACK_MM 89
-#define WHEEL_DIAMETER_MM 34
 
 #endif
