@@ -681,6 +681,14 @@ void Arduino_AlvikCarrier::drive(const float linear, const float angular){
     setRpm(kinematics->getLeftVelocity(), kinematics->getRightVelocity());
 }
 
+float Arduino_AlvikCarrier::getLinearVelocity(){
+    return kinematics->getLinearVelocity();
+}
+
+float Arduino_AlvikCarrier::getAngularVelocity(){
+    return kinematics->getAngularVelocity();
+}
+
 
 void Arduino_AlvikCarrier::lockingRotate(const float angle){
     float initial_angle = kinematics->getTheta();

@@ -186,10 +186,16 @@ void loop(){
   if (millis()-tmotor>20){
     tmotor=millis();
     alvik.updateMotors();
+    alvik.updateKinematics();
+    // joint speed
     msg_size = packeter.packetC2F('j', alvik.getRpmLeft(),alvik.getRpmRight());
     alvik.serial->write(packeter.msg,msg_size);
+    // joint position
     msg_size = packeter.packetC2F('w', alvik.getPositionLeft(),alvik.getPositionRight());
-    alvik.serial->write(packeter.msg,msg_size);
+    alvik.serial->write(packeter.msg, msg_size);
+    // robot speed
+    msg_size = packeter.packetC2F('v', alvik.getLinearVelocity(), alvik.getAngularVelocity());
+    alvik.serial->write(packeter.msg, msg_size);
   }
 
   if (millis()-timu>10){
