@@ -80,7 +80,7 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     previous_travel = 0.0;
     move_direction = 0.0;
     rotate_pid = new PidController(ROTATE_KP_DEFAULT, ROTATE_KI_DEFAULT, ROTATE_KD_DEFAULT, ROTATE_CONTROL_PERIOD, ROTATE_MAX_SPEED);
-    move_pid = new PidController(MOVE_KP_DEFAULT, MOTOR_KI_DEFAULT, MOVE_KD_DEFAULT, MOVE_CONTROL_PERIOD, MOVE_MAX_SPEED);
+    move_pid = new PidController(MOVE_KP_DEFAULT, MOVE_KI_DEFAULT, MOVE_KD_DEFAULT, MOVE_CONTROL_PERIOD, MOVE_MAX_SPEED);
 }
 
 int Arduino_AlvikCarrier::begin(){
@@ -747,6 +747,7 @@ void Arduino_AlvikCarrier::lockingMove(const float distance){
 void Arduino_AlvikCarrier::move(const float distance){
     move_pid->reset();
     previous_travel=kinematics->getTravel();
+    actual_direction=1.0;
     if (distance<0){
         move_direction=-1.0;
     }
@@ -772,10 +773,10 @@ void Arduino_AlvikCarrier::updateKinematics(){
         if (kinematics_movement==MOVEMENT_MOVE){
             move_pid->update((kinematics->getTravel()-previous_travel)*move_direction);
             drive(round(move_pid->getControlOutput()/10.0)*10, 0);
-            
             if (abs(move_pid->getError())<MOVE_THREADSHOLD){
                 kinematics_achieved=true;
             }
+            
         }
     }
 }

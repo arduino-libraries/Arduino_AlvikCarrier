@@ -73,6 +73,7 @@ class Arduino_AlvikCarrier{
         bool kinematics_achieved;
         float previous_travel;
         float move_direction;
+        float actual_direction;
 
         PidController * rotate_pid;
         PidController * move_pid;
@@ -217,15 +218,15 @@ class Arduino_AlvikCarrier{
 
 
         // Kinematics
-        void updateKinematics();
+        void updateKinematics();                                                        // update pose/velocity of the robot and controls
         void drive(const float linear, const float angular);                            // set mm/s and deg/s of the robot
 
         void move(const float distance);                                                // move of distance millimeters
         void rotate(const float angle);                                                 // rotate of angle degrees
         
         
-        void lockingRotate(const float angle);                                                 
-        void lockingMove(const float distance);                                                // move of distance millimeters
+        void lockingRotate(const float angle);                                          // rotate of angle degrees     
+        void lockingMove(const float distance);                                         // move of distance millimeters
 
         void disableKinematicsMovement();
         bool isTargetReached();
