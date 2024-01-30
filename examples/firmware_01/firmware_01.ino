@@ -209,6 +209,20 @@ void loop(){
     // robot speed
     msg_size = packeter.packetC2F('v', alvik.getLinearVelocity(), alvik.getAngularVelocity());
     alvik.serial->write(packeter.msg, msg_size);
+
+    if (alvik.getKinematicsMovement()!=MOVEMENT_DISABLED){
+      if (alvik.isTargetReached()){
+        if (alvik.getKinematicsMovement()==MOVEMENT_ROTATE){
+          msg_size = packeter.packetC1B('x', 'R');
+        }
+        if (alvik.getKinematicsMovement()==MOVEMENT_MOVE){
+          msg_size = packeter.packetC1B('x', 'M');
+        }
+        alvik.serial->write(packeter.msg, msg_size);
+        alvik.disableKinematicsMovement();
+      }
+
+    }
   }
 
   if (millis()-timu>10){

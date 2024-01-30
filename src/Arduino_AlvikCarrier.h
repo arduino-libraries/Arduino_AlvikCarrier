@@ -232,6 +232,7 @@ class Arduino_AlvikCarrier{
 
         void disableKinematicsMovement();
         bool isTargetReached();
+        uint8_t getKinematicsMovement();                                                 // get which kind of motion is running in kinematic control
 
 
 };

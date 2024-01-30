@@ -796,3 +796,7 @@ void Arduino_AlvikCarrier::disableKinematicsMovement(){
 bool Arduino_AlvikCarrier::isTargetReached(){
     return kinematics_achieved;
 }
+
+uint8_t Arduino_AlvikCarrier::getKinematicsMovement(){
+    return kinematics_movement;
+}
