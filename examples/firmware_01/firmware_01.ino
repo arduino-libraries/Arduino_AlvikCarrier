@@ -83,18 +83,21 @@ void loop(){
     switch (code){
       case 'J':
         packeter.unpacketC2F(code,left,right);
+        alvik.disableKinematicsMovement();
         alvik.disablePositionControl();
         alvik.setRpm(left, right);
         break;
 
       case 'V':
         packeter.unpacketC2F(code,linear,angular);
+        alvik.disableKinematicsMovement();
         alvik.disablePositionControl();
         alvik.drive(linear,angular);
         break;
 
       case 'W':
         packeter.unpacketC2B1F(code,label,control_type,value);
+        alvik.disableKinematicsMovement();
         if (label=='L'){
           switch (control_type){
             case 'V':
@@ -144,6 +147,16 @@ void loop(){
         if (pid=='R'){
           alvik.setKPidRight(kp,ki,kd);
         }
+        break;
+
+      case 'R':
+        packeter.unpacketC1F(code,value);
+        alvik.rotate(value);
+        break;
+      
+      case 'G':
+        packeter.unpacketC1F(code,value);
+        alvik.move(value);
         break;
     }
   }
