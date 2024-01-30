@@ -219,7 +219,7 @@ void loop(){
           msg_size = packeter.packetC1B('x', 'M');
         }
         alvik.serial->write(packeter.msg, msg_size);
-        alvik.disableKinematicsMovement();
+        //alvik.disableKinematicsMovement();
       }
 
     }

@@ -765,7 +765,6 @@ void Arduino_AlvikCarrier::lockingMove(const float distance){
 void Arduino_AlvikCarrier::move(const float distance){
     move_pid->reset();
     previous_travel=kinematics->getTravel();
-    actual_direction=1.0;
     if (distance<0){
         move_direction=-1.0;
     }
