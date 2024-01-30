@@ -669,12 +669,27 @@ void Arduino_AlvikCarrier::errorLed(const int error_code){
 /*                                             Kinematics                                             */
 /******************************************************************************************************/
 
-
-
-
-
-
-
+void Arduino_AlvikCarrier::updateKinematics(){
+    kinematics->inverse(motor_control_left->getRPM(), motor_control_right->getRPM());
+    kinematics->updatePose();
+    if (kinematics_movement!=MOVEMENT_DISABLED){
+        if (kinematics_movement==MOVEMENT_ROTATE){
+            rotate_pid->update(kinematics->getTheta());
+            drive(0, round(rotate_pid->getControlOutput()/10.0)*10);
+            if (abs(rotate_pid->getError())<ROTATE_THREASHOLD){
+                kinematics_achieved=true;
+            }
+        }
+        if (kinematics_movement==MOVEMENT_MOVE){
+            move_pid->update((kinematics->getTravel()-previous_travel)*move_direction);
+            drive(round(move_pid->getControlOutput()/10.0)*10, 0);
+            if (abs(move_pid->getError())<MOVE_THREADSHOLD){
+                kinematics_achieved=true;
+            }
+            
+        }
+    }
+}
 
 void Arduino_AlvikCarrier::drive(const float linear, const float angular){
     kinematics->forward(linear, angular);
@@ -688,7 +703,6 @@ float Arduino_AlvikCarrier::getLinearVelocity(){
 float Arduino_AlvikCarrier::getAngularVelocity(){
     return kinematics->getAngularVelocity();
 }
-
 
 void Arduino_AlvikCarrier::lockingRotate(const float angle){
     float initial_angle = kinematics->getTheta();
@@ -715,15 +729,12 @@ void Arduino_AlvikCarrier::lockingRotate(const float angle){
     motor_control_right->brake();
 }
 
-
 void Arduino_AlvikCarrier::rotate(const float angle){
     rotate_pid->reset();
     rotate_pid->setReference(kinematics->getTheta()+angle);
     kinematics_movement=MOVEMENT_ROTATE;
     kinematics_achieved=false;
 }
-
-
 
 void Arduino_AlvikCarrier::lockingMove(const float distance){
     float initial_travel = kinematics->getTravel();
@@ -751,7 +762,6 @@ void Arduino_AlvikCarrier::lockingMove(const float distance){
     motor_control_right->brake();
 }
 
-
 void Arduino_AlvikCarrier::move(const float distance){
     move_pid->reset();
     previous_travel=kinematics->getTravel();
@@ -765,28 +775,6 @@ void Arduino_AlvikCarrier::move(const float distance){
     move_pid->setReference(distance);
     kinematics_movement=MOVEMENT_MOVE;
     kinematics_achieved=false;
-}
-
-void Arduino_AlvikCarrier::updateKinematics(){
-    kinematics->inverse(motor_control_left->getRPM(), motor_control_right->getRPM());
-    kinematics->updatePose();
-    if (kinematics_movement!=MOVEMENT_DISABLED){
-        if (kinematics_movement==MOVEMENT_ROTATE){
-            rotate_pid->update(kinematics->getTheta());
-            drive(0, round(rotate_pid->getControlOutput()/10.0)*10);
-            if (abs(rotate_pid->getError())<ROTATE_THREASHOLD){
-                kinematics_achieved=true;
-            }
-        }
-        if (kinematics_movement==MOVEMENT_MOVE){
-            move_pid->update((kinematics->getTravel()-previous_travel)*move_direction);
-            drive(round(move_pid->getControlOutput()/10.0)*10, 0);
-            if (abs(move_pid->getError())<MOVE_THREADSHOLD){
-                kinematics_achieved=true;
-            }
-            
-        }
-    }
 }
 
 void Arduino_AlvikCarrier::disableKinematicsMovement(){
