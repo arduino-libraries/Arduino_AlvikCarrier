@@ -193,6 +193,10 @@ int Arduino_AlvikCarrier::getBlue(){
     return bottom_blue;
 }
 
+int Arduino_AlvikCarrier::getClear(){
+    return bottom_clear;
+}
+
 int Arduino_AlvikCarrier::getProximity(){
     return bottom_proximity;
 }

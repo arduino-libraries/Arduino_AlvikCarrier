@@ -115,6 +115,7 @@ class Arduino_AlvikCarrier{
         int getRed();                                                                   // red value 0-4095
         int getGreen();                                                                 // green value 0-4095
         int getBlue();                                                                  // blue value 0-4095
+        int getClear();                                                                 // clear value 0-4095
         int getProximity();                                                             // proximity value 0-127
 
 
