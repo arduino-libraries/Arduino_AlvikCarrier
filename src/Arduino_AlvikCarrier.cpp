@@ -679,6 +679,7 @@ void Arduino_AlvikCarrier::updateKinematics(){
             drive(0, round(rotate_pid->getControlOutput()/10.0)*10);
             if (abs(rotate_pid->getError())<ROTATE_THREASHOLD){
                 kinematics_achieved=true;
+                disableKinematicsMovement();
             }
         }
         if (kinematics_movement==MOVEMENT_MOVE){
@@ -686,6 +687,7 @@ void Arduino_AlvikCarrier::updateKinematics(){
             drive(round(move_pid->getControlOutput()/10.0)*10, 0);
             if (abs(move_pid->getError())<MOVE_THREADSHOLD){
                 kinematics_achieved=true;
+                disableKinematicsMovement();
             }
             
         }
