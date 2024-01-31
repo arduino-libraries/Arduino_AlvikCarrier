@@ -9,6 +9,8 @@
     
 */
 
+// WIP -> preliminary firmware
+
 
 #include "Arduino_AlvikCarrier.h"
 #include "sensor_line.h"
@@ -35,6 +37,7 @@ unsigned long timu=0;
 
 
 float left, right, value;
+float linear, angular;
 uint8_t leds;
 
 uint8_t sensor_id = 0;
@@ -42,6 +45,7 @@ uint8_t sensor_id = 0;
 
 uint8_t pid;
 float kp, ki, kd;
+float x, y, theta;
 
 uint8_t servo_A, servo_B;
 
@@ -49,6 +53,8 @@ uint8_t servo_A, servo_B;
 void setup(){
   Serial.begin(115200);
   alvik.begin();
+  alvik.disableIlluminator();
+  alvik.setLeds(COLOR_ORANGE);
   alvik.setLedBuiltin(HIGH);
   line.begin();
   tof.begin();
@@ -59,6 +65,7 @@ void setup(){
   alvik.serial->write(packeter.msg,msg_size);
 
   alvik.setLedBuiltin(LOW);
+  alvik.setLeds(COLOR_BLACK);
 
 
   code=0;
@@ -77,20 +84,51 @@ void loop(){
     switch (code){
       case 'J':
         packeter.unpacketC2F(code,left,right);
+        alvik.disableKinematicsMovement();
+        alvik.disablePositionControl();
         alvik.setRpm(left, right);
         break;
-      case 'W':
-        packeter.unpacketC2B1F(code,label,control_type,value);
-        if ((label == 'L') && (control_type == 'V')) {
-          alvik.motor_control_left->setRPM(value);
-        }
-        else if ((label == 'R') && (control_type == 'V'))
-        {
-          alvik.motor_control_right->setRPM(value);
-        }
-        
+
+      case 'V':
+        packeter.unpacketC2F(code,linear,angular);
+        alvik.disableKinematicsMovement();
+        alvik.disablePositionControl();
+        alvik.drive(linear,angular);
         break;
 
+      case 'W':
+        packeter.unpacketC2B1F(code,label,control_type,value);
+        alvik.disableKinematicsMovement();
+        if (label=='L'){
+          switch (control_type){
+            case 'V':
+              alvik.disablePositionControlLeft();
+              alvik.setRpmLeft(value);
+              break;
+            case 'P':
+              alvik.setPositionLeft(value);
+              break;
+            case 'Z':
+              alvik.resetPositionLeft(value);
+              break;
+          }
+        }
+        if (label=='R'){
+          switch (control_type){
+            case 'V':
+              alvik.disablePositionControlRight();
+              alvik.setRpmRight(value);
+              break;
+            case 'P':
+              alvik.setPositionRight(value);
+              break;
+            case 'Z':
+              alvik.resetPositionRight(value);
+              break;
+          }
+        }
+        break;
+      
       case 'S':
         packeter.unpacketC2B(code,servo_A,servo_B);
         alvik.setServoA(servo_A);
@@ -110,6 +148,23 @@ void loop(){
         if (pid=='R'){
           alvik.setKPidRight(kp,ki,kd);
         }
+        break;
+
+      case 'R':
+        packeter.unpacketC1F(code, value);
+        alvik.disablePositionControl();
+        alvik.rotate(value);
+        break;
+      
+      case 'G':
+        packeter.unpacketC1F(code, value);
+        alvik.disablePositionControl();
+        alvik.move(value);
+        break;
+
+      case 'Z':
+        packeter.unpacketC3F(code, x, y, theta);
+        alvik.resetPose(x, y, theta);
         break;
     }
   }
@@ -152,9 +207,33 @@ void loop(){
   if (millis()-tmotor>20){
     tmotor=millis();
     alvik.updateMotors();
+    alvik.updateKinematics();
+    // joint speed
     msg_size = packeter.packetC2F('j', alvik.getRpmLeft(),alvik.getRpmRight());
     alvik.serial->write(packeter.msg,msg_size);
-   
+    // joint position
+    msg_size = packeter.packetC2F('w', alvik.getPositionLeft(),alvik.getPositionRight());
+    alvik.serial->write(packeter.msg, msg_size);
+    // robot speed
+    msg_size = packeter.packetC2F('v', alvik.getLinearVelocity(), alvik.getAngularVelocity());
+    alvik.serial->write(packeter.msg, msg_size);
+    // pose
+    msg_size = packeter.packetC3F('s', alvik.getX(), alvik.getY(), alvik.getTheta());
+    alvik.serial->write(packeter.msg, msg_size);
+
+    if (alvik.getKinematicsMovement()!=MOVEMENT_DISABLED){
+      if (alvik.isTargetReached()){
+        if (alvik.getKinematicsMovement()==MOVEMENT_ROTATE){
+          msg_size = packeter.packetC1B('x', 'R');
+        }
+        if (alvik.getKinematicsMovement()==MOVEMENT_MOVE){
+          msg_size = packeter.packetC1B('x', 'M');
+        }
+        alvik.serial->write(packeter.msg, msg_size);
+        //alvik.disableKinematicsMovement();
+      }
+
+    }
   }
 
   if (millis()-timu>10){

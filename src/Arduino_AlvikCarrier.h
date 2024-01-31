@@ -70,6 +70,13 @@ class Arduino_AlvikCarrier{
 
 
         uint8_t kinematics_movement;
+        bool kinematics_achieved;
+        float previous_travel;
+        float move_direction;
+        float actual_direction;
+
+        PidController * rotate_pid;
+        PidController * move_pid;
 
 
 
@@ -109,6 +116,7 @@ class Arduino_AlvikCarrier{
         int getRed();                                                                   // red value 0-4095
         int getGreen();                                                                 // green value 0-4095
         int getBlue();                                                                  // blue value 0-4095
+        int getClear();                                                                 // clear value 0-4095
         int getProximity();                                                             // proximity value 0-127
 
 
@@ -210,13 +218,25 @@ class Arduino_AlvikCarrier{
 
 
         // Kinematics
-        void updateKinematics();
+        void updateKinematics();                                                        // update pose/velocity of the robot and controls
         void drive(const float linear, const float angular);                            // set mm/s and deg/s of the robot
+        float getLinearVelocity();                                                      // get linear velocity of the robot in mm/s
+        float getAngularVelocity();                                                     // get angular velocity of the robot in deg/s
+        float getX();                                                                   // absolute position in mm
+        float getY();                                                                   // absolute position in mm
+        float getTheta();                                                               // angle in deg
+        void resetPose(const float x0=0.0, const float y0=0.0, const float theta0=0.0); // reset pose in kinematics
 
         void move(const float distance);                                                // move of distance millimeters
         void rotate(const float angle);                                                 // rotate of angle degrees
-
         
+        
+        void lockingRotate(const float angle);                                          // rotate of angle degrees     
+        void lockingMove(const float distance);                                         // move of distance millimeters
+
+        void disableKinematicsMovement();
+        bool isTargetReached();
+        uint8_t getKinematicsMovement();                                                // get which kind of motion is running in kinematic control
 
 
 };

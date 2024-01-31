@@ -177,6 +177,10 @@ class Kinematics{
 
         }
 
+        void resetTravel(){
+            travel=0.0;
+        }
+
         float getX(){
             return m_to_mm(x);
         }
