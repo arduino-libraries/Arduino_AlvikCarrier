@@ -152,11 +152,13 @@ void loop(){
 
       case 'R':
         packeter.unpacketC1F(code, value);
+        alvik.disablePositionControl();
         alvik.rotate(value);
         break;
       
       case 'G':
         packeter.unpacketC1F(code, value);
+        alvik.disablePositionControl();
         alvik.move(value);
         break;
 
