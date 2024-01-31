@@ -222,6 +222,9 @@ class Arduino_AlvikCarrier{
         void drive(const float linear, const float angular);                            // set mm/s and deg/s of the robot
         float getLinearVelocity();                                                      // get linear velocity of the robot in mm/s
         float getAngularVelocity();                                                     // get angular velocity of the robot in deg/s
+        float getX();                                                                   // absolute position in mm
+        float getY();                                                                   // absolute position in mm
+        float getTheta();                                                               // angle in deg
 
         void move(const float distance);                                                // move of distance millimeters
         void rotate(const float angle);                                                 // rotate of angle degrees

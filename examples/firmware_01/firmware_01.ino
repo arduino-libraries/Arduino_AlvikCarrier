@@ -209,6 +209,9 @@ void loop(){
     // robot speed
     msg_size = packeter.packetC2F('v', alvik.getLinearVelocity(), alvik.getAngularVelocity());
     alvik.serial->write(packeter.msg, msg_size);
+    // pose
+    msg_size = packeter.packetC3F('s', alvik.getX(), alvik.getY(), alvik.getTheta());
+    alvik.serial->write(packeter.msg, msg_size);
 
     if (alvik.getKinematicsMovement()!=MOVEMENT_DISABLED){
       if (alvik.isTargetReached()){

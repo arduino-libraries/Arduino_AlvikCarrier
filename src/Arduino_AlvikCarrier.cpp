@@ -704,6 +704,18 @@ float Arduino_AlvikCarrier::getAngularVelocity(){
     return kinematics->getAngularVelocity();
 }
 
+float Arduino_AlvikCarrier::getX(){
+    return kinematics->getX();
+}
+
+float Arduino_AlvikCarrier::getY(){
+    return kinematics->getY();
+}
+
+float Arduino_AlvikCarrier::getTheta(){
+    return kinematics->getTheta();
+}
+
 void Arduino_AlvikCarrier::lockingRotate(const float angle){
     float initial_angle = kinematics->getTheta();
     float final_angle = angle+initial_angle;
