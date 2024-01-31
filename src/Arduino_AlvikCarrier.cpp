@@ -716,6 +716,10 @@ float Arduino_AlvikCarrier::getTheta(){
     return kinematics->getTheta();
 }
 
+void Arduino_AlvikCarrier::resetPose(const float x0, const float y0, const float theta0){
+    kinematics->resetPose(x0,y0,theta0);
+}
+
 void Arduino_AlvikCarrier::lockingRotate(const float angle){
     float initial_angle = kinematics->getTheta();
     float final_angle = angle+initial_angle;

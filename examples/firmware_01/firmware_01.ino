@@ -45,6 +45,7 @@ uint8_t sensor_id = 0;
 
 uint8_t pid;
 float kp, ki, kd;
+float x, y, theta;
 
 uint8_t servo_A, servo_B;
 
@@ -150,13 +151,18 @@ void loop(){
         break;
 
       case 'R':
-        packeter.unpacketC1F(code,value);
+        packeter.unpacketC1F(code, value);
         alvik.rotate(value);
         break;
       
       case 'G':
-        packeter.unpacketC1F(code,value);
+        packeter.unpacketC1F(code, value);
         alvik.move(value);
+        break;
+
+      case 'Z':
+        packeter.unpacketC3F(code, x, y, theta);
+        alvik.resetPose(x, y, theta);
         break;
     }
   }
