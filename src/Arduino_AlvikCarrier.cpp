@@ -87,6 +87,7 @@ int Arduino_AlvikCarrier::begin(){
     beginLeds();
 
     serial->begin(UART_BAUD);
+    serial->flush();
 
     // setup alternate functions
     AF_Tim2_pwm();
