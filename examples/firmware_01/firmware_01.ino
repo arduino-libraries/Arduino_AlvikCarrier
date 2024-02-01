@@ -29,6 +29,7 @@ uint8_t label;
 uint8_t control_type;
 uint8_t msg_size;
 uint8_t ack_required=0;
+int ack_counter=0;
 
 
 unsigned long tmotor=0;
@@ -158,6 +159,7 @@ void loop(){
         alvik.disablePositionControl();
         alvik.rotate(value);
         ack_required=MOVEMENT_ROTATE;
+        ack_counter=5;
         break;
       
       case 'G':
@@ -165,6 +167,7 @@ void loop(){
         alvik.disablePositionControl();
         alvik.move(value);
         ack_required=MOVEMENT_MOVE;
+        ack_counter=5;
         break;
 
       case 'Z':
@@ -253,14 +256,26 @@ void loop(){
   if (millis()-tack>100){
     tack=millis();
     msg_size = packeter.packetC1B('x', 0);
-    if (ack_required==MOVEMENT_ROTATE){
-      msg_size = packeter.packetC1B('x', 'R');
-      Serial.println("R");
+
+    if (alvik.isTargetReached()){
+      if (ack_required==MOVEMENT_ROTATE){
+        msg_size = packeter.packetC1B('x', 'R');
+        //ack_counter--;
+        Serial.println("R");
+      }
+      if (ack_required==MOVEMENT_MOVE){
+        msg_size = packeter.packetC1B('x', 'M');
+        //ack_counter--;
+        Serial.println("M");
+      }
     }
-    if (ack_required==MOVEMENT_MOVE){
-      msg_size = packeter.packetC1B('x', 'M');
-      Serial.println("M");
+
+
+    if (ack_counter<=0){
+      ack_counter=0;
+      ack_required=MOVEMENT_DISABLED;
     }
+
     alvik.serial->write(packeter.msg, msg_size);
   }
 

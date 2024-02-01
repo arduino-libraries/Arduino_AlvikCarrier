@@ -751,10 +751,11 @@ void Arduino_AlvikCarrier::lockingRotate(const float angle){
 }
 
 void Arduino_AlvikCarrier::rotate(const float angle){
+    disableKinematicsMovement();
+    kinematics_achieved=false;
     rotate_pid->reset();
     rotate_pid->setReference(kinematics->getTheta()+angle);
     kinematics_movement=MOVEMENT_ROTATE;
-    kinematics_achieved=false;
 }
 
 void Arduino_AlvikCarrier::lockingMove(const float distance){
@@ -784,6 +785,9 @@ void Arduino_AlvikCarrier::lockingMove(const float distance){
 }
 
 void Arduino_AlvikCarrier::move(const float distance){
+    disableKinematicsMovement();
+    kinematics_achieved=false;
+
     move_pid->reset();
     previous_travel=kinematics->getTravel();
     if (distance<0){
@@ -794,7 +798,6 @@ void Arduino_AlvikCarrier::move(const float distance){
     }
     move_pid->setReference(distance);
     kinematics_movement=MOVEMENT_MOVE;
-    kinematics_achieved=false;
 }
 
 void Arduino_AlvikCarrier::disableKinematicsMovement(){
