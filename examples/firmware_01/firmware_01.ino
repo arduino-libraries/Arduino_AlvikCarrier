@@ -35,6 +35,7 @@ unsigned long tmotor=0;
 unsigned long tsend=0;
 unsigned long tsensor=0;
 unsigned long timu=0;
+unsigned long tack=0;
 
 
 float left, right, value;
@@ -74,6 +75,7 @@ void setup(){
   tsend=millis();
   tsensor=millis();
   timu=millis();
+  tack=millis();
 }
 
 void loop(){
@@ -223,18 +225,21 @@ void loop(){
     // pose
     msg_size = packeter.packetC3F('z', alvik.getX(), alvik.getY(), alvik.getTheta());
     alvik.serial->write(packeter.msg, msg_size);
-
+/*
     if (ack_required!=0){
+    //if (alvik.getKinematicsMovement()!=MOVEMENT_DISABLED){
       if (alvik.isTargetReached()){
         Serial.print(alvik.isTargetReached());
         Serial.print("\t");
-        Serial.println(alvik.getKinematicsMovement());
+        
 
         if (ack_required==MOVEMENT_ROTATE){
           msg_size = packeter.packetC1B('x', 'R');
+          Serial.println("R");
         }
         if (ack_required==MOVEMENT_MOVE){
           msg_size = packeter.packetC1B('x', 'M');
+          Serial.println("M");
         }
         alvik.serial->write(packeter.msg, msg_size);
         //alvik.disableKinematicsMovement();
@@ -242,6 +247,21 @@ void loop(){
       }
 
     }
+    */
+  }
+
+  if (millis()-tack>100){
+    tack=millis();
+    msg_size = packeter.packetC1B('x', 0);
+    if (ack_required==MOVEMENT_ROTATE){
+      msg_size = packeter.packetC1B('x', 'R');
+      Serial.println("R");
+    }
+    if (ack_required==MOVEMENT_MOVE){
+      msg_size = packeter.packetC1B('x', 'M');
+      Serial.println("M");
+    }
+    alvik.serial->write(packeter.msg, msg_size);
   }
 
   if (millis()-timu>10){
