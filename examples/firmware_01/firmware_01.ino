@@ -28,12 +28,15 @@ uint8_t code;
 uint8_t label;
 uint8_t control_type;
 uint8_t msg_size;
-
+uint8_t ack_required=0;
+bool ack_check=false;
+uint8_t ack_code=0;
 
 unsigned long tmotor=0;
 unsigned long tsend=0;
 unsigned long tsensor=0;
 unsigned long timu=0;
+unsigned long tack=0;
 
 
 float left, right, value;
@@ -73,6 +76,7 @@ void setup(){
   tsend=millis();
   tsensor=millis();
   timu=millis();
+  tack=millis();
 }
 
 void loop(){
@@ -154,21 +158,33 @@ void loop(){
         packeter.unpacketC1F(code, value);
         alvik.disablePositionControl();
         alvik.rotate(value);
+        ack_required=MOVEMENT_ROTATE;
+        ack_check=true;
         break;
       
       case 'G':
         packeter.unpacketC1F(code, value);
         alvik.disablePositionControl();
         alvik.move(value);
+        ack_required=MOVEMENT_MOVE;
+        ack_check=true;
         break;
 
       case 'Z':
         packeter.unpacketC3F(code, x, y, theta);
         alvik.resetPose(x, y, theta);
         break;
+
+      case 'X':
+        packeter.unpacketC1B(code, ack_code);
+        if (ack_code == 'K') {
+          ack_check = false;
+        }
+        break;
     }
   }
 
+  // sensors publish
   if (millis()-tsensor>10){
     tsensor=millis();
     switch(sensor_id){
@@ -204,6 +220,7 @@ void loop(){
     }
   } 
 
+  // motors update & publish
   if (millis()-tmotor>20){
     tmotor=millis();
     alvik.updateMotors();
@@ -218,24 +235,28 @@ void loop(){
     msg_size = packeter.packetC2F('v', alvik.getLinearVelocity(), alvik.getAngularVelocity());
     alvik.serial->write(packeter.msg, msg_size);
     // pose
-    msg_size = packeter.packetC3F('s', alvik.getX(), alvik.getY(), alvik.getTheta());
+    msg_size = packeter.packetC3F('z', alvik.getX(), alvik.getY(), alvik.getTheta());
     alvik.serial->write(packeter.msg, msg_size);
-
-    if (alvik.getKinematicsMovement()!=MOVEMENT_DISABLED){
-      if (alvik.isTargetReached()){
-        if (alvik.getKinematicsMovement()==MOVEMENT_ROTATE){
-          msg_size = packeter.packetC1B('x', 'R');
-        }
-        if (alvik.getKinematicsMovement()==MOVEMENT_MOVE){
-          msg_size = packeter.packetC1B('x', 'M');
-        }
-        alvik.serial->write(packeter.msg, msg_size);
-        //alvik.disableKinematicsMovement();
-      }
-
-    }
   }
 
+  // acknowledge
+  if (millis()-tack > 100){
+    tack = millis();
+    if (ack_check && alvik.isTargetReached()){
+      if (ack_required == MOVEMENT_ROTATE){
+        msg_size = packeter.packetC1B('x', 'R');
+      }
+      if (ack_required == MOVEMENT_MOVE){
+        msg_size = packeter.packetC1B('x', 'M');
+      }
+    }
+    else{
+      msg_size = packeter.packetC1B('x', 0);
+    }
+    alvik.serial->write(packeter.msg, msg_size);
+  }
+
+  // imu update
   if (millis()-timu>10){
     timu=millis();
     alvik.updateImu();

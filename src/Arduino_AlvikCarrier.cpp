@@ -87,6 +87,7 @@ int Arduino_AlvikCarrier::begin(){
     beginLeds();
 
     serial->begin(UART_BAUD);
+    serial->flush();
 
     // setup alternate functions
     AF_Tim2_pwm();
@@ -678,6 +679,8 @@ void Arduino_AlvikCarrier::updateKinematics(){
             drive(0, round(rotate_pid->getControlOutput()/10.0)*10);
             if (abs(rotate_pid->getError())<ROTATE_THREASHOLD){
                 kinematics_achieved=true;
+                disableKinematicsMovement();
+                drive(0,0);
             }
         }
         if (kinematics_movement==MOVEMENT_MOVE){
@@ -685,6 +688,8 @@ void Arduino_AlvikCarrier::updateKinematics(){
             drive(round(move_pid->getControlOutput()/10.0)*10, 0);
             if (abs(move_pid->getError())<MOVE_THREADSHOLD){
                 kinematics_achieved=true;
+                disableKinematicsMovement();
+                drive(0,0);
             }
             
         }
@@ -746,10 +751,11 @@ void Arduino_AlvikCarrier::lockingRotate(const float angle){
 }
 
 void Arduino_AlvikCarrier::rotate(const float angle){
+    disableKinematicsMovement();
+    kinematics_achieved=false;
     rotate_pid->reset();
     rotate_pid->setReference(kinematics->getTheta()+angle);
     kinematics_movement=MOVEMENT_ROTATE;
-    kinematics_achieved=false;
 }
 
 void Arduino_AlvikCarrier::lockingMove(const float distance){
@@ -779,6 +785,9 @@ void Arduino_AlvikCarrier::lockingMove(const float distance){
 }
 
 void Arduino_AlvikCarrier::move(const float distance){
+    disableKinematicsMovement();
+    kinematics_achieved=false;
+
     move_pid->reset();
     previous_travel=kinematics->getTravel();
     if (distance<0){
@@ -789,7 +798,6 @@ void Arduino_AlvikCarrier::move(const float distance){
     }
     move_pid->setReference(distance);
     kinematics_movement=MOVEMENT_MOVE;
-    kinematics_achieved=false;
 }
 
 void Arduino_AlvikCarrier::disableKinematicsMovement(){

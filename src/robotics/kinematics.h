@@ -174,7 +174,6 @@ class Kinematics{
             delta_left=0.0;
             delta_right=0.0;
             delta_travel=0.0;
-
         }
 
         void resetTravel(){
