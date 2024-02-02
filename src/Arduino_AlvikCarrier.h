@@ -234,8 +234,8 @@ class Arduino_AlvikCarrier{
         void lockingRotate(const float angle);                                          // rotate of angle degrees     
         void lockingMove(const float distance);                                         // move of distance millimeters
 
-        void disableKinematicsMovement();
-        bool isTargetReached();
+        void disableKinematicsMovement();                                               // disable movements that requires kinematics
+        bool isTargetReached();                                                         // get true if a movement is accomplished
         uint8_t getKinematicsMovement();                                                // get which kind of motion is running in kinematic control
 
 

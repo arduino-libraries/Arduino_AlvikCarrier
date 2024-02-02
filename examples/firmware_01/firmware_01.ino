@@ -238,7 +238,6 @@ void loop(){
     // pose
     msg_size = packeter.packetC3F('z', alvik.getX(), alvik.getY(), alvik.getTheta());
     alvik.serial->write(packeter.msg, msg_size);
-
   }
 
   // acknowledge

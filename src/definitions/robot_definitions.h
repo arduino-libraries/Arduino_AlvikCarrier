@@ -79,8 +79,8 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 
 // Library version
 #define VERSION_BYTE_HIGH 0
-#define VERSION_BYTE_MID 1
-#define VERSION_BYTE_LOW 2
+#define VERSION_BYTE_MID 2
+#define VERSION_BYTE_LOW 0
 
 
 
