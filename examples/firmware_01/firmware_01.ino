@@ -29,7 +29,6 @@ uint8_t label;
 uint8_t control_type;
 uint8_t msg_size;
 uint8_t ack_required=0;
-int ack_counter=0;
 bool ack_check=false;
 uint8_t ack_code=0;
 
@@ -169,7 +168,6 @@ void loop(){
         alvik.disablePositionControl();
         alvik.move(value);
         ack_required=MOVEMENT_MOVE;
-        ack_counter=5;
         ack_check=true;
         break;
 
@@ -177,10 +175,9 @@ void loop(){
         packeter.unpacketC3F(code, x, y, theta);
         alvik.resetPose(x, y, theta);
         break;
+
       case 'X':
         packeter.unpacketC1B(code, ack_code);
-        Serial.print("Ack received ");
-        Serial.println(ack_code);
         if (ack_code == 'K') {
           ack_check = false;
         }
@@ -188,6 +185,7 @@ void loop(){
     }
   }
 
+  // sensors publish
   if (millis()-tsensor>10){
     tsensor=millis();
     switch(sensor_id){
@@ -223,6 +221,7 @@ void loop(){
     }
   } 
 
+  // motors update & publish
   if (millis()-tmotor>20){
     tmotor=millis();
     alvik.updateMotors();
@@ -239,58 +238,27 @@ void loop(){
     // pose
     msg_size = packeter.packetC3F('z', alvik.getX(), alvik.getY(), alvik.getTheta());
     alvik.serial->write(packeter.msg, msg_size);
-/*
-    if (ack_required!=0){
-    //if (alvik.getKinematicsMovement()!=MOVEMENT_DISABLED){
-      if (alvik.isTargetReached()){
-        Serial.print(alvik.isTargetReached());
-        Serial.print("\t");
-        
 
-        if (ack_required==MOVEMENT_ROTATE){
-          msg_size = packeter.packetC1B('x', 'R');
-          Serial.println("R");
-        }
-        if (ack_required==MOVEMENT_MOVE){
-          msg_size = packeter.packetC1B('x', 'M');
-          Serial.println("M");
-        }
-        alvik.serial->write(packeter.msg, msg_size);
-        //alvik.disableKinematicsMovement();
-        ack_required=0;
-      }
-
-    }
-    */
   }
 
-  if (millis()-tack>100){
-    tack=millis();
-    msg_size = packeter.packetC1B('x', 0);
-
-    if (ack_check&&alvik.isTargetReached()){
-      if (ack_required==MOVEMENT_ROTATE){
+  // acknowledge
+  if (millis()-tack > 100){
+    tack = millis();
+    if (ack_check && alvik.isTargetReached()){
+      if (ack_required == MOVEMENT_ROTATE){
         msg_size = packeter.packetC1B('x', 'R');
-        //ack_counter--;
-        Serial.println("R");
       }
-      if (ack_required==MOVEMENT_MOVE){
+      if (ack_required == MOVEMENT_MOVE){
         msg_size = packeter.packetC1B('x', 'M');
-        //ack_counter--;
-        Serial.println("M");
       }
-      // ack_check=false;
     }
-
-
-    if (ack_counter<=0){
-      ack_counter=0;
-      ack_required=MOVEMENT_DISABLED;
+    else{
+      msg_size = packeter.packetC1B('x', 0);
     }
-
     alvik.serial->write(packeter.msg, msg_size);
   }
 
+  // imu update
   if (millis()-timu>10){
     timu=millis();
     alvik.updateImu();
