@@ -159,7 +159,6 @@ void loop(){
         alvik.disablePositionControl();
         alvik.rotate(value);
         ack_required=MOVEMENT_ROTATE;
-        ack_counter=5;
         ack_check=true;
         break;
       
