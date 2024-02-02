@@ -31,6 +31,7 @@ uint8_t msg_size;
 uint8_t ack_required=0;
 int ack_counter=0;
 bool ack_check=false;
+uint8_t ack_code=0;
 
 unsigned long tmotor=0;
 unsigned long tsend=0;
@@ -176,6 +177,14 @@ void loop(){
         packeter.unpacketC3F(code, x, y, theta);
         alvik.resetPose(x, y, theta);
         break;
+      case 'X':
+        packeter.unpacketC1B(code, ack_code);
+        Serial.print("Ack received ");
+        Serial.println(ack_code);
+        if (ack_code == 'K') {
+          ack_check = false;
+        }
+        break;
     }
   }
 
@@ -270,7 +279,7 @@ void loop(){
         //ack_counter--;
         Serial.println("M");
       }
-      ack_check=false;
+      // ack_check=false;
     }
 
 
