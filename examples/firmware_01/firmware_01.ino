@@ -31,12 +31,14 @@ uint8_t msg_size;
 uint8_t ack_required=0;
 bool ack_check=false;
 uint8_t ack_code=0;
+uint8_t behaviours;
 
 unsigned long tmotor=0;
 unsigned long tsend=0;
 unsigned long tsensor=0;
 unsigned long timu=0;
 unsigned long tack=0;
+unsigned long tbehaviours=0;
 
 
 float left, right, value;
@@ -77,6 +79,7 @@ void setup(){
   tsensor=millis();
   timu=millis();
   tack=millis();
+  tbehaviours=millis();
 }
 
 void loop(){
@@ -181,6 +184,17 @@ void loop(){
           ack_check = false;
         }
         break;
+
+      case 'B':
+        packeter.unpacketC1B(code, behaviours);
+        switch (behaviours){
+          case 1: 
+            alvik.setBehaviour(LIFT_ILLUMINATOR, true);
+            break;
+          default:
+            alvik.setBehaviour(ALL_BEHAVIOURS, false);
+        }
+        break;
     }
   }
 
@@ -254,6 +268,11 @@ void loop(){
       msg_size = packeter.packetC1B('x', 0);
     }
     alvik.serial->write(packeter.msg, msg_size);
+  }
+
+  if (millis()-tbehaviours > 100){
+    tbehaviours = millis();
+    alvik.updateBehaviours();
   }
 
   // imu update

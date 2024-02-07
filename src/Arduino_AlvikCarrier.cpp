@@ -133,6 +133,8 @@ int Arduino_AlvikCarrier::begin(){
     if (beginImu()!=0){
         errorLed(ERROR_IMU);
     }
+
+    beginBehaviours();
     
 
     return 0;
@@ -171,6 +173,7 @@ void Arduino_AlvikCarrier::updateAPDS(){
 }
 
 void Arduino_AlvikCarrier::setIlluminator(uint8_t value){
+    illuminator_state=value;
     digitalWrite(APDS_LED, value);
 }
 
@@ -810,4 +813,50 @@ bool Arduino_AlvikCarrier::isTargetReached(){
 
 uint8_t Arduino_AlvikCarrier::getKinematicsMovement(){
     return kinematics_movement;
+}
+
+
+
+/******************************************************************************************************/
+/*                                             Behaviours                                             */
+/******************************************************************************************************/
+void Arduino_AlvikCarrier::beginBehaviours(){
+    prev_illuminator_state = illuminator_state;
+    behaviours = 0;
+    first_lift = true;
+}
+
+
+void Arduino_AlvikCarrier::updateBehaviours(){
+    if (behaviours|=1 == 1){
+        if (isLifted()&&first_lift){
+            first_lift = false;
+            prev_illuminator_state = illuminator_state;
+            disableIlluminator();
+        }
+        if (!isLifted()&&!first_lift){
+            if (prev_illuminator_state!=0){
+                first_lift = true;
+                enableIlluminator();
+            }
+        }
+    }
+}
+
+void Arduino_AlvikCarrier::setBehaviour(const uint8_t behaviour, const bool enable){
+    if (enable){
+        behaviours |= behaviour;
+    }
+    else{
+        behaviours &= ~behaviour;
+    }
+}
+
+bool Arduino_AlvikCarrier::isLifted(){
+    if (getProximity()>LIFT_THRESHOLD){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
