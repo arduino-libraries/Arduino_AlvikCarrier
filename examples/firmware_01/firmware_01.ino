@@ -28,17 +28,17 @@ uint8_t code;
 uint8_t label;
 uint8_t control_type;
 uint8_t msg_size;
-uint8_t ack_required=0;
-bool ack_check=false;
-uint8_t ack_code=0;
+uint8_t ack_required = 0;
+bool ack_check = false;
+uint8_t ack_code = 0;
 uint8_t behaviours;
 
-unsigned long tmotor=0;
-unsigned long tsend=0;
-unsigned long tsensor=0;
-unsigned long timu=0;
-unsigned long tack=0;
-unsigned long tbehaviours=0;
+unsigned long tmotor = 0;
+unsigned long tsend = 0;
+unsigned long tsensor = 0;
+unsigned long timu = 0;
+unsigned long tack = 0;
+unsigned long tbehaviours = 0;
 
 
 float left, right, value;
@@ -54,6 +54,9 @@ float x, y, theta;
 
 uint8_t servo_A, servo_B;
 
+int counter_version = 9;
+uint8_t version[3];
+
 
 void setup(){
   Serial.begin(115200);
@@ -64,7 +67,7 @@ void setup(){
   line.begin();
   tof.begin();
 
-  uint8_t version[3];
+
   alvik.getVersion(version[0], version[1], version[2]);
   msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
   alvik.serial->write(packeter.msg,msg_size);
@@ -256,6 +259,12 @@ void loop(){
   // acknowledge
   if (millis()-tack > 100){
     tack = millis();
+    if (counter_version>0){
+      counter_version--;
+      alvik.getVersion(version[0], version[1], version[2]);
+      msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
+      alvik.serial->write(packeter.msg,msg_size);
+    }
     if (ack_check && alvik.isTargetReached()){
       if (ack_required == MOVEMENT_ROTATE){
         msg_size = packeter.packetC1B('x', 'R');
