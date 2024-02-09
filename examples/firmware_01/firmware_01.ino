@@ -247,7 +247,7 @@ void loop(){
   } 
 
   // motors update & publish
-  if (millis()-tmotor>20){
+  if (millis()-tmotor>=20){
     tmotor=millis();
     alvik.updateMotors();
     alvik.updateKinematics();
