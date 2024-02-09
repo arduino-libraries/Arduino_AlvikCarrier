@@ -53,6 +53,7 @@ float kp, ki, kd;
 float x, y, theta;
 
 uint8_t servo_A, servo_B;
+float position_left, position_right;
 
 int counter_version = 9;
 uint8_t version[3];
@@ -138,6 +139,14 @@ void loop(){
           }
         }
         break;
+
+
+      case 'A':
+        packeter.unpacketC2F(code,position_left, position_right);
+        alvik.disableKinematicsMovement();
+        alvik.setPosition(position_left, position_right);
+        break;
+
       
       case 'S':
         packeter.unpacketC2B(code,servo_A,servo_B);
