@@ -42,6 +42,8 @@ MotorControl::MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp
     angle = 0.0;
     reference = 0.0;
 
+    return_flag = false;
+
     trip = 0.0;
     iterations = 0.0;
     start_value = 0.0;
@@ -111,22 +113,28 @@ float MotorControl::getRPM(){
 
 
 bool MotorControl::setRPM(const float ref){
-    if ((ref<=MOTOR_LIMIT)&&(ref>=-MOTOR_LIMIT)){
-        reference = ref;
-        if (control_mode==CONTROL_MODE_LINEAR){
-            start_value=interpolation;
-            end_value=reference;
-            trip=0.0;
-            iterations=abs(end_value-start_value)/step_size;
-            step=1.0/iterations;
-            step_index=0;
-        }
-        else if(control_mode==CONTROL_MODE_NORMAL){
-            vel_pid->setReference(reference);
-        }
-        return true;
+    reference = ref;
+    return_flag = true;
+    if (ref>MOTOR_LIMIT){
+        reference=MOTOR_LIMIT;
+        return_flag = false;
     }
-    return false;
+    if (ref<-MOTOR_LIMIT){
+        reference=-MOTOR_LIMIT;
+        return_flag = false;
+    }
+    if (control_mode==CONTROL_MODE_LINEAR){
+        start_value=interpolation;
+        end_value=reference;
+        trip=0.0;
+        iterations=abs(end_value-start_value)/step_size;
+        step=1.0/iterations;
+        step_index=0;
+    }
+    else if(control_mode==CONTROL_MODE_NORMAL){
+        vel_pid->setReference(reference);
+    }
+    return return_flag;
 }
 
 void MotorControl::update(){
