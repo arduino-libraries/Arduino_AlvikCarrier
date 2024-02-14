@@ -231,7 +231,7 @@ void loop(){
         break;
       case 3:
         if (tof.update_rois()){
-          msg_size = packeter.packetC7I('f', tof.getLeft(), tof.getCenterLeft(), tof.getCenter(), tof.getCenterRight(), tof.getRight(), tof.get_min_range_top_mm(), tof.get_max_range_bottom_mm());
+          msg_size = packeter.packetC7I('f', tof.getLeft(), tof.getCenterLeft(), tof.getCenter(), tof.getCenterRight(), tof.getRight(), tof.getTop(), tof.getBottom());
           alvik.serial->write(packeter.msg,msg_size);
         }
         break;

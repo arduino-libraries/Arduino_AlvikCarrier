@@ -133,7 +133,7 @@ class SensorTofMatrix{
         bool update_rois() {
             bool out = update();
             top = get_avg_range_top_mm();
-            bottom = get_max_range_bottom_mm();
+            bottom = get_avg_range_bottom_mm();
             left = get_avg_range_left_mm();
             right = get_avg_range_right_mm();
             center_left = get_avg_range_center_left_mm();
@@ -168,7 +168,7 @@ class SensorTofMatrix{
 
         int get_max_range_bottom_mm() {
 
-            int16_t bottom_max = results.distance_mm[0];
+            int16_t bottom_max = results.distance_mm[4?12:48];
 
             for (int i=(_size==4?12:48); i < (_size==4?15:63) ;i++) {
                 bottom_max = max(bottom_max, results.distance_mm[i]);
@@ -206,7 +206,7 @@ class SensorTofMatrix{
 
         int get_min_range_right_mm() {
 
-            int16_t _min = results.distance_mm[0];
+            int16_t _min = results.distance_mm[4?3:6];
 
             for (int i=(_size==4?3:6); i < (_size==4?16:64) ;i+=_size) {
                 _min = min(_min, results.distance_mm[i]);
@@ -220,7 +220,7 @@ class SensorTofMatrix{
 
         int get_min_range_center_left_mm() {
 
-            int16_t _min = results.distance_mm[0];
+            int16_t _min = results.distance_mm[4?5:18];
 
             for (int i=(_size==4?5:18); i < (_size==4?13:50) ;i+=_size) {
                 _min = min(_min, results.distance_mm[i]);
@@ -234,7 +234,7 @@ class SensorTofMatrix{
 
         int get_min_range_center_right_mm() {
 
-            int16_t _min = results.distance_mm[0];
+            int16_t _min = results.distance_mm[4?6:20];
 
             for (int i=(_size==4?6:20); i < (_size==4?14:52) ;i+=_size) {
                 _min = min(_min, results.distance_mm[i]);
@@ -248,7 +248,7 @@ class SensorTofMatrix{
 
         int get_min_range_center_mm() {
 
-            int16_t _min = results.distance_mm[0];
+            int16_t _min = results.distance_mm[5?6:19];
 
             for (int i=(_size==5?6:19); i < (_size==4?13:51) ;i+=_size) {
                 _min = min(_min, results.distance_mm[i]);
