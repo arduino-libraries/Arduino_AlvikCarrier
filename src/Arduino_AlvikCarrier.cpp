@@ -834,9 +834,14 @@ void Arduino_AlvikCarrier::updateBehaviours(){
             prev_illuminator_state = illuminator_state;
             disableIlluminator();
         }
+        if (isLifted()&&!first_lift) {
+            if (prev_illuminator_state!=0){
+                disableIlluminator();
+            }
+        }
         if (!isLifted()&&!first_lift){
             if (prev_illuminator_state!=0){
-                first_lift = true;
+                //first_lift = true;
                 enableIlluminator();
             }
         }
