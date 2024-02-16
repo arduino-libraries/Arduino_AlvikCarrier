@@ -60,6 +60,14 @@ const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 #define MOVEMENT_MOVE 2
 
 
+#define LIFT_THRESHOLD 80
+
+#define ALL_BEHAVIOURS 255
+#define LIFT_ILLUMINATOR 1
+
+
+
+
 
 
 // Sensor fusioning parameters
@@ -80,7 +88,7 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 // Library version
 #define VERSION_BYTE_HIGH 0
 #define VERSION_BYTE_MID 2
-#define VERSION_BYTE_LOW 0
+#define VERSION_BYTE_LOW 1
 
 
 

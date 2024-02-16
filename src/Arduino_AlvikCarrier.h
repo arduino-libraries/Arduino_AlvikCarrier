@@ -37,6 +37,7 @@ class Arduino_AlvikCarrier{
 
         APDS9960 * apds9960;
         int bottom_red, bottom_green, bottom_blue, bottom_clear, bottom_proximity;
+        bool illuminator_state;
 
 
         Servo * servo_A;
@@ -77,6 +78,12 @@ class Arduino_AlvikCarrier{
 
         PidController * rotate_pid;
         PidController * move_pid;
+
+
+        bool prev_illuminator_state;
+        uint8_t behaviours;
+        bool first_lift;
+
 
 
 
@@ -238,7 +245,10 @@ class Arduino_AlvikCarrier{
         bool isTargetReached();                                                         // get true if a movement is accomplished
         uint8_t getKinematicsMovement();                                                // get which kind of motion is running in kinematic control
 
-
+        void beginBehaviours();
+        void updateBehaviours();
+        void setBehaviour(const uint8_t behaviour, const bool enable);
+        bool isLifted();
 };
 
 #endif

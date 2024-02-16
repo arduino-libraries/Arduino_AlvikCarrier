@@ -95,7 +95,7 @@
 // Uart
 #define UART_TX PA9
 #define UART_RX PA10
-#define UART_BAUD 115200
+#define UART_BAUD 460800
 
 
 // Errors

@@ -133,6 +133,8 @@ int Arduino_AlvikCarrier::begin(){
     if (beginImu()!=0){
         errorLed(ERROR_IMU);
     }
+
+    beginBehaviours();
     
 
     return 0;
@@ -171,15 +173,18 @@ void Arduino_AlvikCarrier::updateAPDS(){
 }
 
 void Arduino_AlvikCarrier::setIlluminator(uint8_t value){
+    illuminator_state=value;
     digitalWrite(APDS_LED, value);
 }
 
 void Arduino_AlvikCarrier::enableIlluminator(){
     setIlluminator(HIGH);
+    prev_illuminator_state = true;
 }
 
 void Arduino_AlvikCarrier::disableIlluminator(){
     setIlluminator(LOW);
+    prev_illuminator_state = false;
 }
 
 int Arduino_AlvikCarrier::getRed(){
@@ -540,7 +545,18 @@ void Arduino_AlvikCarrier::setLeds(const uint32_t red, const uint32_t green, con
 
 void Arduino_AlvikCarrier::setAllLeds(const uint8_t value){
     setLedBuiltin(value&1);
-    setIlluminator((value>>1)&1);
+    //setIlluminator((value>>1)&1);
+    if ((value>>1)&1){
+        if ((behaviours|=1 == 1)&&isLifted()){
+            prev_illuminator_state = true;
+        }
+        else{
+            enableIlluminator();
+        }
+    }
+    else{
+        disableIlluminator();
+    }
     setLedLeftRed(((value>>2)&1));
     setLedLeftGreen(((value>>3)&1));
     setLedLeftBlue(((value>>4)&1));
@@ -810,4 +826,70 @@ bool Arduino_AlvikCarrier::isTargetReached(){
 
 uint8_t Arduino_AlvikCarrier::getKinematicsMovement(){
     return kinematics_movement;
+}
+
+
+
+/******************************************************************************************************/
+/*                                             Behaviours                                             */
+/******************************************************************************************************/
+void Arduino_AlvikCarrier::beginBehaviours(){
+    prev_illuminator_state = illuminator_state;
+    behaviours = 0;
+    first_lift = true;
+}
+
+
+void Arduino_AlvikCarrier::updateBehaviours(){
+    if (behaviours|=1 == 1){
+        /*
+        if (isLifted()&&first_lift){
+            first_lift = false;
+            prev_illuminator_state = illuminator_state;
+            disableIlluminator();
+        }
+        if (isLifted()&&!first_lift) {
+            if (prev_illuminator_state!=0){
+                disableIlluminator();
+            }
+        }
+        if (!isLifted()&&!first_lift){
+            if (prev_illuminator_state!=0){
+                //first_lift = true;
+                enableIlluminator();
+            }
+        }
+        */
+       if (isLifted()&&first_lift){
+        //disableIlluminator();
+        setIlluminator(LOW);
+        first_lift=false;
+       }
+       else{
+        if (!isLifted()){
+            setIlluminator(prev_illuminator_state);
+        }
+        if (!isLifted()&&!first_lift){
+            first_lift = true;
+        }
+       }
+    }
+}
+
+void Arduino_AlvikCarrier::setBehaviour(const uint8_t behaviour, const bool enable){
+    if (enable){
+        behaviours |= behaviour;
+    }
+    else{
+        behaviours &= ~behaviour;
+    }
+}
+
+bool Arduino_AlvikCarrier::isLifted(){
+    if (getProximity()>LIFT_THRESHOLD){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
