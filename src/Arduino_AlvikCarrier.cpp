@@ -547,7 +547,12 @@ void Arduino_AlvikCarrier::setAllLeds(const uint8_t value){
     setLedBuiltin(value&1);
     //setIlluminator((value>>1)&1);
     if ((value>>1)&1){
-        enableIlluminator();
+        if ((behaviours|=1 == 1)&&isLifted()){
+            prev_illuminator_state = true;
+        }
+        else{
+            enableIlluminator();
+        }
     }
     else{
         disableIlluminator();
