@@ -248,7 +248,7 @@ class SensorTofMatrix{
 
         int get_min_range_center_mm() {
 
-            int16_t _min = results.distance_mm[(_size==4?6:19];
+            int16_t _min = results.distance_mm[_size==4?6:19];
 
             for (int i=(_size==4?6:19); i < (_size==4?13:51) ;i+=_size) {
                 _min = min(_min, results.distance_mm[i]);
