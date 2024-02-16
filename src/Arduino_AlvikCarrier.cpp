@@ -174,6 +174,7 @@ void Arduino_AlvikCarrier::updateAPDS(){
 
 void Arduino_AlvikCarrier::setIlluminator(uint8_t value){
     illuminator_state=value;
+    prev_illuminator_state = value;
     digitalWrite(APDS_LED, value);
 }
 
