@@ -179,10 +179,12 @@ void Arduino_AlvikCarrier::setIlluminator(uint8_t value){
 
 void Arduino_AlvikCarrier::enableIlluminator(){
     setIlluminator(HIGH);
+    prev_illuminator_state = true;
 }
 
 void Arduino_AlvikCarrier::disableIlluminator(){
     setIlluminator(LOW);
+    prev_illuminator_state = false;
 }
 
 int Arduino_AlvikCarrier::getRed(){
@@ -543,7 +545,13 @@ void Arduino_AlvikCarrier::setLeds(const uint32_t red, const uint32_t green, con
 
 void Arduino_AlvikCarrier::setAllLeds(const uint8_t value){
     setLedBuiltin(value&1);
-    setIlluminator((value>>1)&1);
+    //setIlluminator((value>>1)&1);
+    if ((value>>1)&1){
+        enableIlluminator();
+    }
+    else{
+        disableIlluminator();
+    }
     setLedLeftRed(((value>>2)&1));
     setLedLeftGreen(((value>>3)&1));
     setLedLeftBlue(((value>>4)&1));
@@ -829,6 +837,7 @@ void Arduino_AlvikCarrier::beginBehaviours(){
 
 void Arduino_AlvikCarrier::updateBehaviours(){
     if (behaviours|=1 == 1){
+        /*
         if (isLifted()&&first_lift){
             first_lift = false;
             prev_illuminator_state = illuminator_state;
@@ -845,6 +854,20 @@ void Arduino_AlvikCarrier::updateBehaviours(){
                 enableIlluminator();
             }
         }
+        */
+       if (isLifted()&&first_lift){
+        //disableIlluminator();
+        setIlluminator(LOW);
+        first_lift=false;
+       }
+       else{
+        if (!isLifted()){
+            setIlluminator(prev_illuminator_state);
+        }
+        if (!isLifted()&&!first_lift){
+            first_lift = true;
+        }
+       }
     }
 }
 
