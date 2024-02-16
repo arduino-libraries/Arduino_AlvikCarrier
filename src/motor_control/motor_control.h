@@ -29,6 +29,8 @@ class MotorControl{
     private:
 
         uint8_t control_mode;
+        bool return_flag;
+
 
         float kp;
         float ki;
