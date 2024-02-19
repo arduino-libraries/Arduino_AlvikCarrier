@@ -1,0 +1,80 @@
+name: Compile Firmware
+
+# See: https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
+on:
+  push:
+    paths:
+      - "**"
+  pull_request:
+    paths:
+      - "**"
+  schedule:
+    # Run every Tuesday at 8 AM UTC to catch breakage caused by changes to external resources (libraries, platforms).
+    - cron: "0 8 * * TUE"
+  workflow_dispatch:
+  repository_dispatch:
+
+env:
+  BINARY_FILENAME: firmware.ino.bin
+  BINARY_ARTIFACT_NAME: firmware
+
+jobs:
+  build:
+    name: Build firmware
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        board:
+          - fqbn: STMicroelectronics:stm32:GenF4:pnum=GENERIC_F411RCTX,usb=CDCgen
+            platforms: |
+              # Install STM32duino via Boards Manager for the toolchain
+              - name: STMicroelectronics:stm32
+                source-url: https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
+
+    steps:
+      - name: Set environment variables
+        run: |
+          # See: https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
+          echo "BINARY_OUTPUT_PATH=${{ runner.temp }}/output" >> "$GITHUB_ENV"
+          echo "SKETCHES_REPORTS_PATH=${{ runner.temp }}/sketches-reports" >> "$GITHUB_ENV"
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Compile firmware
+        uses: arduino/compile-sketches@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fqbn: ${{ matrix.board.fqbn }}
+          platforms: ${{ matrix.board.platforms }}
+          libraries: |
+            # - name: Arduino_MAX17332 not in library manager yet
+            source-url: git@github.com:arduino-libraries/Arduino_MAX17332.git
+            # - name: ucPack in library manager but not with latest APIs
+            source-url: git@github.com:gbr1/ucPack.git
+            - name: STM32duino MotionFX
+            - name: STM32duino VL53L7CX
+            - name: AT42QT
+          sketch-paths: |
+            - examples/firmware
+          cli-compile-flags: |
+            - --output-dir=${{ env.BINARY_OUTPUT_PATH }}
+          enable-deltas-report: true
+          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
+
+      - name: Save firmware binary as workflow artifact
+        uses: actions/upload-artifact@v2
+        with:
+          if-no-files-found: error
+          path: ${{ env.BINARY_OUTPUT_PATH }}/${{ env.BINARY_FILENAME }}
+          name: ${{ env.BINARY_ARTIFACT_NAME }}
+
+      - name: Save sketches report as workflow artifact
+        uses: actions/upload-artifact@v2
+        with:
+          if-no-files-found: error
+          path: ${{ env.SKETCHES_REPORTS_PATH }}
+          name: sketches-reports
