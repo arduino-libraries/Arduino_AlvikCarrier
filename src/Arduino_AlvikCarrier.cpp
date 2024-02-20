@@ -893,3 +893,20 @@ bool Arduino_AlvikCarrier::isLifted(){
         return false;
     }
 }
+
+
+
+/******************************************************************************************************/
+/*                                             Utilities                                              */
+/******************************************************************************************************/
+
+void Arduino_AlvikCarrier::getSerialNumber(char * sn){
+  uint32_t id[3];
+  id[0] = HAL_GetUIDw0();
+  id[1] = HAL_GetUIDw1();
+  id[2] = HAL_GetUIDw2();
+  uint32_t top = id[0]+id[2];
+  uint16_t bottom = (id[1]&0xFFFF0000)>>16;
+  sprintf(sn,"%08lx", top);
+  sprintf(sn+8,"%x",bottom);
+}

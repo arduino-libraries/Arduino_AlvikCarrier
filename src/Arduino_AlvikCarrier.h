@@ -249,6 +249,11 @@ class Arduino_AlvikCarrier{
         void updateBehaviours();
         void setBehaviour(const uint8_t behaviour, const bool enable);
         bool isLifted();
+
+
+        // Utilities
+        void getSerialNumber(char * sn);                                                // get STM32 serial number
+
 };
 
 #endif
