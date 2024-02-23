@@ -85,6 +85,7 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
 
 int Arduino_AlvikCarrier::begin(){
     beginLeds();
+    pinMode(NANO_CHK,INPUT_PULLDOWN);
 
     serial->begin(UART_BAUD);
     serial->flush();
@@ -254,6 +255,7 @@ void Arduino_AlvikCarrier::disconnectExternalI2C(){
 /******************************************************************************************************/
 
 int Arduino_AlvikCarrier::beginBMS(){
+    while(digitalRead(NANO_CHK)==HIGH){}
     bms->begin();
     return 0;
 }

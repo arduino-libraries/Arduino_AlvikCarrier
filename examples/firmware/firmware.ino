@@ -39,6 +39,7 @@ unsigned long tsensor = 0;
 unsigned long timu = 0;
 unsigned long tack = 0;
 unsigned long tbehaviours = 0;
+unsigned long tbattery = 0;
 
 
 float left, right, value;
@@ -71,6 +72,10 @@ void setup(){
 
   alvik.getVersion(version[0], version[1], version[2]);
   msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
+  alvik.serial->write(packeter.msg,msg_size);
+
+  alvik.updateBMS();
+  msg_size = packeter.packetC1F('p', alvik.getBatteryChargePercentage());
   alvik.serial->write(packeter.msg,msg_size);
 
   alvik.setLedBuiltin(LOW);
@@ -298,6 +303,13 @@ void loop(){
     timu=millis();
     alvik.updateImu();
     msg_size = packeter.packetC6F('i', alvik.getAccelerationX(), alvik.getAccelerationY(), alvik.getAccelerationZ(), alvik.getAngularVelocityX(), alvik.getAngularVelocityY(), alvik.getAngularVelocityZ());
+    alvik.serial->write(packeter.msg,msg_size);
+  }
+
+  // battery update
+  if (millis()-tbattery>1000){
+    alvik.updateBMS();
+    msg_size = packeter.packetC1F('p', alvik.getBatteryChargePercentage());
     alvik.serial->write(packeter.msg,msg_size);
   }
 }

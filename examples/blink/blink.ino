@@ -24,7 +24,7 @@ void setup(){
 
 void loop(){
     alvik.setLedBuiltin(HIGH);
-    delay(100);
+    delay(1000);
     alvik.setLedBuiltin(LOW);
     delay(1000);
 }

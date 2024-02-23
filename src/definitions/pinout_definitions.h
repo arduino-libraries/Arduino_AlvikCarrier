@@ -69,6 +69,8 @@
 #define I2C_2_SCL PB10
 #define ARDUINO_ROBOT_ADDRESS 0x2B
 
+// Check
+#define NANO_CHK PC0
 
 // Touch
 #define TOUCH_PAD_UP 7        
