@@ -245,10 +245,12 @@ class Arduino_AlvikCarrier{
         bool isTargetReached();                                                         // get true if a movement is accomplished
         uint8_t getKinematicsMovement();                                                // get which kind of motion is running in kinematic control
 
-        void beginBehaviours();
-        void updateBehaviours();
-        void setBehaviour(const uint8_t behaviour, const bool enable);
-        bool isLifted();
+
+        // Behaviours
+        void beginBehaviours();                                                         // internal behaviours of the robot
+        void updateBehaviours();                                                        // updated internal behaviours
+        void setBehaviour(const uint8_t behaviour, const bool enable);                  // set a behaviour
+        bool isLifted();                                                                // is robot lifted?
 
 
         // Utilities
