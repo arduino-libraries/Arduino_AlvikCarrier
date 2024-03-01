@@ -179,7 +179,7 @@ class Arduino_AlvikCarrier{
         void updateTouch();                                                             // update touch status
         bool getAnyTouchPressed();                                                      // get any touch pressed
         bool getTouchKey(const uint8_t key);                                            // return true if key touch is pressed
-        uint8_t getTouchKeys();                                                         // return touched pads as byte
+        uint8_t getTouchKeys(const bool single_touch = true);                           // return touched pads as byte
         bool getTouchUp();                                                              // get nav pad up
         bool getTouchRight();                                                           // get nav pad right
         bool getTouchDown();                                                            // get nav pad down
@@ -245,10 +245,17 @@ class Arduino_AlvikCarrier{
         bool isTargetReached();                                                         // get true if a movement is accomplished
         uint8_t getKinematicsMovement();                                                // get which kind of motion is running in kinematic control
 
-        void beginBehaviours();
-        void updateBehaviours();
-        void setBehaviour(const uint8_t behaviour, const bool enable);
-        bool isLifted();
+
+        // Behaviours
+        void beginBehaviours();                                                         // internal behaviours of the robot
+        void updateBehaviours();                                                        // updated internal behaviours
+        void setBehaviour(const uint8_t behaviour, const bool enable);                  // set a behaviour
+        bool isLifted();                                                                // is robot lifted?
+
+
+        // Utilities
+        void getSerialNumber(char * sn);                                                // get STM32 serial number
+
 };
 
 #endif

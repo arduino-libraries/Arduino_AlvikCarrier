@@ -85,6 +85,7 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
 
 int Arduino_AlvikCarrier::begin(){
     beginLeds();
+    pinMode(NANO_CHK,INPUT_PULLDOWN);
 
     serial->begin(UART_BAUD);
     serial->flush();
@@ -254,6 +255,7 @@ void Arduino_AlvikCarrier::disconnectExternalI2C(){
 /******************************************************************************************************/
 
 int Arduino_AlvikCarrier::beginBMS(){
+    while(digitalRead(NANO_CHK)==HIGH){}
     bms->begin();
     return 0;
 }
@@ -432,17 +434,55 @@ bool Arduino_AlvikCarrier::getTouchKey(const uint8_t key){
     return false;
 }
 
-uint8_t Arduino_AlvikCarrier::getTouchKeys(){
+uint8_t Arduino_AlvikCarrier::getTouchKeys(const bool single_touch){
     touch_value=0;
     if (getAnyTouchPressed()){
         touch_value|=1;
-        touch_value|=getTouchOk()<<1;
-        touch_value|=getTouchDelete()<<2;
-        touch_value|=getTouchCenter()<<3;
-        touch_value|=getTouchUp()<<4;
-        touch_value|=getTouchLeft()<<5;
-        touch_value|=getTouchDown()<<6;
-        touch_value|=getTouchRight()<<7;
+        if (!single_touch){
+            touch_value|=getTouchOk()<<1;
+            touch_value|=getTouchDelete()<<2;
+            touch_value|=getTouchCenter()<<3;
+            touch_value|=getTouchUp()<<4;
+            touch_value|=getTouchLeft()<<5;
+            touch_value|=getTouchDown()<<6;
+            touch_value|=getTouchRight()<<7;
+        }
+        else{
+            if (getTouchOk()){
+                touch_value|=1<<1;
+            }else{
+                if (getTouchDelete()){
+                    touch_value|=1<<2;
+                }
+                else{
+                    if (getTouchCenter()){
+                        touch_value|=1<<3;
+                    }
+                    else{
+                        if (getTouchLeft()){
+                            touch_value|=1<<5;
+                        }
+                        else{
+                            if (getTouchDown()){
+                                touch_value|=1<<6;
+                            }
+                            else{
+                                if (getTouchRight()){
+                                    touch_value|=1<<7;
+                                }
+                                else{
+                                    if (getTouchUp()){
+                                        touch_value|=1<<4;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
     }
     return touch_value;
 }
@@ -693,7 +733,7 @@ void Arduino_AlvikCarrier::updateKinematics(){
         if (kinematics_movement==MOVEMENT_ROTATE){
             rotate_pid->update(kinematics->getTheta());
             drive(0, round(rotate_pid->getControlOutput()/10.0)*10);
-            if (abs(rotate_pid->getError())<ROTATE_THREASHOLD){
+            if (abs(rotate_pid->getError())<ROTATE_THRESHOLD){
                 kinematics_achieved=true;
                 disableKinematicsMovement();
                 drive(0,0);
@@ -702,7 +742,7 @@ void Arduino_AlvikCarrier::updateKinematics(){
         if (kinematics_movement==MOVEMENT_MOVE){
             move_pid->update((kinematics->getTravel()-previous_travel)*move_direction);
             drive(round(move_pid->getControlOutput()/10.0)*10, 0);
-            if (abs(move_pid->getError())<MOVE_THREADSHOLD){
+            if (abs(move_pid->getError())<MOVE_THRESHOLD){
                 kinematics_achieved=true;
                 disableKinematicsMovement();
                 drive(0,0);
@@ -892,4 +932,21 @@ bool Arduino_AlvikCarrier::isLifted(){
     else{
         return false;
     }
+}
+
+
+
+/******************************************************************************************************/
+/*                                             Utilities                                              */
+/******************************************************************************************************/
+
+void Arduino_AlvikCarrier::getSerialNumber(char * sn){
+  uint32_t id[3];
+  id[0] = HAL_GetUIDw0();
+  id[1] = HAL_GetUIDw1();
+  id[2] = HAL_GetUIDw2();
+  uint32_t top = id[0]+id[2];
+  uint16_t bottom = (id[1]&0xFFFF0000)>>16;
+  sprintf(sn,"%08lx", top);
+  sprintf(sn+8,"%x",bottom);
 }
