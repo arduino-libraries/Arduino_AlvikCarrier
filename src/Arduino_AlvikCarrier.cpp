@@ -434,17 +434,55 @@ bool Arduino_AlvikCarrier::getTouchKey(const uint8_t key){
     return false;
 }
 
-uint8_t Arduino_AlvikCarrier::getTouchKeys(){
+uint8_t Arduino_AlvikCarrier::getTouchKeys(const bool single_touch){
     touch_value=0;
     if (getAnyTouchPressed()){
         touch_value|=1;
-        touch_value|=getTouchOk()<<1;
-        touch_value|=getTouchDelete()<<2;
-        touch_value|=getTouchCenter()<<3;
-        touch_value|=getTouchUp()<<4;
-        touch_value|=getTouchLeft()<<5;
-        touch_value|=getTouchDown()<<6;
-        touch_value|=getTouchRight()<<7;
+        if (!single_touch){
+            touch_value|=getTouchOk()<<1;
+            touch_value|=getTouchDelete()<<2;
+            touch_value|=getTouchCenter()<<3;
+            touch_value|=getTouchUp()<<4;
+            touch_value|=getTouchLeft()<<5;
+            touch_value|=getTouchDown()<<6;
+            touch_value|=getTouchRight()<<7;
+        }
+        else{
+            if (getTouchOk()){
+                touch_value|=1<<1;
+            }else{
+                if (getTouchDelete()){
+                    touch_value|=1<<2;
+                }
+                else{
+                    if (getTouchCenter()){
+                        touch_value|=1<<3;
+                    }
+                    else{
+                        if (getTouchLeft()){
+                            touch_value|=1<<5;
+                        }
+                        else{
+                            if (getTouchDown()){
+                                touch_value|=1<<6;
+                            }
+                            else{
+                                if (getTouchRight()){
+                                    touch_value|=1<<7;
+                                }
+                                else{
+                                    if (getTouchUp()){
+                                        touch_value|=1<<4;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
     }
     return touch_value;
 }

@@ -179,7 +179,7 @@ class Arduino_AlvikCarrier{
         void updateTouch();                                                             // update touch status
         bool getAnyTouchPressed();                                                      // get any touch pressed
         bool getTouchKey(const uint8_t key);                                            // return true if key touch is pressed
-        uint8_t getTouchKeys();                                                         // return touched pads as byte
+        uint8_t getTouchKeys(const bool single_touch = true);                           // return touched pads as byte
         bool getTouchUp();                                                              // get nav pad up
         bool getTouchRight();                                                           // get nav pad right
         bool getTouchDown();                                                            // get nav pad down
