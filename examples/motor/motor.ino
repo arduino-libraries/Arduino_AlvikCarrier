@@ -9,6 +9,8 @@
     
 */
 
+// This example shows how wheels velocity control can be used
+
 
 #include "Arduino_AlvikCarrier.h"
 
@@ -21,15 +23,10 @@ int status=0;
 float reference = 0.0;
 
 void setup(){ 
-  Serial.begin(115200);
   alvik.begin();
   t=millis();
   t_change=millis();
   alvik.setRpm(reference,reference);
-
-  Serial.print("reference");
-  Serial.print(" ");
-  Serial.println("measure");
 }
 
 void loop(){
@@ -64,11 +61,5 @@ void loop(){
   if (millis()-t>20){
     t=millis();
     alvik.updateMotors();
-    
-    Serial.print(reference);
-    Serial.print(" ");
-    Serial.print(alvik.getRpmRight());
-    Serial.print(" ");
-    Serial.println(alvik.getRpmLeft());
   }
 }

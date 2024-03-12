@@ -9,6 +9,8 @@
     
 */
 
+// This example shows how left wheel position control can be used
+
 
 #include "Arduino_AlvikCarrier.h"
 
@@ -20,7 +22,6 @@ uint8_t task=0;
 float reference;
 
 void setup() {
-  Serial.begin(115200);
   alvik.begin();
   task = 0;
   reference = 0;
@@ -32,10 +33,6 @@ void loop() {
   if (millis()-tmotor>20){
     tmotor = millis();
     alvik.updateMotors();
-    Serial.print(reference);
-    Serial.print("\t");
-    Serial.print(alvik.getPositionLeft());
-    Serial.print("\n");
   }
 
   if (millis()-ttask>5000){
