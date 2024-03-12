@@ -20,7 +20,6 @@ unsigned long time_imu_update=0;
 Arduino_AlvikCarrier alvik;
 
 void setup(){
-    Serial.begin(115200);
     alvik.begin();
     time_imu_update=millis();
 }
@@ -28,24 +27,24 @@ void setup(){
 void loop(){
     if (millis()-time_imu_update>100){
         alvik.updateImu();
-        Serial.print("\t");
-        Serial.print(alvik.getAccelerationX());
-        Serial.print("\t");
-        Serial.print(alvik.getAccelerationY()); 
-        Serial.print("\t");
-        Serial.print(alvik.getAccelerationZ()); 
-        Serial.print("\t");
-        Serial.print(alvik.getAngularVelocityX());
-        Serial.print("\t");
-        Serial.print(alvik.getAngularVelocityY()); 
-        Serial.print("\t");
-        Serial.print(alvik.getAngularVelocityZ()); 
-        Serial.print("\t");
-        Serial.print(alvik.getRoll());
-        Serial.print("\t");
-        Serial.print(alvik.getPitch());  
-        Serial.print("\t");
-        Serial.println(alvik.getYaw()); 
+        alvik.serial->print("\t");
+        alvik.serial->print(alvik.getAccelerationX());
+        alvik.serial->print("\t");
+        alvik.serial->print(alvik.getAccelerationY()); 
+        alvik.serial->print("\t");
+        alvik.serial->print(alvik.getAccelerationZ()); 
+        alvik.serial->print("\t");
+        alvik.serial->print(alvik.getAngularVelocityX());
+        alvik.serial->print("\t");
+        alvik.serial->print(alvik.getAngularVelocityY()); 
+        alvik.serial->print("\t");
+        alvik.serial->print(alvik.getAngularVelocityZ()); 
+        alvik.serial->print("\t");
+        alvik.serial->print(alvik.getRoll());
+        alvik.serial->print("\t");
+        alvik.serial->print(alvik.getPitch());  
+        alvik.serial->print("\t");
+        alvik.serial->println(alvik.getYaw()); 
     }
     delay(1);
 }

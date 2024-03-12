@@ -22,7 +22,6 @@ uint8_t task=0;
 bool led_value = false;
 
 void setup() {
-  Serial.begin(115200);
   alvik.begin();
   ttask=millis();
   tmotor=millis();
@@ -35,17 +34,17 @@ void loop() {
     tmotor=millis();
     alvik.updateMotors();
     alvik.updateKinematics();
-    Serial.print("\t");
-    Serial.print(alvik.getLinearVelocity());
-    Serial.print("\t");
-    Serial.print(alvik.getAngularVelocity());
-    Serial.print("\t");
-    Serial.print(alvik.getX());
-    Serial.print("\t");
-    Serial.print(alvik.getY());
-    Serial.print("\t");
-    Serial.print(alvik.getTheta());
-    Serial.print("\n");
+    alvik.serial->print("\t");
+    alvik.serial->print(alvik.getLinearVelocity());
+    alvik.serial->print("\t");
+    alvik.serial->print(alvik.getAngularVelocity());
+    alvik.serial->print("\t");
+    alvik.serial->print(alvik.getX());
+    alvik.serial->print("\t");
+    alvik.serial->print(alvik.getY());
+    alvik.serial->print("\t");
+    alvik.serial->print(alvik.getTheta());
+    alvik.serial->print("\n");
   }
 
   if ((millis()-ttask>5000)||alvik.isTargetReached()){

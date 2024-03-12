@@ -9,7 +9,7 @@
     
 */
 
-// WIP -> preliminary firmware
+// This is the stock firmware of Arduino Alvik robot.
 
 
 #include "Arduino_AlvikCarrier.h"
@@ -61,7 +61,6 @@ uint8_t version[3];
 
 
 void setup(){
-  Serial.begin(115200);
   alvik.begin();
   alvik.disableIlluminator();
   alvik.setLeds(COLOR_ORANGE);
