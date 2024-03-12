@@ -18,7 +18,7 @@
 #define WHEEL_DIAMETER_MM 34.0
 
 // Motor Control and mechanical parameters
-#define CONTROL_LIMIT 4096              // PWM resolution
+#define CONTROL_LIMIT 4095              // PWM resolution
 
 #define MOTOR_LIMIT 70.0                // Mechanical RPM limit speed of used motors
 #define MOTOR_CPR 6.0                   // Resolution of the encoder
@@ -42,17 +42,17 @@ const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 
 // Kinematics control
 #define ROTATE_KP_DEFAULT 5.0
-#define ROTATE_KI_DEFAULT 0.0
+#define ROTATE_KI_DEFAULT 0.01
 #define ROTATE_KD_DEFAULT 0.001
 #define ROTATE_CONTROL_PERIOD 0.02
-#define ROTATE_MAX_SPEED 45.0
+#define ROTATE_MAX_SPEED 170.0
 #define ROTATE_THRESHOLD 1
 
 #define MOVE_KP_DEFAULT 5.0
-#define MOVE_KI_DEFAULT 0.0
+#define MOVE_KI_DEFAULT 0.01
 #define MOVE_KD_DEFAULT 0.001
 #define MOVE_CONTROL_PERIOD 0.02
-#define MOVE_MAX_SPEED 45.0
+#define MOVE_MAX_SPEED 130.0
 #define MOVE_THRESHOLD 3
 
 #define MOVEMENT_DISABLED 0

@@ -19,7 +19,7 @@
 #include "../definitions/robot_definitions.h"
 #include "pid_controller.h"
 
-#define CONTROL_LIMIT 4095
+//#define CONTROL_LIMIT 4095
 #define MEM_SIZE 5
 #define CONTROL_MODE_NORMAL 0
 #define CONTROL_MODE_LINEAR 1
