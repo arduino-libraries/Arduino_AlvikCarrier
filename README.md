@@ -21,4 +21,5 @@ To flash the firmware use the Arduino® Alvik documentation.
 
 ## Useful links
 - [Product page](https://store.arduino.cc/pages/alvik)
+- [Alvik C++](https://github.com/arduino-libraries/Arduino_Alvik)
 - [Micropython](https://github.com/arduino/arduino-alvik-mpy)
