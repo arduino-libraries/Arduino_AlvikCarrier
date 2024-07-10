@@ -217,7 +217,10 @@ bool MotorControl::isPositionControlEnabled(){
 }
 
 void MotorControl::resetPosition(const float p0){
-    position=p0;
+    disablePositionControl();
+    pos_pid->reset();
+    position = p0;
+    reference_position = p0;
 }
 
 float MotorControl::getPosition(){
