@@ -67,6 +67,10 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     ipKnobs = &iKnobs;
     imu_delta_time = MOTION_FX_ENGINE_DELTATIME;
     sample_to_discard = 0;
+    is_shaking = 0;
+    first_wakeup = true;
+    shake_time = 0;
+    shake_counter = 0;
 
     // version
     version_high = VERSION_BYTE_HIGH;
@@ -619,6 +623,9 @@ int Arduino_AlvikCarrier::beginImu(){
     imu->Set_G_FS(2000);
     imu->Enable_X();
     imu->Enable_G();
+    imu->Enable_Wake_Up_Detection(LSM6DSO_INT1_PIN);
+    imu->Set_Wake_Up_Threshold(1);
+    imu->Set_Wake_Up_Duration(3);
 
     delay(10);
 
@@ -664,6 +671,33 @@ void Arduino_AlvikCarrier::updateImu(){
         sample_to_discard++;
     }
 
+    imu->Get_X_Event_Status(&imu_status);
+ 
+    if (imu_status.WakeUpStatus && 
+            (motor_control_left->getRPM()<1 && motor_control_left->getRPM()>-1) &&
+            (motor_control_right->getRPM()<1 && motor_control_right->getRPM()>-1)){
+        if (first_wakeup){
+            shake_time = millis();
+            first_wakeup = false;
+            shake_counter = 0;
+        }
+        shake_counter++;
+    }
+
+    if (millis()-shake_time>500){
+        if (shake_counter>10){
+            is_shaking = true;
+            shake_counter = 0;
+            shake_time_sig = millis();
+        }
+    }
+    if (is_shaking && (millis()-shake_time_sig>1000)){
+        is_shaking = false;
+    }
+
+
+    
+
 }
 
 float Arduino_AlvikCarrier::getAccelerationX(){
@@ -700,6 +734,10 @@ float Arduino_AlvikCarrier::getPitch(){
 
 float Arduino_AlvikCarrier::getYaw(){
     return 360.0-filter_data.rotation[0];
+}
+
+bool Arduino_AlvikCarrier::isShaking(){
+    return is_shaking;
 }
 
 
