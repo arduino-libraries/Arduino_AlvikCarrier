@@ -227,6 +227,8 @@ void loop(){
         alvik.updateTouch();
         msg_size = packeter.packetC1B('t', alvik.getTouchKeys());
         alvik.serial->write(packeter.msg,msg_size);
+        msg_size = packeter.packetC1B('d', alvik.isShaking());
+        alvik.serial->write(packeter.msg,msg_size);
         break;
       case 2:
         alvik.updateAPDS();
