@@ -70,6 +70,8 @@ class Arduino_AlvikCarrier{
         bool first_wakeup;
         unsigned long shake_time, shake_time_sig;
         uint16_t shake_counter;
+        uint8_t tilt_status;
+        uint8_t xl, xh, yl, yh, zl, zh;
 
         uint8_t version_high;
         uint8_t version_mid;
@@ -226,7 +228,8 @@ class Arduino_AlvikCarrier{
         float getRoll();                                                                // get robot roll
         float getPitch();                                                               // get robot pitch
         float getYaw();                                                                 // get robot yaw
-        bool  isShaking();                                                              // get true if robot is shaking                                                        
+        bool  isShaking();                                                              // get true if robot is shaking    
+        uint8_t getMotion();                                                            // get tilt + shaking                                                    
 
         void errorLed(const int error_code);                                            // error routine, locks on code blinking led
 

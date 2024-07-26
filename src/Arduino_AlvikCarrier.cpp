@@ -71,6 +71,13 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     first_wakeup = true;
     shake_time = 0;
     shake_counter = 0;
+    tilt_status = 0;
+    xl = 0;
+    xh = 0;
+    yl = 0;
+    yh = 0;
+    zl = 0;
+    zh = 0;
 
     // version
     version_high = VERSION_BYTE_HIGH;
@@ -626,6 +633,8 @@ int Arduino_AlvikCarrier::beginImu(){
     imu->Enable_Wake_Up_Detection(LSM6DSO_INT1_PIN);
     imu->Set_Wake_Up_Threshold(1);
     imu->Set_Wake_Up_Duration(3);
+    imu->Enable_6D_Orientation(LSM6DSO_INT1_PIN);
+
 
     delay(10);
 
@@ -695,9 +704,20 @@ void Arduino_AlvikCarrier::updateImu(){
         is_shaking = false;
     }
 
-
+    imu->Get_6D_Orientation_XL(&xl);
+    imu->Get_6D_Orientation_XH(&xh);
+    imu->Get_6D_Orientation_YL(&yl);
+    imu->Get_6D_Orientation_YH(&yh);
+    imu->Get_6D_Orientation_ZL(&zl);
+    imu->Get_6D_Orientation_ZH(&zh);
     
-
+    tilt_status = 0;
+    tilt_status |= xl<<4;
+    tilt_status |= xh<<5;
+    tilt_status |= zl<<7;
+    tilt_status |= zh<<6;
+    tilt_status |= yh<<3;
+    tilt_status |= yl<<2;
 }
 
 float Arduino_AlvikCarrier::getAccelerationX(){
@@ -738,6 +758,10 @@ float Arduino_AlvikCarrier::getYaw(){
 
 bool Arduino_AlvikCarrier::isShaking(){
     return is_shaking;
+}
+
+uint8_t Arduino_AlvikCarrier::getMotion(){
+    return tilt_status | isShaking();
 }
 
 
