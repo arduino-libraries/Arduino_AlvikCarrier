@@ -79,6 +79,8 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     zl = 0;
     zh = 0;
     tilt_time = 0;
+    tmp_tilt_status = 0;
+    tilt_filter = 0;
 
     // version
     version_high = VERSION_BYTE_HIGH;
@@ -714,13 +716,24 @@ void Arduino_AlvikCarrier::updateImu(){
         imu->Get_6D_Orientation_ZL(&zl);
         imu->Get_6D_Orientation_ZH(&zh);
         
-        tilt_status = 0;
-        tilt_status |= xl<<4;
-        tilt_status |= xh<<5;
-        tilt_status |= zl<<7;
-        tilt_status |= zh<<6;
-        tilt_status |= yh<<3;
-        tilt_status |= yl<<2;
+        tmp_tilt_status = 0;
+        tmp_tilt_status |= xl<<4;
+        tmp_tilt_status |= xh<<5;
+        tmp_tilt_status |= zl<<7;
+        tmp_tilt_status |= zh<<6;
+        tmp_tilt_status |= yh<<3;
+        tmp_tilt_status |= yl<<2;
+
+        if (tilt_status ==  tmp_tilt_status){
+            tilt_filter++;
+        }else{
+            tilt_filter = 0;
+        }
+
+        if (tilt_filter>20){
+            tilt_status = tmp_tilt_status;
+        }
+
     }
 
 }
