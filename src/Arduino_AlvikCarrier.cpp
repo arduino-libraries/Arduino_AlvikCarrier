@@ -71,7 +71,7 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     first_wakeup = true;
     shake_time = 0;
     shake_counter = 0;
-    tilt_status = 0;
+    tilt_status = 0x80;
     xl = 0;
     xh = 0;
     yl = 0;
@@ -724,7 +724,7 @@ void Arduino_AlvikCarrier::updateImu(){
         tmp_tilt_status |= yh<<3;
         tmp_tilt_status |= yl<<2;
 
-        if (tilt_status ==  tmp_tilt_status){
+        if (tilt_status !=  tmp_tilt_status){
             tilt_filter++;
         }else{
             tilt_filter = 0;
@@ -732,6 +732,7 @@ void Arduino_AlvikCarrier::updateImu(){
 
         if (tilt_filter>20){
             tilt_status = tmp_tilt_status;
+            tilt_filter = 0;
         }
 
     }
