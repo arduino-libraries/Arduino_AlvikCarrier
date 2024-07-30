@@ -761,7 +761,12 @@ bool Arduino_AlvikCarrier::isShaking(){
 }
 
 uint8_t Arduino_AlvikCarrier::getMotion(){
-    return tilt_status | isShaking();
+    if (isShaking){
+        return 0x01;
+    }
+    else{
+        return tilt_status;
+    }
 }
 
 
