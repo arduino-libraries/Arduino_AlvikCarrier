@@ -761,7 +761,7 @@ bool Arduino_AlvikCarrier::isShaking(){
 }
 
 uint8_t Arduino_AlvikCarrier::getMotion(){
-    if (isShaking){
+    if (isShaking()){
         return 0x01;
     }
     else{
