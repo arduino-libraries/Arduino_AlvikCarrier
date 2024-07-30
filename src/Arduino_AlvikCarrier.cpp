@@ -78,6 +78,7 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
     yh = 0;
     zl = 0;
     zh = 0;
+    tilt_time = 0;
 
     // version
     version_high = VERSION_BYTE_HIGH;
@@ -702,9 +703,10 @@ void Arduino_AlvikCarrier::updateImu(){
     }
     if (is_shaking && (millis()-shake_time_sig>1000)){
         is_shaking = false;
+        tilt_time = millis();
     }
 
-    if (!is_shaking){
+    if ((!is_shaking) && (millis()-tilt_time>1000)){
         imu->Get_6D_Orientation_XL(&xl);
         imu->Get_6D_Orientation_XH(&xh);
         imu->Get_6D_Orientation_YL(&yl);

@@ -72,6 +72,7 @@ class Arduino_AlvikCarrier{
         uint16_t shake_counter;
         uint8_t tilt_status;
         uint8_t xl, xh, yl, yh, zl, zh;
+        unsigned long tilt_time;
 
         uint8_t version_high;
         uint8_t version_mid;
