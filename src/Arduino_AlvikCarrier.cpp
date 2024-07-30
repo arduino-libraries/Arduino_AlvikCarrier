@@ -704,20 +704,23 @@ void Arduino_AlvikCarrier::updateImu(){
         is_shaking = false;
     }
 
-    imu->Get_6D_Orientation_XL(&xl);
-    imu->Get_6D_Orientation_XH(&xh);
-    imu->Get_6D_Orientation_YL(&yl);
-    imu->Get_6D_Orientation_YH(&yh);
-    imu->Get_6D_Orientation_ZL(&zl);
-    imu->Get_6D_Orientation_ZH(&zh);
-    
-    tilt_status = 0;
-    tilt_status |= xl<<4;
-    tilt_status |= xh<<5;
-    tilt_status |= zl<<7;
-    tilt_status |= zh<<6;
-    tilt_status |= yh<<3;
-    tilt_status |= yl<<2;
+    if (!is_shaking){
+        imu->Get_6D_Orientation_XL(&xl);
+        imu->Get_6D_Orientation_XH(&xh);
+        imu->Get_6D_Orientation_YL(&yl);
+        imu->Get_6D_Orientation_YH(&yh);
+        imu->Get_6D_Orientation_ZL(&zl);
+        imu->Get_6D_Orientation_ZH(&zh);
+        
+        tilt_status = 0;
+        tilt_status |= xl<<4;
+        tilt_status |= xh<<5;
+        tilt_status |= zl<<7;
+        tilt_status |= zh<<6;
+        tilt_status |= yh<<3;
+        tilt_status |= yl<<2;
+    }
+
 }
 
 float Arduino_AlvikCarrier::getAccelerationX(){
@@ -761,12 +764,7 @@ bool Arduino_AlvikCarrier::isShaking(){
 }
 
 uint8_t Arduino_AlvikCarrier::getMotion(){
-    if (isShaking()){
-        return 0x01;
-    }
-    else{
-        return tilt_status;
-    }
+    return tilt_status | isShaking();
 }
 
 
