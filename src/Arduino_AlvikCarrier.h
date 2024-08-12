@@ -56,6 +56,8 @@ class Arduino_AlvikCarrier{
         LSM6DSOSensor * imu;
         int32_t accelerometer[3];
         int32_t gyroscope[3];
+        LSM6DSO_Event_Status_t imu_status;
+
 
         float imu_delta_time;
         MFX_knobs_t iKnobs;
@@ -64,6 +66,15 @@ class Arduino_AlvikCarrier{
         MFX_input_t imu_data;
         MFX_output_t filter_data;
         uint16_t sample_to_discard;
+        bool is_shaking;
+        bool first_wakeup;
+        unsigned long shake_time, shake_time_sig;
+        uint16_t shake_counter;
+        uint8_t tilt_status;
+        uint8_t xl, xh, yl, yh, zl, zh;
+        unsigned long tilt_time;
+        uint8_t tilt_filter;
+        uint8_t tmp_tilt_status;
 
         uint8_t version_high;
         uint8_t version_mid;
@@ -220,6 +231,8 @@ class Arduino_AlvikCarrier{
         float getRoll();                                                                // get robot roll
         float getPitch();                                                               // get robot pitch
         float getYaw();                                                                 // get robot yaw
+        bool  isShaking();                                                              // get true if robot is shaking    
+        uint8_t getMotion();                                                            // get tilt + shaking                                                    
 
         void errorLed(const int error_code);                                            // error routine, locks on code blinking led
 
