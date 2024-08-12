@@ -43,6 +43,7 @@ class MotorControl{
         float pos_controller_period;
         float pos_max_velocity;
         bool position_control_enabled;
+        bool is_position_reached;
         
         float position;
         float angle;
@@ -112,6 +113,7 @@ class MotorControl{
         void setPosition(const float degree);                          // set the reference for position control
         float getPosition();                                            // get the actual angle in degrees of motor
         void  resetPosition(const float p0=0.0);                        // reset/set the position value
+        bool isPositionReached();
 
         float getError();
         

@@ -122,6 +122,8 @@ void loop(){
               break;
             case 'P':
               alvik.setPositionLeft(value);
+              ack_required=MOVEMENT_LEFT;
+              ack_check=true;
               break;
             case 'Z':
               alvik.resetPositionLeft(value);
@@ -136,6 +138,8 @@ void loop(){
               break;
             case 'P':
               alvik.setPositionRight(value);
+              ack_required=MOVEMENT_RIGHT;
+              ack_check=true;
               break;
             case 'Z':
               alvik.resetPositionRight(value);
@@ -149,6 +153,8 @@ void loop(){
         packeter.unpacketC2F(code,position_left, position_right);
         alvik.disableKinematicsMovement();
         alvik.setPosition(position_left, position_right);
+        ack_required=MOVEMENT_POSITION;
+        ack_check=true;
         break;
 
       
@@ -280,12 +286,21 @@ void loop(){
       msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
       alvik.serial->write(packeter.msg,msg_size);
     }
-    if (ack_check && alvik.isTargetReached()){
+    if (ack_check && (alvik.isTargetReached() || alvik.isPositionReached() || alvik.isPositionLeftReached() || alvik.isPositionRightReached())){
       if (ack_required == MOVEMENT_ROTATE){
         msg_size = packeter.packetC1B('x', 'R');
       }
       if (ack_required == MOVEMENT_MOVE){
         msg_size = packeter.packetC1B('x', 'M');
+      }
+      if (ack_required == MOVEMENT_POSITION){
+        msg_size = packeter.packetC1B('x', 'P');
+      }
+      if (ack_required == MOVEMENT_LEFT){
+        msg_size = packeter.packetC1B('x', 'P');
+      }
+      if (ack_required == MOVEMENT_RIGHT){
+        msg_size = packeter.packetC1B('x', 'P');
       }
     }
     else{
