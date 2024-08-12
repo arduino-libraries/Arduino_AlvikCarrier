@@ -362,12 +362,20 @@ float Arduino_AlvikCarrier::getPositionLeft(){
     return motor_control_left->getPosition();
 }
 
+bool Arduino_AlvikCarrier::isPositionLeftReached(){
+    return motor_control_left->isPositionReached();
+}
+
 void Arduino_AlvikCarrier::setPositionRight(const float degrees){
     motor_control_right->setPosition(degrees);
 }  
 
 float Arduino_AlvikCarrier::getPositionRight(){
     return motor_control_right->getPosition();
+}
+
+bool Arduino_AlvikCarrier::isPositionRightReached(){
+    return motor_control_right->isPositionReached();
 }
 
 void Arduino_AlvikCarrier::setPosition(const float left_deg, const float right_deg){
@@ -378,6 +386,10 @@ void Arduino_AlvikCarrier::setPosition(const float left_deg, const float right_d
 void Arduino_AlvikCarrier::getPosition(float & left_deg, float & right_deg){
     left_deg = getPositionLeft();
     right_deg = getPositionRight();
+}
+
+bool Arduino_AlvikCarrier::isPositionReached(){
+    return isPositionLeftReached() && isPositionRightReached();
 }
 
 void Arduino_AlvikCarrier::resetPositionLeft(const float initial_position){

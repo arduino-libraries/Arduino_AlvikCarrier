@@ -172,10 +172,13 @@ class Arduino_AlvikCarrier{
         void setKPidRight(const float kp, const float ki, const float kd);              // set PID parameters for right wheel
         void setPositionLeft(const float degrees);                                      // set position in degrees on left wheel
         float getPositionLeft();                                                        // get left wheel position in degrees
+        bool isPositionLeftReached();                                                   // return true if left wheel position is reached
         void setPositionRight(const float degrees);                                     // set position in degrees on right wheel
         float getPositionRight();                                                       // get right wheel position in degrees
+        bool isPositionRightReached();                                                  // return true if right wheel position is reached
         void setPosition(const float left_deg, const float right_deg);                  // set positions on both wheels
         void getPosition(float & left_deg, float & right_deg);                          // get both wheels position
+        bool isPositionReached();                                                       // return true if both wheels position are reached
         void resetPositionLeft(const float initial_position=0.0);                       // reset/set value of position for left wheel
         void resetPositionRight(const float initial_position=0.0);                      // reset/set value of position for right wheel
         void disablePositionControlLeft();                                              // disable the position control on left wheel
