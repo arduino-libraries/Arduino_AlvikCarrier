@@ -213,6 +213,9 @@ void loop(){
           case 1: 
             alvik.setBehaviour(LIFT_ILLUMINATOR, true);
             break;
+          case STOP_ON_UVP:
+            alvik.setBehaviour(STOP_ON_UVP, true);
+            break;
           default:
             alvik.setBehaviour(ALL_BEHAVIOURS, false);
         }

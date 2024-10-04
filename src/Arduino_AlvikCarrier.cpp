@@ -11,7 +11,7 @@
 
 #include "Arduino_AlvikCarrier.h"
 #include "./utilities/HAL_custom_init.h"
-
+#include "INR18650_config.h"
 
 
 Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
@@ -271,6 +271,11 @@ void Arduino_AlvikCarrier::disconnectExternalI2C(){
 int Arduino_AlvikCarrier::beginBMS(){
     while(digitalRead(NANO_CHK)==HIGH){}
     bms->begin();
+
+    if (!bms->compareWithMem(inr18650_config)){
+        upgradeBMS();
+    }
+
     return 0;
 }
 
@@ -288,6 +293,15 @@ float Arduino_AlvikCarrier::getBatteryChargePercentage(){
     return state_of_charge;
 }
 
+void Arduino_AlvikCarrier::upgradeBMS(){
+
+    bms->writeShadowMem(inr18650_config);
+
+    // MAX17332_Programmer bmsProgrammer(*bms);
+    // bmsProgrammer.writeNVM(inr18650_config);
+
+    return;
+}
 
 
 /******************************************************************************************************/
@@ -1006,6 +1020,19 @@ void Arduino_AlvikCarrier::updateBehaviours(){
             first_lift = true;
         }
        }
+    }
+
+    if ((bool) behaviours & STOP_ON_UVP){
+
+        if (bms->readSoc() < BATTERY_CHARGE_MIN && !bms->isCharging()){
+            setLedLeftRed(1);
+            setLedRightRed(0);
+            delay(500);
+            setLedLeftRed(0);
+            setLedRightRed(1);
+            delay(500);
+            // TODO MEMORIZE A STATE VARIABLE TO STOP MOTORS ETC...
+        }
     }
 }
 

@@ -27,6 +27,8 @@
 #include "motion_fx.h"
 #include "./robotics/kinematics.h"
 
+#define BATTERY_CHARGE_MIN 10.0
+
 
 
 class Arduino_AlvikCarrier{
@@ -156,7 +158,7 @@ class Arduino_AlvikCarrier{
         void updateBMS();                                                               // update the BMS
         float getBatteryVoltage();                                                      // get Voltage
         float getBatteryChargePercentage();                                             // get battery percentage
-
+        void upgradeBMS();
 
 
         // Motors
