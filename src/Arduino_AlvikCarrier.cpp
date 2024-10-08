@@ -137,7 +137,7 @@ int Arduino_AlvikCarrier::begin(){
      
     beginServo();
     
-    if (beginBMS()!=0){
+    if (!beginBMS()){
         errorLed(ERROR_BMS);
     }
     
@@ -270,8 +270,7 @@ void Arduino_AlvikCarrier::disconnectExternalI2C(){
 
 int Arduino_AlvikCarrier::beginBMS(){
     while(digitalRead(NANO_CHK)==HIGH){}
-    bms->begin();
-    return 0;
+    return bms->begin();
 }
 
 void Arduino_AlvikCarrier::updateBMS(){
