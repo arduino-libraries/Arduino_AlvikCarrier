@@ -973,39 +973,30 @@ void Arduino_AlvikCarrier::beginBehaviours(){
 
 
 void Arduino_AlvikCarrier::updateBehaviours(){
-    if (behaviours|=1 == 1){
-        /*
+    if ((1<<(LIFT_ILLUMINATOR-1)) & behaviours){
+
         if (isLifted()&&first_lift){
-            first_lift = false;
-            prev_illuminator_state = illuminator_state;
-            disableIlluminator();
+            //disableIlluminator();
+            setIlluminator(LOW);
+            first_lift=false;
         }
-        if (isLifted()&&!first_lift) {
-            if (prev_illuminator_state!=0){
-                disableIlluminator();
+        else{
+            if (!isLifted()){
+                setIlluminator(prev_illuminator_state);
+            }
+            if (!isLifted()&&!first_lift){
+                first_lift = true;
             }
         }
-        if (!isLifted()&&!first_lift){
-            if (prev_illuminator_state!=0){
-                //first_lift = true;
-                enableIlluminator();
-            }
-        }
-        */
-       if (isLifted()&&first_lift){
-        //disableIlluminator();
-        setIlluminator(LOW);
-        first_lift=false;
-       }
-       else{
-        if (!isLifted()){
-            setIlluminator(prev_illuminator_state);
-        }
-        if (!isLifted()&&!first_lift){
-            first_lift = true;
-        }
-       }
     }
+
+    if ((1 << (BATTERY_ALERT-1)) & behaviours){
+        led1->setRed(true);
+    }
+    else{
+        led1->setRed(false);
+    }
+
 }
 
 void Arduino_AlvikCarrier::setBehaviour(const uint8_t behaviour, const bool enable){

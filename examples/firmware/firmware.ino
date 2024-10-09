@@ -213,6 +213,9 @@ void loop(){
           case 1: 
             alvik.setBehaviour(LIFT_ILLUMINATOR, true);
             break;
+          case 2:
+            alvik.setBehaviour(BATTERY_ALERT, true);
+            break;
           default:
             alvik.setBehaviour(ALL_BEHAVIOURS, false);
         }
