@@ -96,6 +96,7 @@ class Arduino_AlvikCarrier{
         bool first_lift;
         unsigned long battery_alert_time;
         unsigned long battery_alert_wave;
+        bool battery_alert;
 
 
 
@@ -159,6 +160,7 @@ class Arduino_AlvikCarrier{
         float getBatteryVoltage();                                                      // get Voltage
         float getBatteryChargePercentage();                                             // get battery percentage
         float isBatteryCharging();                                                      // return -1 if battery discharge or 1 if charging
+        bool isBatteryAlert();                                                          // return true if battery is LOW and alert behaviour is setted, otherwise false
 
 
 
@@ -187,7 +189,6 @@ class Arduino_AlvikCarrier{
         void disablePositionControlLeft();                                              // disable the position control on left wheel
         void disablePositionControlRight();                                             // disable the position control on right wheel
         void disablePositionControl();                                                  // disable the position control on both wheels
-
 
 
 

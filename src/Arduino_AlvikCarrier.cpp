@@ -298,6 +298,10 @@ float Arduino_AlvikCarrier::isBatteryCharging(){
     return charging;
 }
 
+bool Arduino_AlvikCarrier::isBatteryAlert(){
+    return battery_alert;
+}
+
 
 
 /******************************************************************************************************/
@@ -982,6 +986,7 @@ void Arduino_AlvikCarrier::beginBehaviours(){
     first_lift = true;
     battery_alert_time = millis();
     battery_alert_wave = 100;
+    battery_alert = false;
 }
 
 
@@ -1007,7 +1012,7 @@ void Arduino_AlvikCarrier::updateBehaviours(){
 
     // battery alert
     if ((1<<(BATTERY_ALERT-1)) & behaviours){
-        if (getBatteryVoltage()<BATTERY_ALERT_MINIMUM_VOLTAGE){
+        if ((isBatteryCharging()==-1)&&(getBatteryChargePercentage()<BATTERY_ALERT_MINIMUM_CHARGE)){
             if (millis()-battery_alert_time>battery_alert_wave){
                 battery_alert_time = millis();
                 if (battery_alert_wave==400){
@@ -1018,11 +1023,19 @@ void Arduino_AlvikCarrier::updateBehaviours(){
                     setLeds(COLOR_BLACK);
                     battery_alert_wave=400;
                 }
+            }
+            if (getBatteryChargePercentage()<BATTERY_ALERT_STOP_CHARGE){
+                battery_alert = true;
                 setRpm(0,0);
-                motor_left->stop();
-                motor_right->stop();
+                setIlluminator(false);
             }
         }
+        else{
+            battery_alert = false;
+        }
+    }
+    else{
+        battery_alert = false;
     }
 
 }
