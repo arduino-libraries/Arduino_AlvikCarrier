@@ -269,6 +269,7 @@ void Arduino_AlvikCarrier::disconnectExternalI2C(){
 /******************************************************************************************************/
 
 int Arduino_AlvikCarrier::beginBMS(){
+    charging = 0.0;
     while(digitalRead(NANO_CHK)==HIGH){}
     return bms->begin();
 }
@@ -276,6 +277,12 @@ int Arduino_AlvikCarrier::beginBMS(){
 void Arduino_AlvikCarrier::updateBMS(){
     voltage = bms->readVCell();
     state_of_charge = bms->readSoc();
+    if (bms->isCharging()){
+        charging = 1.0;
+    }
+    else{
+        charging = -1.0;
+    }
 }
 
 
@@ -285,6 +292,10 @@ float Arduino_AlvikCarrier::getBatteryVoltage(){
 
 float Arduino_AlvikCarrier::getBatteryChargePercentage(){
     return state_of_charge;
+}
+
+float Arduino_AlvikCarrier::isBatteryCharging(){
+    return charging;
 }
 
 
@@ -997,15 +1008,15 @@ void Arduino_AlvikCarrier::updateBehaviours(){
     // battery alert
     if ((1<<(BATTERY_ALERT-1)) & behaviours){
         if (getBatteryVoltage()<BATTERY_ALERT_MINIMUM_VOLTAGE){
-            if (battery_alert_time-millis()>battery_alert_wave){
+            if (millis()-battery_alert_time>battery_alert_wave){
                 battery_alert_time = millis();
-                if (battery_alert_wave==100){
-                    setAllLeds(COLOR_RED);
-                    battery_alert_wave=400;
+                if (battery_alert_wave==400){
+                    setLeds(COLOR_RED);
+                    battery_alert_wave=100;
                 }
                 else{
-                    setAllLeds(COLOR_BLACK);
-                    battery_alert_wave=100;
+                    setLeds(COLOR_BLACK);
+                    battery_alert_wave=400;
                 }
                 setRpm(0,0);
                 motor_left->stop();

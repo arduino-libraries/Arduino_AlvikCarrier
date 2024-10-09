@@ -45,7 +45,7 @@ class Arduino_AlvikCarrier{
 
 
         MAX17332 * bms;
-        float voltage, state_of_charge; 
+        float voltage, state_of_charge, charging; 
 
 
         AT42QT2120 * touch_sensor;
@@ -158,6 +158,7 @@ class Arduino_AlvikCarrier{
         void updateBMS();                                                               // update the BMS
         float getBatteryVoltage();                                                      // get Voltage
         float getBatteryChargePercentage();                                             // get battery percentage
+        float isBatteryCharging();                                                      // return -1 if battery discharge or 1 if charging
 
 
 

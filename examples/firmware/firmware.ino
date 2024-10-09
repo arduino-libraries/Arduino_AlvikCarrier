@@ -329,7 +329,7 @@ void loop(){
   if (millis()-tbattery>1000){
     tbattery = millis();
     alvik.updateBMS();
-    msg_size = packeter.packetC1F('p', alvik.getBatteryChargePercentage());
+    msg_size = packeter.packetC1F('p', alvik.isBatteryCharging()*alvik.getBatteryChargePercentage());
     alvik.serial->write(packeter.msg,msg_size);
   }
 }
