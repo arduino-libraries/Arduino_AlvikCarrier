@@ -969,10 +969,14 @@ void Arduino_AlvikCarrier::beginBehaviours(){
     prev_illuminator_state = illuminator_state;
     behaviours = 0;
     first_lift = true;
+    battery_alert_time = millis();
+    battery_alert_wave = 100;
 }
 
 
 void Arduino_AlvikCarrier::updateBehaviours(){
+    
+    // illuminator off on lift
     if ((1<<(LIFT_ILLUMINATOR-1)) & behaviours){
 
         if (isLifted()&&first_lift){
@@ -990,11 +994,24 @@ void Arduino_AlvikCarrier::updateBehaviours(){
         }
     }
 
-    if ((1 << (BATTERY_ALERT-1)) & behaviours){
-        led1->setRed(true);
-    }
-    else{
-        led1->setRed(false);
+    // battery alert
+    if ((1<<(BATTERY_ALERT-1)) & behaviours){
+        if (getBatteryVoltage()<BATTERY_ALERT_MINIMUM_VOLTAGE){
+            if (battery_alert_time-millis()>battery_alert_wave){
+                battery_alert_time = millis();
+                if (battery_alert_wave==100){
+                    setAllLeds(COLOR_RED);
+                    battery_alert_wave=400;
+                }
+                else{
+                    setAllLeds(COLOR_BLACK);
+                    battery_alert_wave=100;
+                }
+                setRpm(0,0);
+                motor_left->stop();
+                motor_right->stop();
+            }
+        }
     }
 
 }

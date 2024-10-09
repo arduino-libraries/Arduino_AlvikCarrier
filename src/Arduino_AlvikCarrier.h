@@ -94,6 +94,8 @@ class Arduino_AlvikCarrier{
         bool prev_illuminator_state;
         uint8_t behaviours;
         bool first_lift;
+        unsigned long battery_alert_time;
+        unsigned long battery_alert_wave;
 
 
 

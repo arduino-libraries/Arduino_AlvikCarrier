@@ -95,6 +95,9 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define VERSION_BYTE_MID 0
 #define VERSION_BYTE_LOW 3
 
+// Battery stats
+#define BATTERY_ALERT_MINIMUM_VOLTAGE 3.4
+
 
 
 #endif
