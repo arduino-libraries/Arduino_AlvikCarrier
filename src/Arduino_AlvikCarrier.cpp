@@ -1017,10 +1017,12 @@ void Arduino_AlvikCarrier::updateBehaviours(){
                 battery_alert_time = millis();
                 if (battery_alert_wave==400){
                     setLeds(COLOR_RED);
+                    setLedBuiltin(HIGH);
                     battery_alert_wave=100;
                 }
                 else{
                     setLeds(COLOR_BLACK);
+                    setLedBuiltin(LOW);
                     battery_alert_wave=400;
                 }
             }
