@@ -269,6 +269,7 @@ void Arduino_AlvikCarrier::disconnectExternalI2C(){
 /******************************************************************************************************/
 
 int Arduino_AlvikCarrier::beginBMS(){
+    charging = 0.0;
     while(digitalRead(NANO_CHK)==HIGH){}
     return bms->begin();
 }
@@ -276,6 +277,12 @@ int Arduino_AlvikCarrier::beginBMS(){
 void Arduino_AlvikCarrier::updateBMS(){
     voltage = bms->readVCell();
     state_of_charge = bms->readSoc();
+    if (bms->isCharging()){
+        charging = 1.0;
+    }
+    else{
+        charging = -1.0;
+    }
 }
 
 
@@ -285,6 +292,14 @@ float Arduino_AlvikCarrier::getBatteryVoltage(){
 
 float Arduino_AlvikCarrier::getBatteryChargePercentage(){
     return state_of_charge;
+}
+
+float Arduino_AlvikCarrier::isBatteryCharging(){
+    return charging;
+}
+
+bool Arduino_AlvikCarrier::isBatteryAlert(){
+    return battery_alert;
 }
 
 
@@ -969,43 +984,62 @@ void Arduino_AlvikCarrier::beginBehaviours(){
     prev_illuminator_state = illuminator_state;
     behaviours = 0;
     first_lift = true;
+    battery_alert_time = millis();
+    battery_alert_wave = 100;
+    battery_alert = false;
 }
 
 
 void Arduino_AlvikCarrier::updateBehaviours(){
-    if (behaviours|=1 == 1){
-        /*
+    
+    // illuminator off on lift
+    if ((1<<(LIFT_ILLUMINATOR-1)) & behaviours){
+
         if (isLifted()&&first_lift){
-            first_lift = false;
-            prev_illuminator_state = illuminator_state;
-            disableIlluminator();
+            //disableIlluminator();
+            setIlluminator(LOW);
+            first_lift=false;
         }
-        if (isLifted()&&!first_lift) {
-            if (prev_illuminator_state!=0){
-                disableIlluminator();
+        else{
+            if (!isLifted()){
+                setIlluminator(prev_illuminator_state);
+            }
+            if (!isLifted()&&!first_lift){
+                first_lift = true;
             }
         }
-        if (!isLifted()&&!first_lift){
-            if (prev_illuminator_state!=0){
-                //first_lift = true;
-                enableIlluminator();
-            }
-        }
-        */
-       if (isLifted()&&first_lift){
-        //disableIlluminator();
-        setIlluminator(LOW);
-        first_lift=false;
-       }
-       else{
-        if (!isLifted()){
-            setIlluminator(prev_illuminator_state);
-        }
-        if (!isLifted()&&!first_lift){
-            first_lift = true;
-        }
-       }
     }
+
+    // battery alert
+    if ((1<<(BATTERY_ALERT-1)) & behaviours){
+        if ((isBatteryCharging()==-1)&&(getBatteryChargePercentage()<BATTERY_ALERT_MINIMUM_CHARGE)){
+            if (millis()-battery_alert_time>battery_alert_wave){
+                battery_alert_time = millis();
+                if (battery_alert_wave==400){
+                    setLeds(COLOR_RED);
+                    setLedBuiltin(HIGH);
+                    battery_alert_wave=100;
+                }
+                else{
+                    setLeds(COLOR_BLACK);
+                    setLedBuiltin(LOW);
+                    battery_alert_wave=400;
+                }
+            }
+            if (getBatteryChargePercentage()<BATTERY_ALERT_STOP_CHARGE){
+                battery_alert = true;
+                setRpm(0,0);
+                setIlluminator(false);
+            }
+        }
+        else{
+            battery_alert = false;
+        }
+    }
+    else{
+        battery_alert = false;
+    }
+
 }
 
 void Arduino_AlvikCarrier::setBehaviour(const uint8_t behaviour, const bool enable){

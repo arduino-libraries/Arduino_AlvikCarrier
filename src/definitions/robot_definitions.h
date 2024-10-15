@@ -68,6 +68,7 @@ const float MOTOR_RATIO = MOTOR_CPR*MOTOR_GEAR_RATIO;
 
 #define ALL_BEHAVIOURS 255
 #define LIFT_ILLUMINATOR 1
+#define BATTERY_ALERT 2
 
 
 
@@ -92,7 +93,11 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 // Library version
 #define VERSION_BYTE_HIGH 1
 #define VERSION_BYTE_MID 0
-#define VERSION_BYTE_LOW 3
+#define VERSION_BYTE_LOW 4
+
+// Battery stats
+#define BATTERY_ALERT_MINIMUM_CHARGE 20.0
+#define BATTERY_ALERT_STOP_CHARGE 10.0
 
 
 

@@ -96,110 +96,113 @@ void loop(){
   }
   if (packeter.checkPayload()) {
     code = packeter.payloadTop();
+    if (!alvik.isBatteryAlert()){
+      switch (code){
+        case 'J':
+          packeter.unpacketC2F(code,left,right);
+          alvik.disableKinematicsMovement();
+          alvik.disablePositionControl();
+          alvik.setRpm(left, right);
+          break;
+
+        case 'V':
+          packeter.unpacketC2F(code,linear,angular);
+          alvik.disableKinematicsMovement();
+          alvik.disablePositionControl();
+          alvik.drive(linear,angular);
+          break;
+
+        case 'W':
+          packeter.unpacketC2B1F(code,label,control_type,value);
+          alvik.disableKinematicsMovement();
+          if (label=='L'){
+            switch (control_type){
+              case 'V':
+                alvik.disablePositionControlLeft();
+                alvik.setRpmLeft(value);
+                break;
+              case 'P':
+                alvik.setPositionLeft(value);
+                ack_required=MOVEMENT_LEFT;
+                ack_check=true;
+                break;
+              case 'Z':
+                alvik.resetPositionLeft(value);
+                break;
+            }
+          }
+          if (label=='R'){
+            switch (control_type){
+              case 'V':
+                alvik.disablePositionControlRight();
+                alvik.setRpmRight(value);
+                break;
+              case 'P':
+                alvik.setPositionRight(value);
+                ack_required=MOVEMENT_RIGHT;
+                ack_check=true;
+                break;
+              case 'Z':
+                alvik.resetPositionRight(value);
+                break;
+            }
+          }
+          break;
+
+
+        case 'A':
+          packeter.unpacketC2F(code,position_left, position_right);
+          alvik.disableKinematicsMovement();
+          alvik.setPosition(position_left, position_right);
+          ack_required=MOVEMENT_POSITION;
+          ack_check=true;
+          break;
+
+        
+        case 'S':
+          packeter.unpacketC2B(code,servo_A,servo_B);
+          alvik.setServoA(servo_A);
+          alvik.setServoB(servo_B);
+          break;
+        
+        case 'L':
+          packeter.unpacketC1B(code,leds);
+          alvik.setAllLeds(leds);
+          break;
+        
+        case 'P':
+          packeter.unpacketC1B3F(code,pid,kp,ki,kd);
+          if (pid=='L'){
+            alvik.setKPidLeft(kp,ki,kd);
+          }
+          if (pid=='R'){
+            alvik.setKPidRight(kp,ki,kd);
+          }
+          break;
+
+        case 'R':
+          packeter.unpacketC1F(code, value);
+          alvik.disablePositionControl();
+          alvik.rotate(value);
+          ack_required=MOVEMENT_ROTATE;
+          ack_check=true;
+          break;
+        
+        case 'G':
+          packeter.unpacketC1F(code, value);
+          alvik.disablePositionControl();
+          alvik.move(value);
+          ack_required=MOVEMENT_MOVE;
+          ack_check=true;
+          break;
+
+        case 'Z':
+          packeter.unpacketC3F(code, x, y, theta);
+          alvik.resetPose(x, y, theta);
+          break;
+      }
+    }
     switch (code){
-      case 'J':
-        packeter.unpacketC2F(code,left,right);
-        alvik.disableKinematicsMovement();
-        alvik.disablePositionControl();
-        alvik.setRpm(left, right);
-        break;
-
-      case 'V':
-        packeter.unpacketC2F(code,linear,angular);
-        alvik.disableKinematicsMovement();
-        alvik.disablePositionControl();
-        alvik.drive(linear,angular);
-        break;
-
-      case 'W':
-        packeter.unpacketC2B1F(code,label,control_type,value);
-        alvik.disableKinematicsMovement();
-        if (label=='L'){
-          switch (control_type){
-            case 'V':
-              alvik.disablePositionControlLeft();
-              alvik.setRpmLeft(value);
-              break;
-            case 'P':
-              alvik.setPositionLeft(value);
-              ack_required=MOVEMENT_LEFT;
-              ack_check=true;
-              break;
-            case 'Z':
-              alvik.resetPositionLeft(value);
-              break;
-          }
-        }
-        if (label=='R'){
-          switch (control_type){
-            case 'V':
-              alvik.disablePositionControlRight();
-              alvik.setRpmRight(value);
-              break;
-            case 'P':
-              alvik.setPositionRight(value);
-              ack_required=MOVEMENT_RIGHT;
-              ack_check=true;
-              break;
-            case 'Z':
-              alvik.resetPositionRight(value);
-              break;
-          }
-        }
-        break;
-
-
-      case 'A':
-        packeter.unpacketC2F(code,position_left, position_right);
-        alvik.disableKinematicsMovement();
-        alvik.setPosition(position_left, position_right);
-        ack_required=MOVEMENT_POSITION;
-        ack_check=true;
-        break;
-
-      
-      case 'S':
-        packeter.unpacketC2B(code,servo_A,servo_B);
-        alvik.setServoA(servo_A);
-        alvik.setServoB(servo_B);
-        break;
-      
-      case 'L':
-        packeter.unpacketC1B(code,leds);
-        alvik.setAllLeds(leds);
-        break;
-      
-      case 'P':
-        packeter.unpacketC1B3F(code,pid,kp,ki,kd);
-        if (pid=='L'){
-          alvik.setKPidLeft(kp,ki,kd);
-        }
-        if (pid=='R'){
-          alvik.setKPidRight(kp,ki,kd);
-        }
-        break;
-
-      case 'R':
-        packeter.unpacketC1F(code, value);
-        alvik.disablePositionControl();
-        alvik.rotate(value);
-        ack_required=MOVEMENT_ROTATE;
-        ack_check=true;
-        break;
-      
-      case 'G':
-        packeter.unpacketC1F(code, value);
-        alvik.disablePositionControl();
-        alvik.move(value);
-        ack_required=MOVEMENT_MOVE;
-        ack_check=true;
-        break;
-
-      case 'Z':
-        packeter.unpacketC3F(code, x, y, theta);
-        alvik.resetPose(x, y, theta);
-        break;
-
       case 'X':
         packeter.unpacketC1B(code, ack_code);
         if (ack_code == 'K') {
@@ -212,6 +215,9 @@ void loop(){
         switch (behaviours){
           case 1: 
             alvik.setBehaviour(LIFT_ILLUMINATOR, true);
+            break;
+          case 2:
+            alvik.setBehaviour(BATTERY_ALERT, true);
             break;
           default:
             alvik.setBehaviour(ALL_BEHAVIOURS, false);
@@ -326,7 +332,7 @@ void loop(){
   if (millis()-tbattery>1000){
     tbattery = millis();
     alvik.updateBMS();
-    msg_size = packeter.packetC1F('p', alvik.getBatteryChargePercentage());
+    msg_size = packeter.packetC1F('p', alvik.isBatteryCharging()*alvik.getBatteryChargePercentage());
     alvik.serial->write(packeter.msg,msg_size);
   }
 }

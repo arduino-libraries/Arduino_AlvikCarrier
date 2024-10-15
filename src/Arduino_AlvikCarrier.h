@@ -45,7 +45,7 @@ class Arduino_AlvikCarrier{
 
 
         MAX17332 * bms;
-        float voltage, state_of_charge; 
+        float voltage, state_of_charge, charging; 
 
 
         AT42QT2120 * touch_sensor;
@@ -94,6 +94,9 @@ class Arduino_AlvikCarrier{
         bool prev_illuminator_state;
         uint8_t behaviours;
         bool first_lift;
+        unsigned long battery_alert_time;
+        unsigned long battery_alert_wave;
+        bool battery_alert;
 
 
 
@@ -156,6 +159,8 @@ class Arduino_AlvikCarrier{
         void updateBMS();                                                               // update the BMS
         float getBatteryVoltage();                                                      // get Voltage
         float getBatteryChargePercentage();                                             // get battery percentage
+        float isBatteryCharging();                                                      // return -1 if battery discharge or 1 if charging
+        bool isBatteryAlert();                                                          // return true if battery is LOW and alert behaviour is setted, otherwise false
 
 
 
@@ -184,7 +189,6 @@ class Arduino_AlvikCarrier{
         void disablePositionControlLeft();                                              // disable the position control on left wheel
         void disablePositionControlRight();                                             // disable the position control on right wheel
         void disablePositionControl();                                                  // disable the position control on both wheels
-
 
 
 
