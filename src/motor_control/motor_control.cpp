@@ -35,6 +35,7 @@ MotorControl::MotorControl(DCmotor * _motor, Encoder * _encoder, const float _kp
     pos_controller_period = _pos_controller_period;
     pos_max_velocity = _pos_max_velocity;
     position_control_enabled = false;
+    is_position_reached = false;
 
 
 
@@ -168,6 +169,9 @@ void MotorControl::update(){
     if (position_control_enabled){
         pos_pid->update(position);
         setRPM(round(pos_pid->getControlOutput()/10.0)*10);
+        if (abs(pos_pid->getError())<POSITION_THRESHOLD){
+            is_position_reached = true;
+        }
     }
 }
 
@@ -210,6 +214,7 @@ void MotorControl::enablePositionControl(){
 
 void MotorControl::disablePositionControl(){
     position_control_enabled = false;
+    is_position_reached = false;
 }
 
 bool MotorControl::isPositionControlEnabled(){
@@ -230,5 +235,10 @@ float MotorControl::getPosition(){
 void MotorControl::setPosition(const float degree){
     pos_pid->setReference(degree);
     enablePositionControl();
+    is_position_reached = false;
+}
+
+bool MotorControl::isPositionReached(){
+    return is_position_reached;
 }
 
