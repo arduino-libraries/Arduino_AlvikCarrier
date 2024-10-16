@@ -92,8 +92,8 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 
 // Library version
 #define VERSION_BYTE_HIGH 1
-#define VERSION_BYTE_MID 0
-#define VERSION_BYTE_LOW 4
+#define VERSION_BYTE_MID 1
+#define VERSION_BYTE_LOW 0
 
 // Battery stats
 #define BATTERY_ALERT_MINIMUM_CHARGE 20.0

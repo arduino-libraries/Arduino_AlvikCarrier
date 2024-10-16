@@ -277,7 +277,7 @@ int Arduino_AlvikCarrier::beginBMS(){
 void Arduino_AlvikCarrier::updateBMS(){
     voltage = bms->readVCell();
     state_of_charge = bms->readSoc();
-    if (bms->isCharging()){
+    if (bms->readCurrent()>=0){
         charging = 1.0;
     }
     else{
