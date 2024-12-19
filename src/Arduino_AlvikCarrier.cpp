@@ -686,8 +686,8 @@ int Arduino_AlvikCarrier::beginImu(){
     ipKnobs->modx = MOTION_FX_DECIMATION;
 
     MotionFX_setKnobs(mfxstate, ipKnobs);
-    MotionFX_enable_6X(mfxstate, MFX_ENGINE_ENABLE);
-    MotionFX_enable_9X(mfxstate, MFX_ENGINE_DISABLE);
+    MotionFX_enable_6X(mfxstate, MFX_ENGINE_DISABLE);
+    MotionFX_enable_9X(mfxstate, MFX_ENGINE_ENABLE);
 
     return 0;
 }
@@ -701,6 +701,10 @@ void Arduino_AlvikCarrier::updateImu(){
     imu_data.acc[0] = (float)accelerometer[0] * FROM_MG_TO_G;
     imu_data.acc[1] = (float)accelerometer[1] * FROM_MG_TO_G;
     imu_data.acc[2] = (float)accelerometer[2] * FROM_MG_TO_G;
+    imu_data.mag[0] = -getSinTheta() * SIM_MAG_FILED_UT50;
+    imu_data.mag[1] = getCosTheta() * SIM_MAG_FILED_UT50;
+    imu_data.mag[2] = 0;
+
 
     if (sample_to_discard>MOTION_FX_SAMPLETODISCARD){
         MotionFX_propagate(mfxstate, &filter_data, &imu_data, &imu_delta_time);
@@ -882,6 +886,14 @@ float Arduino_AlvikCarrier::getY(){
 
 float Arduino_AlvikCarrier::getTheta(){
     return kinematics->getTheta();
+}
+
+float Arduino_AlvikCarrier::getSinTheta(){
+    return kinematics->getSinTheta();
+}
+
+float Arduino_AlvikCarrier::getCosTheta(){
+    return kinematics->getCosTheta();
 }
 
 void Arduino_AlvikCarrier::resetPose(const float x0, const float y0, const float theta0){

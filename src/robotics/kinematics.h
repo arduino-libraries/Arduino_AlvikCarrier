@@ -30,6 +30,7 @@ class Kinematics{
         float left_vel, right_vel;
 
         float theta, delta_theta;
+        float sin_theta, cos_theta;
         float x, y;
         float delta_left, delta_right;
         float delta_travel;
@@ -154,8 +155,10 @@ class Kinematics{
 
         void updatePose(){
             delta_theta=angular_velocity*control_period;
-            delta_x=linear_velocity*cos(theta)*control_period;
-            delta_y=linear_velocity*sin(theta)*control_period;
+            sin_theta = sin(theta);
+            cos_theta = cos(theta);
+            delta_x=linear_velocity*cos_theta*control_period;
+            delta_y=linear_velocity*sin_theta*control_period;
             delta_travel=sqrt(delta_x*delta_x+delta_y*delta_y);
             x+=delta_x;
             y+=delta_y;
@@ -190,6 +193,14 @@ class Kinematics{
 
         float getTheta(){
             return rads_to_degs(theta);
+        }
+
+        float getSinTheta(){
+            return sin_theta;
+        }
+
+        float getCosTheta(){
+            return cos_theta;
         }
 
         float getTravel(){

@@ -252,6 +252,8 @@ class Arduino_AlvikCarrier{
         float getX();                                                                   // absolute position in mm
         float getY();                                                                   // absolute position in mm
         float getTheta();                                                               // angle in deg
+        float getSinTheta();                                                            // stored sin of current theta
+        float getCosTheta();                                                            // stored cos of current theta
         void resetPose(const float x0=0.0, const float y0=0.0, const float theta0=0.0); // reset pose in kinematics
 
         void move(const float distance);                                                // move of distance millimeters
