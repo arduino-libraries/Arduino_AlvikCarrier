@@ -701,8 +701,8 @@ void Arduino_AlvikCarrier::updateImu(){
     imu_data.acc[0] = (float)accelerometer[0] * FROM_MG_TO_G;
     imu_data.acc[1] = (float)accelerometer[1] * FROM_MG_TO_G;
     imu_data.acc[2] = (float)accelerometer[2] * FROM_MG_TO_G;
-    imu_data.mag[0] = -getSinTheta() * SIM_MAG_FILED_UT50;
-    imu_data.mag[1] = getCosTheta() * SIM_MAG_FILED_UT50;
+    imu_data.mag[0] = -getSinTheta() * SIM_MAG_FIELD_UT50;
+    imu_data.mag[1] = getCosTheta() * SIM_MAG_FIELD_UT50;
     imu_data.mag[2] = 0;
 
 

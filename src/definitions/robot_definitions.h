@@ -90,7 +90,7 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define MOTION_FX_DECIMATION                      1U
 #define FROM_MGAUSS_TO_UT50  (0.1f/50.0f)
 #define SIM_MAG_FIELD_MG         500        // simulated magnetic field intensity in mGauss
-#define SIM_MAG_FILED_UT50      SIM_MAG_FIELD_MG * FROM_MGAUSS_TO_UT50
+#define SIM_MAG_FIELD_UT50      SIM_MAG_FIELD_MG * FROM_MGAUSS_TO_UT50
 
 // Library version
 #define VERSION_BYTE_HIGH 1
