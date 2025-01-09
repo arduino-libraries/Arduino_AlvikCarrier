@@ -842,7 +842,8 @@ void Arduino_AlvikCarrier::updateKinematics(){
     kinematics->updatePose();
     if (kinematics_movement!=MOVEMENT_DISABLED){
         if (kinematics_movement==MOVEMENT_ROTATE){
-            rotate_pid->update(kinematics->getTheta());
+            //rotate_pid->update(kinematics->getTheta());
+            rotate_pid->update(getYaw());
             drive(0, round(rotate_pid->getControlOutput()/10.0)*10);
             if (abs(rotate_pid->getError())<ROTATE_THRESHOLD){
                 kinematics_achieved=true;
@@ -929,7 +930,8 @@ void Arduino_AlvikCarrier::rotate(const float angle){
     disableKinematicsMovement();
     kinematics_achieved=false;
     rotate_pid->reset();
-    rotate_pid->setReference(kinematics->getTheta()+angle);
+    //rotate_pid->setReference(kinematics->getTheta()+angle);
+    rotate_pid->setReference(kinematics->normalizeAngle(getYaw() + angle));
     kinematics_movement=MOVEMENT_ROTATE;
 }
 

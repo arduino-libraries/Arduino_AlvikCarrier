@@ -153,6 +153,16 @@ class Kinematics{
         }
         */
 
+        float normalizeAngle(float angle) {
+            angle = angle - 360.0f * floor(angle / 360.0f);
+            
+            if (angle < 0) {
+                angle += 360.0f;
+            }
+
+            return angle;
+        }
+
         void updatePose(){
             delta_theta=angular_velocity*control_period;
             sin_theta = sin(theta);
