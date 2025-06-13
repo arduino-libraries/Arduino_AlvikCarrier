@@ -20,6 +20,7 @@
 #include "./motor_control/dcmotor.h"
 #include "./motor_control/motor_control.h"
 #include "Arduino_APDS9960.h"
+#include "Arduino_APDS9999.h"
 #include <Servo.h>
 #include "Arduino_MAX17332.h"
 #include "AT42QT2120.h"
@@ -36,7 +37,9 @@ class Arduino_AlvikCarrier{
 
 
         APDS9960 * apds9960;
+        Arduino_APDS9999 * apds9999;
         int bottom_red, bottom_green, bottom_blue, bottom_clear, bottom_proximity;
+        int color_sensor_used;
         bool illuminator_state;
 
 

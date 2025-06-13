@@ -51,6 +51,8 @@ Arduino_AlvikCarrier::Arduino_AlvikCarrier(){
 
     // color sensor
     apds9960 = new APDS9960(*wire, APDS_INT);
+    apds9999 = new Arduino_APDS9999(*wire);
+    color_sensor_used = -1;
 
     // servo
     servo_A = new Servo();
@@ -170,21 +172,41 @@ int Arduino_AlvikCarrier::beginAPDS(){
     pinMode(APDS_LED, OUTPUT);
     //enableIlluminator();
     disableIlluminator();
-    if (!apds9960->begin()){
-        return ERROR_APDS;
+
+    if (!apds9999->begin()){
+        if (!apds9960->begin()){
+            return ERROR_APDS;
+        }
+        color_sensor_used = APDS9960_VERSION;
     }
+    else{
+        apds9999->enableColorSensor();
+        apds9999->enableProximitySensor();
+        apds9999->setGain(APDS9999_GAIN_3X);
+        apds9999->setLSResolution(APDS9999_LS_RES_16B);
+        apds9999->setLSRate(APDS9999_LS_RATE_25MS);
+        color_sensor_used = APDS9999_VERSION;
+    }
+
     return 0;
 }
 
 void Arduino_AlvikCarrier::updateAPDS(){
-    if (apds9960->proximityAvailable()){
-        bottom_proximity=apds9960->readProximity();
+    if (color_sensor_used == APDS9960_VERSION){
+        if (apds9960->proximityAvailable()){
+            bottom_proximity=apds9960->readProximity();
+        }
+        if (apds9960->colorAvailable()){
+            apds9960->readColor(bottom_red, bottom_green, bottom_blue, bottom_clear);
+        }
     }
-    //digitalWrite(APDS_LED,HIGH);
-    if (apds9960->colorAvailable()){
-        apds9960->readColor(bottom_red, bottom_green, bottom_blue, bottom_clear);
+    if (color_sensor_used == APDS9999_VERSION){
+        bottom_proximity = 255 - apds9999->getProximity();
+        bottom_red = apds9999->getRed();
+        bottom_green = apds9999->getGreen();
+        bottom_blue = apds9999->getBlue();
+        bottom_clear = apds9999->getIR();
     }
-    //digitalWrite(APDS_LED,LOW);
 }
 
 void Arduino_AlvikCarrier::setIlluminator(uint8_t value){
@@ -228,7 +250,9 @@ int Arduino_AlvikCarrier::getProximity(){
 
 int Arduino_AlvikCarrier::beginServo(){
     servo_A->attach(SERVO_A);
+    delay(200);
     servo_B->attach(SERVO_B);
+    delay(200);
     return 0;
 }
 
@@ -1052,12 +1076,23 @@ void Arduino_AlvikCarrier::setBehaviour(const uint8_t behaviour, const bool enab
 }
 
 bool Arduino_AlvikCarrier::isLifted(){
-    if (getProximity()>LIFT_THRESHOLD){
-        return true;
+    if (color_sensor_used == APDS9960_VERSION){
+        if (getProximity()>LIFT_THRESHOLD){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
-    else{
-        return false;
+    if (color_sensor_used == APDS9999_VERSION){
+        if (getProximity()>=254){   // different scale
+            return true;
+        }
+        else{
+            return false;
+        }   
     }
+    return false;
 }
 
 

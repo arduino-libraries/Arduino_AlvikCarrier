@@ -59,6 +59,8 @@
 // APDS9960
 #define APDS_LED PB6
 #define APDS_INT PC10
+#define APDS9960_VERSION 0
+#define APDS9999_VERSION 1
 
 // I2C ports
 #define I2C_1_SDA PB7
