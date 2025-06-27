@@ -153,14 +153,24 @@ int Arduino_AlvikCarrier::begin(){
 
     beginBehaviours();
     
+    // hw revision check
+    if (color_sensor_used == APDS9960_VERSION){
+        hw_revision = HW_REVISION_1_3;
+    }
+    else{
+        hw_revision = HW_REVISION_1_6;
+    }
 
     return 0;
 }
 
-void Arduino_AlvikCarrier::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte){
+void Arduino_AlvikCarrier::getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte, const bool hw_revision_on_version){
     high_byte = version_high;
     mid_byte = version_mid;
     low_byte = version_low;
+    if (hw_revision_on_version){
+        high_byte = high_byte & 0x0F | (hw_revision<<4);
+    }
 }
 
 

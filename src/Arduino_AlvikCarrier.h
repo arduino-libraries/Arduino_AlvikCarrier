@@ -82,6 +82,7 @@ class Arduino_AlvikCarrier{
         uint8_t version_high;
         uint8_t version_mid;
         uint8_t version_low;
+        uint8_t hw_revision;
 
 
         uint8_t kinematics_movement;
@@ -128,7 +129,8 @@ class Arduino_AlvikCarrier{
         int begin();                                                                    // initialize the robot
 
 
-        void getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte);      // get firmware version
+        void getVersion(uint8_t &high_byte, uint8_t &mid_byte, uint8_t &low_byte,
+                                        const bool hw_revision_on_version = true);      // get firmware version
 
 
         // Color sensor, APDS9960

@@ -95,10 +95,12 @@ const float MOTION_FX_PERIOD = (1000U / MOTION_FX_FREQ);
 #define VERSION_BYTE_MID 1
 #define VERSION_BYTE_LOW 1
 
+#define HW_REVISION_1_3  0       // apds9960 1.3 - 1.5
+#define HW_REVISION_1_6  1       // apds9999 1.6
+
 // Battery stats
 #define BATTERY_ALERT_MINIMUM_CHARGE 20.0
 #define BATTERY_ALERT_STOP_CHARGE 10.0
-
 
 
 #endif
