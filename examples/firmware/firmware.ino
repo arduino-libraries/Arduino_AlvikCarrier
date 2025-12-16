@@ -16,8 +16,9 @@
 #include "sensor_line.h"
 #include "sensor_tof_matrix.h"
 #include "ucPack.h"
+#include "CircularBuffer.h"
 
-#define I2C_ADDRESS 0x48
+#define OUT_BUF_SIZE 512
 
 Arduino_AlvikCarrier alvik;
 SensorLine line(EXT_A2,EXT_A1,EXT_A0);
@@ -25,6 +26,7 @@ SensorTofMatrix tof(alvik.wire, EXT_GPIO3, EXT_GPIO2);
 
 
 ucPack packeter(200);
+CircularBuffer out_buffer(OUT_BUF_SIZE);
 
 uint8_t code;
 uint8_t label;
@@ -34,6 +36,8 @@ uint8_t ack_required = 0;
 bool ack_check = false;
 uint8_t ack_code = 0;
 uint8_t behaviours;
+uint8_t cmd;
+uint8_t id;
 
 unsigned long tmotor = 0;
 unsigned long tsend = 0;
@@ -58,33 +62,175 @@ float x, y, theta;
 uint8_t servo_A, servo_B;
 float position_left, position_right;
 
-int counter_version = 9;
 uint8_t version[3];
 
 
-int sendMessage(const uint8_t *buffer, size_t size) {
-  alvik.ext_wire->beginTransmission(I2C_ADDRESS);
-  size_t out = alvik.ext_wire->write(buffer, size);
-  alvik.ext_wire->endTransmission(I2C_ADDRESS);
-  return out;
+uint8_t outBufferFree() {
+  return OUT_BUF_SIZE - out_buffer.getSize();
 }
 
-void requestMessage() {
-  while (true) {
-    alvik.ext_wire->requestFrom(I2C_ADDRESS, 1);
-    if (!alvik.ext_wire->available()) break;
+
+void receiveEvent(int byte) {
+  while (alvik.ext_wire->available()) {
     packeter.buffer.push(alvik.ext_wire->read());
   }
 }
 
+void requestEvent() {
+  if (out_buffer.isEmpty()) {
+    return;
+  }
+  alvik.ext_wire->write(out_buffer.pop());
+}
+
+void sendMessage(const uint8_t * buf, const size_t length) {
+  if (length > outBufferFree()) {
+    return;
+  }
+  for (uint8_t i = 0; i < length; i++) {
+    out_buffer.push(buf[i]);
+  }
+
+}
+
+void publishVersion() {
+  alvik.getVersion(version[0], version[1], version[2]);
+  msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
+  sendMessage(packeter.msg, msg_size);
+}
+
+void publishSensor(uint8_t sensor_id) {
+  switch(sensor_id){
+    case 0:
+      line.update();
+      msg_size = packeter.packetC3I('l', line.getLeft(), line.getCenter(), line.getRight());
+      sendMessage(packeter.msg, msg_size);
+      break;
+    case 1:
+      alvik.updateTouch();
+      msg_size = packeter.packetC1B('t', alvik.getTouchKeys());
+      sendMessage(packeter.msg, msg_size);
+      msg_size = packeter.packetC1B('m', alvik.getMotion());
+      sendMessage(packeter.msg, msg_size);
+      break;
+    case 2:
+      alvik.updateAPDS();
+      msg_size = packeter.packetC3I('c', alvik.getRed(), alvik.getGreen(), alvik.getBlue());
+      sendMessage(packeter.msg, msg_size);
+      break;
+    case 3:
+      if (tof.update_rois()){
+        msg_size = packeter.packetC7I('f', tof.getLeft(), tof.getCenterLeft(), tof.getCenter(), tof.getCenterRight(), tof.getRight(), tof.getTop(), tof.getBottom());
+        sendMessage(packeter.msg, msg_size);
+      }
+      break;
+    case 4:
+      msg_size = packeter.packetC3F('q', alvik.getRoll(), alvik.getPitch(), alvik.getYaw());
+      sendMessage(packeter.msg, msg_size);
+      break;
+  }
+}
+
+void publishMotors(uint8_t c) {
+  switch(c) {
+    case 'j':
+      // joint speed
+      msg_size = packeter.packetC2F('j', alvik.getRpmLeft(),alvik.getRpmRight());
+      sendMessage(packeter.msg, msg_size);
+      break;
+    case 'w':
+      // joint position
+      msg_size = packeter.packetC2F('w', alvik.getPositionLeft(),alvik.getPositionRight());
+      sendMessage(packeter.msg, msg_size);
+      break;
+    case 'v':
+      // robot speed
+      msg_size = packeter.packetC2F('v', alvik.getLinearVelocity(), alvik.getAngularVelocity());
+      sendMessage(packeter.msg, msg_size);
+      break;
+    case 'z':
+      // pose
+      msg_size = packeter.packetC3F('z', alvik.getX(), alvik.getY(), alvik.getTheta());
+      sendMessage(packeter.msg, msg_size);
+      break;
+    default:
+      break;
+  }
+}
+
+void publishImu() {
+  msg_size = packeter.packetC6F('i', alvik.getAccelerationX(), alvik.getAccelerationY(), alvik.getAccelerationZ(), alvik.getAngularVelocityX(), alvik.getAngularVelocityY(), alvik.getAngularVelocityZ());
+  sendMessage(packeter.msg, msg_size);
+}
+
+void publishBattery() {
+  msg_size = packeter.packetC1F('p', alvik.isBatteryCharging()*alvik.getBatteryChargePercentage());
+  sendMessage(packeter.msg, msg_size);
+}
+
+void publishAck() {
+  if (ack_check && (alvik.isTargetReached() || alvik.isPositionReached() || alvik.isPositionLeftReached() || alvik.isPositionRightReached())){
+    if (ack_required == MOVEMENT_ROTATE){
+      msg_size = packeter.packetC1B('x', 'R');
+    }
+    if (ack_required == MOVEMENT_MOVE){
+      msg_size = packeter.packetC1B('x', 'M');
+    }
+    if (ack_required == MOVEMENT_POSITION){
+      msg_size = packeter.packetC1B('x', 'P');
+    }
+    if (ack_required == MOVEMENT_LEFT){
+      msg_size = packeter.packetC1B('x', 'P');
+    }
+    if (ack_required == MOVEMENT_RIGHT){
+      msg_size = packeter.packetC1B('x', 'P');
+    }
+  }
+  else{
+    msg_size = packeter.packetC1B('x', 0);
+  }
+  // alvik.serial->write(packeter.msg, msg_size);
+  sendMessage(packeter.msg,msg_size);
+}
+
+void publicationRequest(const uint8_t cmd, const uint8_t id) {
+
+  switch(cmd) {
+    case 'v':
+      publishVersion();
+      break;
+    case 'b':
+      publishBattery();
+      break;
+    case 'i':
+      publishImu();
+      break;
+    case 'm':
+      publishMotors(id);
+      break;
+    case 'k':
+      publishAck();
+      break;
+    case 's':
+      publishSensor(id);
+      break;
+    default:
+      break;
+  }
+
+}
+
 void setup(){
   alvik.begin();
+
+  alvik.ext_wire->onReceive(receiveEvent);
+  alvik.ext_wire->onRequest(requestEvent);
+
   alvik.disableIlluminator();
   alvik.setLeds(COLOR_ORANGE);
   alvik.setLedBuiltin(HIGH);
   line.begin();
   tof.begin();
-
 
   alvik.getVersion(version[0], version[1], version[2]);
   msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
@@ -110,10 +256,7 @@ void setup(){
 }
 
 void loop(){
-  // while(alvik.serial->available() > 0) {
-  //   packeter.buffer.push(alvik.serial->read());
-  // }
-  requestMessage();
+
   if (packeter.checkPayload()) {
     code = packeter.payloadTop();
     if (!alvik.isBatteryAlert()){
@@ -243,108 +386,19 @@ void loop(){
             alvik.setBehaviour(ALL_BEHAVIOURS, false);
         }
         break;
+      case '#':
+        packeter.unpacketC2B(code, cmd, id);
+        publicationRequest(cmd, id);
+        break;
     }
   }
 
-  // sensors publish
-  if (millis()-tsensor>10){
-    tsensor=millis();
-    switch(sensor_id){
-      case 0:
-        line.update();
-        msg_size = packeter.packetC3I('l', line.getLeft(), line.getCenter(), line.getRight());
-        // alvik.serial->write(packeter.msg,msg_size);
-        sendMessage(packeter.msg,msg_size);
-        break;
-      case 1:
-        alvik.updateTouch();
-        msg_size = packeter.packetC1B('t', alvik.getTouchKeys());
-        // alvik.serial->write(packeter.msg,msg_size);
-        sendMessage(packeter.msg,msg_size);
-        msg_size = packeter.packetC1B('m', alvik.getMotion());
-        // alvik.serial->write(packeter.msg,msg_size);
-        sendMessage(packeter.msg,msg_size);
-        break;
-      case 2:
-        alvik.updateAPDS();
-        msg_size = packeter.packetC3I('c', alvik.getRed(), alvik.getGreen(), alvik.getBlue());
-        // alvik.serial->write(packeter.msg,msg_size);
-        sendMessage(packeter.msg,msg_size);
-        break;
-      case 3:
-        if (tof.update_rois()){
-          msg_size = packeter.packetC7I('f', tof.getLeft(), tof.getCenterLeft(), tof.getCenter(), tof.getCenterRight(), tof.getRight(), tof.getTop(), tof.getBottom());
-          // alvik.serial->write(packeter.msg,msg_size);
-          sendMessage(packeter.msg,msg_size);
-        }
-        break;
-      case 4:
-        msg_size = packeter.packetC3F('q', alvik.getRoll(), alvik.getPitch(), alvik.getYaw());
-        // alvik.serial->write(packeter.msg,msg_size);
-        sendMessage(packeter.msg,msg_size);
-        break;
-    }
-    sensor_id++;
-    if (sensor_id>4){
-      sensor_id=0;
-    }
-  } 
 
-  // motors update & publish
+  // motors update
   if (millis()-tmotor>=20){
     tmotor=millis();
     alvik.updateMotors();
     alvik.updateKinematics();
-    // joint speed
-    msg_size = packeter.packetC2F('j', alvik.getRpmLeft(),alvik.getRpmRight());
-    // alvik.serial->write(packeter.msg,msg_size);
-    sendMessage(packeter.msg,msg_size);
-    // joint position
-    msg_size = packeter.packetC2F('w', alvik.getPositionLeft(),alvik.getPositionRight());
-    // alvik.serial->write(packeter.msg, msg_size);
-    sendMessage(packeter.msg,msg_size);
-    // robot speed
-    msg_size = packeter.packetC2F('v', alvik.getLinearVelocity(), alvik.getAngularVelocity());
-    // alvik.serial->write(packeter.msg, msg_size);
-    sendMessage(packeter.msg,msg_size);
-    // pose
-    msg_size = packeter.packetC3F('z', alvik.getX(), alvik.getY(), alvik.getTheta());
-    // alvik.serial->write(packeter.msg, msg_size);
-    sendMessage(packeter.msg,msg_size);
-  }
-
-  // acknowledge
-  if (millis()-tack > 100){
-    tack = millis();
-    if (counter_version>0){
-      counter_version--;
-      alvik.getVersion(version[0], version[1], version[2]);
-      msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
-      // alvik.serial->write(packeter.msg,msg_size);
-      sendMessage(packeter.msg,msg_size);
-    }
-    if (ack_check && (alvik.isTargetReached() || alvik.isPositionReached() || alvik.isPositionLeftReached() || alvik.isPositionRightReached())){
-      if (ack_required == MOVEMENT_ROTATE){
-        msg_size = packeter.packetC1B('x', 'R');
-      }
-      if (ack_required == MOVEMENT_MOVE){
-        msg_size = packeter.packetC1B('x', 'M');
-      }
-      if (ack_required == MOVEMENT_POSITION){
-        msg_size = packeter.packetC1B('x', 'P');
-      }
-      if (ack_required == MOVEMENT_LEFT){
-        msg_size = packeter.packetC1B('x', 'P');
-      }
-      if (ack_required == MOVEMENT_RIGHT){
-        msg_size = packeter.packetC1B('x', 'P');
-      }
-    }
-    else{
-      msg_size = packeter.packetC1B('x', 0);
-    }
-    // alvik.serial->write(packeter.msg, msg_size);
-    sendMessage(packeter.msg,msg_size);
   }
 
   if (millis()-tbehaviours > 100){
@@ -356,17 +410,11 @@ void loop(){
   if (millis()-timu>10){
     timu=millis();
     alvik.updateImu();
-    msg_size = packeter.packetC6F('i', alvik.getAccelerationX(), alvik.getAccelerationY(), alvik.getAccelerationZ(), alvik.getAngularVelocityX(), alvik.getAngularVelocityY(), alvik.getAngularVelocityZ());
-    // alvik.serial->write(packeter.msg,msg_size);
-    sendMessage(packeter.msg,msg_size);
   }
 
   // battery update
   if (millis()-tbattery>1000){
     tbattery = millis();
     alvik.updateBMS();
-    msg_size = packeter.packetC1F('p', alvik.isBatteryCharging()*alvik.getBatteryChargePercentage());
-    // alvik.serial->write(packeter.msg,msg_size);
-    sendMessage(packeter.msg,msg_size);
   }
 }

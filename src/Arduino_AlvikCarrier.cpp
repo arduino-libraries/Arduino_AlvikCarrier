@@ -128,8 +128,7 @@ int Arduino_AlvikCarrier::begin(){
     wire->setClock(400000);
     
     connectExternalI2C();
-    //ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
-    ext_wire->begin();
+    ext_wire->begin(ARDUINO_ROBOT_ADDRESS);
 
     
     if (beginAPDS()!=0){
