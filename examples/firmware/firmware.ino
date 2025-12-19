@@ -233,14 +233,8 @@ void setup(){
   tof.begin();
 
   alvik.getVersion(version[0], version[1], version[2]);
-  msg_size = packeter.packetC3B(0x7E, version[0], version[1], version[2]);
-  // alvik.serial->write(packeter.msg,msg_size);
-  sendMessage(packeter.msg,msg_size);
 
   alvik.updateBMS();
-  msg_size = packeter.packetC1F('p', alvik.getBatteryChargePercentage());
-  // alvik.serial->write(packeter.msg,msg_size);
-  sendMessage(packeter.msg,msg_size);
 
   alvik.setLedBuiltin(LOW);
   alvik.setLeds(COLOR_BLACK);
