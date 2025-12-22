@@ -141,12 +141,12 @@ void setup() {
 // ==================== MAIN LOOP ====================
 void loop() {
     // Check for incoming I2C data
-    receiveI2CData();
 
     // Check for serial commands
     if (Serial.available()) {
         char cmd = Serial.read();
         handleCommand(cmd);
+        receiveI2CData(8);
     }
 
     delay(10);
@@ -169,7 +169,7 @@ bool scanForAlvik() {
 bool sendI2CData(const uint8_t* data, uint8_t length) {
     Wire1.beginTransmission(ALVIK_I2C_ADDRESS);
     Wire1.write(data, length);
-    uint8_t error = Wire1.endTransmission();
+    uint8_t error = Wire1.endTransmission(false);
 
     if (error == 0) {
         stats.packetsSent++;
@@ -189,30 +189,27 @@ bool sendI2CData(const uint8_t* data, uint8_t length) {
 /**
  * Receive data from Alvik via I2C
  */
-void receiveI2CData() {
-    uint8_t available = Wire1.requestFrom(ALVIK_I2C_ADDRESS, (uint8_t)32);
+void receiveI2CData(int size) {
 
-    if (available > 0) {
-        Serial.print("📥 Received ");
-        Serial.print(available);
-        Serial.print(" bytes: ");
+    for (int i = 0; i < size; i++) {
+        Wire1.requestFrom(ALVIK_I2C_ADDRESS, 1);
 
-        while (Wire1.available()) {
+        if (Wire1.available()) {
+            Serial.print("📥 Received ");
+
+            //while (Wire1.available()) {
             uint8_t b = Wire1.read();
-            rxBuffer[rxIndex++] = b;
             Serial.print("0x");
-            if (b < 16) Serial.print("0");
             Serial.print(b, HEX);
             Serial.print(" ");
+
+            Serial.println();
+
+            stats.packetsReceived++;
+            stats.lastResponseTime = millis();
         }
-        Serial.println();
-
-        // Try to parse complete packets
-        parseReceivedData();
-
-        stats.packetsReceived++;
-        stats.lastResponseTime = millis();
     }
+
 }
 
 /**
