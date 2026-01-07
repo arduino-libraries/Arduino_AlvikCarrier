@@ -26,11 +26,17 @@ void loop() {
     Monitor.println(alvik.getVersionString());
     delay(1000);
 
-//    alvik.rotate(10.0);
-//    delay(1000);
-//
-//    alvik.rotate(-10.0);
-//    delay(1000);
+    alvik.rotate(10.0);
+    delay(1000);
+
+    alvik.rotate(-10.0);
+    delay(1000);
+
+    alvik.move(10.0);
+    delay(1000);
+
+    alvik.move(-10.0);
+    delay(1000);
 
     float ax, ay, az, gx, gy, gz;
     alvik.getImu(ax, ay, az, gx, gy, gz);

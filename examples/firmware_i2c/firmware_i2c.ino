@@ -113,11 +113,20 @@ void getData(size_t size) {
 
 void rotateCmd() {
     float angle;
-    size_t sz = sizeof(angle);
+    size_t sz = sizeof(float);
     getData(sz);
     memcpy(&angle, data, sz);
 
     alvik.rotate(angle);
+}
+
+void moveCmd() {
+    float distance;
+    size_t sz = sizeof(float);
+    getData(sz);
+    memcpy(&distance, data, sz);
+
+    alvik.move(distance);
 }
 
 void parseMessage() {
@@ -125,6 +134,9 @@ void parseMessage() {
     switch (command){
         case 'R':
             rotateCmd();
+            break;
+        case 'G':
+            moveCmd();
             break;
         default:
             break;

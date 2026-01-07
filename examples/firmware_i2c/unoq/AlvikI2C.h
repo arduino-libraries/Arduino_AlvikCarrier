@@ -37,13 +37,24 @@ class AlvikI2C{
     }
 
     void rotate(float angle) {
-        int msg_size = sizeof(angle);
+        int msg_size = sizeof(float);
         uint8_t msg[msg_size];
 
         wire.beginTransmission(address);
         wire.write('R');
-        memcpy(msg, &angle, sizeof(angle));
-        wire.write(msg, sizeof(angle));
+        memcpy(msg, &angle, msg_size);
+        wire.write(msg, msg_size);
+        wire.endTransmission();
+    }
+
+    void move(float distance) {
+        int msg_size = sizeof(float);
+        uint8_t msg[msg_size];
+
+        wire.beginTransmission(address);
+        wire.write('G');
+        memcpy(msg, &distance, msg_size);
+        wire.write(msg, msg_size);
         wire.endTransmission();
     }
 
