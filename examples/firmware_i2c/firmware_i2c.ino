@@ -94,31 +94,30 @@ void publishImu() {
     sendMessage(packeter.msg, msg_size);
 }
 
-void parseMessage() {
+void getData(size_t size) {
 
+    for (size_t i=0; i<size; i++){
+        data[i]=alvik.ext_wire->read();
+    }
+
+}
+
+void rotateCmd() {
     float angle;
-    uint8_t code;
+    size_t sz = sizeof(angle);
+    getData(sz);
+    memcpy(&angle, data, sz);
+
+    alvik.rotate(angle);
+}
+
+void parseMessage() {
 
     switch (command){
         case 'R':
-            // for (size_t i = 0; i < 9; i++) {
-            //     packeter.buffer.push(alvik.ext_wire->read());
-            // }
-            data[0]=alvik.ext_wire->read();
-            data[1]=alvik.ext_wire->read();
-            data[2]=alvik.ext_wire->read();
-            data[3]=alvik.ext_wire->read();
-            memcpy(&angle, data, 4);
-
-            // packeter.unpacketC1F(code, angle);
-            // alvik.rotate(angle);
-            alvik.serial->println(angle);
-            if (angle > 0) {
-                alvik.setLedRight(COLOR_VIOLET);
-            } else {
-                alvik.setLedRight(COLOR_RED);
-            }
-            //Serial.println("rotate");
+            rotateCmd();
+            break;
+        default:
             break;
     }
 
@@ -126,7 +125,6 @@ void parseMessage() {
 
 void receiveEvent(int event){
     command=alvik.ext_wire->read();
-    //Serial.println("requested\t"+String(command));
     parseMessage();
 
 }

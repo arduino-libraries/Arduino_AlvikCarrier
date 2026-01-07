@@ -3,7 +3,6 @@
 #define ARDUINO_ALVIKCARRIER_ALVIKI2C_H
 
 #include <Wire.h>
-#include <ucPack.h>
 #define wire Wire1
 
 #define ALVIK_I2C_ADDRESS 0x2B
@@ -35,6 +34,17 @@ class AlvikI2C{
         wire.endTransmission();
         wire.requestFrom((uint8_t)address, (uint8_t)3);
         wire.readBytes(version, 3);
+    }
+
+    void rotate(float angle) {
+        int msg_size = sizeof(angle);
+        uint8_t msg[msg_size];
+
+        wire.beginTransmission(address);
+        wire.write('R');
+        memcpy(msg, &angle, sizeof(angle));
+        wire.write(msg, sizeof(angle));
+        wire.endTransmission();
     }
 
     String getVersionString() {
