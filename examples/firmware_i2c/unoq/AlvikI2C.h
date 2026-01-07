@@ -54,6 +54,23 @@ class AlvikI2C{
         return versionStr;
     }
 
+    void getImu(float &ax, float &ay, float &az, float &gx, float &gy, float &gz) {
+        size_t arr_size = sizeof(float) * 6;
+        float data[6];
+
+        wire.beginTransmission(address);
+        wire.write('I');
+        wire.endTransmission();
+        wire.requestFrom((uint8_t)address, (uint8_t)arr_size);
+        wire.readBytes((uint8_t*)data, (uint8_t)arr_size);
+
+        ax = data[0];
+        ay = data[1];
+        az = data[2];
+        gx = data[3];
+        gy = data[4];
+        gz = data[5];
+    }
 
 };
 

@@ -22,23 +22,25 @@ void setup() {
 
 void loop() {
 
+    Monitor.print("VER = ");
     Monitor.println(alvik.getVersionString());
     delay(1000);
 
-    alvik.rotate(10.0);
-    delay(1000);
-
-    alvik.rotate(-10.0);
-    delay(1000);
-
-//
-//    wire.beginTransmission(address);
-//    wire.write('I');
-//    wire.endTransmission();
-//    //delay(20);
-//    wire.requestFrom((uint8_t)address,(uint8_t)29);
-//    wire.readBytes(msg,29);
-//    print_msg(29);
+//    alvik.rotate(10.0);
 //    delay(1000);
+//
+//    alvik.rotate(-10.0);
+//    delay(1000);
+
+    float ax, ay, az, gx, gy, gz;
+    alvik.getImu(ax, ay, az, gx, gy, gz);
+
+    Monitor.print("accX: ");
+    Monitor.print(ax);
+    Monitor.print(" | accY: ");
+    Monitor.print(ay);
+    Monitor.print(" | accZ: ");
+    Monitor.println(az);
+
 }
 

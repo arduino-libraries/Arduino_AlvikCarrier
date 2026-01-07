@@ -90,8 +90,17 @@ void publishVersion() {
 }
 
 void publishImu() {
-    uint8_t msg_size = packeter.packetC6F('i', alvik.getAccelerationX(), alvik.getAccelerationY(), alvik.getAccelerationZ(), alvik.getAngularVelocityX(), alvik.getAngularVelocityY(), alvik.getAngularVelocityZ());
-    sendMessage(packeter.msg, msg_size);
+    float acc_x = alvik.getAccelerationX();
+    float acc_y = alvik.getAccelerationY();
+    float acc_z = alvik.getAccelerationZ();
+    float gyr_x = alvik.getAngularVelocityX();
+    float gyr_y = alvik.getAngularVelocityY();
+    float gyr_z = alvik.getAngularVelocityZ();
+
+    size_t msg_size = sizeof(float)*6;
+
+    float buf[6] = {acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z};
+    sendMessage((uint8_t*)buf, msg_size);
 }
 
 void getData(size_t size) {
