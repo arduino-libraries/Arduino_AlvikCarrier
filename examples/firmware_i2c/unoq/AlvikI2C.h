@@ -19,7 +19,6 @@ class AlvikI2C{
 
     void begin() {
         wire.begin();
-        getVersion();
     }
 
     bool isOnline() {
@@ -59,6 +58,7 @@ class AlvikI2C{
     }
 
     String getVersionString() {
+        getVersion();
         String versionStr = String(version[0]) + "." +
                             String(version[1]) + "." +
                             String(version[2]);
