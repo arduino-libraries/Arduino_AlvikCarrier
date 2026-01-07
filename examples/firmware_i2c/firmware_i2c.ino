@@ -30,7 +30,7 @@ unsigned long tbattery = 0;
 
 
 void setup() {
-    Serial.begin(115200);
+    //Serial.begin(115200);
     alvik.begin();
     alvik.disableIlluminator();
     alvik.setLeds(COLOR_ORANGE);
@@ -94,20 +94,41 @@ void publishImu() {
     sendMessage(packeter.msg, msg_size);
 }
 
-void receiveEvent(int event){
-    command=alvik.ext_wire->read();
-    Serial.println("requested\t"+String(command));
+void parseMessage() {
+
+    float angle;
+    uint8_t code;
+
     switch (command){
         case 'R':
+            // for (size_t i = 0; i < 9; i++) {
+            //     packeter.buffer.push(alvik.ext_wire->read());
+            // }
             data[0]=alvik.ext_wire->read();
             data[1]=alvik.ext_wire->read();
             data[2]=alvik.ext_wire->read();
             data[3]=alvik.ext_wire->read();
-            memcpy(&tmp_float, data, 4);
-            alvik.rotate(tmp_float);
-            Serial.println("rotate");
+            memcpy(&angle, data, 4);
+
+            // packeter.unpacketC1F(code, angle);
+            // alvik.rotate(angle);
+            alvik.serial->println(angle);
+            if (angle > 0) {
+                alvik.setLedRight(COLOR_VIOLET);
+            } else {
+                alvik.setLedRight(COLOR_RED);
+            }
+            //Serial.println("rotate");
             break;
     }
+
+}
+
+void receiveEvent(int event){
+    command=alvik.ext_wire->read();
+    //Serial.println("requested\t"+String(command));
+    parseMessage();
+
 }
 
 void requestEvent(){

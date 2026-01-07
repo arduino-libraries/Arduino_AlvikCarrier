@@ -1,11 +1,14 @@
 #include "Wire.h"
 #include "Arduino_RouterBridge.h"
+#include "ucPack.h"
 #define wire Wire1
 
 #define ALVIK_I2C_ADDRESS 0x2B
 
+ucPack packeter(200);
 uint8_t version[3];
 int address = ALVIK_I2C_ADDRESS;
+int msg_size;
 
 float f = 90;
 uint8_t msg[100];
@@ -50,12 +53,25 @@ void loop() {
     Monitor.println(version[2], HEX);
     delay(1000);
 
-    // wire.beginTransmission(address);
-    // wire.write('R');
-    // memcpy(msg,&f,sizeof(float));
-    // wire.write(msg,4);
-    // wire.endTransmission();
-    // delay(1000);
+    f = 90.0;
+    wire.beginTransmission(address);
+    wire.write('R');
+    //msg_size = packeter.packetC1F('R', f);
+    memcpy(msg, &f, sizeof(f));
+    //wire.write(packeter.msg, msg_size);
+    wire.write(msg, sizeof(f));
+    wire.endTransmission();
+    delay(1000);
+
+    f = -90.0;
+    wire.beginTransmission(address);
+    wire.write('R');
+    //msg_size = packeter.packetC1F('R', f);
+    memcpy(msg, &f, sizeof(f));
+    //wire.write(packeter.msg, msg_size);
+    wire.write(msg, sizeof(f));
+    wire.endTransmission();
+    delay(1000);
 
     wire.beginTransmission(address);
     wire.write('I');
