@@ -18,8 +18,6 @@ ucPack packeter(200);
 uint8_t out_buffer[OUT_BUF_SIZE];
 size_t message_len = 0;
 
-float tmp_float;
-
 unsigned long tmotor = 0;
 unsigned long tsend = 0;
 unsigned long tsensor = 0;
@@ -27,6 +25,10 @@ unsigned long timu = 0;
 unsigned long tack = 0;
 unsigned long tbehaviours = 0;
 unsigned long tbattery = 0;
+
+bool tof_available = false;
+
+uint8_t sensor_id = 0;
 
 
 void setup() {
@@ -66,6 +68,46 @@ void loop() {
         alvik.updateImu();
     }
 
+    // sensors publish
+    if (millis()-tsensor>10){
+        tsensor=millis();
+        switch(sensor_id){
+            case 0:
+                line.update();
+                // msg_size = packeter.packetC3I('l', line.getLeft(), line.getCenter(), line.getRight());
+                // alvik.serial->write(packeter.msg, msg_size);
+                break;
+            case 1:
+                // alvik.updateTouch();
+                // msg_size = packeter.packetC1B('t', alvik.getTouchKeys());
+                // alvik.serial->write(packeter.msg,msg_size);
+                // msg_size = packeter.packetC1B('m', alvik.getMotion());
+                // alvik.serial->write(packeter.msg, msg_size);
+                break;
+            case 2:
+                // alvik.updateAPDS();
+                // msg_size = packeter.packetC3I('c', alvik.getRed(), alvik.getGreen(), alvik.getBlue());
+                // alvik.serial->write(packeter.msg, msg_size);
+                break;
+            case 3:
+                tof_available = tof.update_rois();
+                // if (tof.update_rois()){
+                //     msg_size = packeter.packetC7I('f', tof.getLeft(), tof.getCenterLeft(), tof.getCenter(), tof.getCenterRight(), tof.getRight(), tof.getTop(), tof.getBottom());
+                //     alvik.serial->write(packeter.msg,msg_size);
+                // }
+                break;
+            case 4:
+                // msg_size = packeter.packetC3F('q', alvik.getRoll(), alvik.getPitch(), alvik.getYaw());
+                // alvik.serial->write(packeter.msg,msg_size);
+                break;
+        }
+        sensor_id++;
+        if (sensor_id>4){
+            sensor_id=0;
+        }
+    }
+
+
     // battery update
     if (millis()-tbattery>1000){
         tbattery = millis();
@@ -103,6 +145,23 @@ void publishImu() {
     sendMessage((uint8_t*)buf, msg_size);
 }
 
+void publishTofMatrix() {
+    int buf[7] = {0,0,0,0,0,0,0};
+
+    if (tof_available) {
+        buf[0] = tof.getLeft();
+        buf[1] = tof.getCenterLeft();
+        buf[2] = tof.getCenter();
+        buf[3] = tof.getCenterRight();
+        buf[4] = tof.getRight();
+        buf[5] = tof.getTop();
+        buf[6] = tof.getBottom();
+    }
+
+    size_t msg_size = sizeof(int)*7;
+    sendMessage((uint8_t*)buf, msg_size);
+}
+
 void getData(size_t size) {
 
     for (size_t i=0; i<size; i++){
@@ -129,6 +188,16 @@ void moveCmd() {
     alvik.move(distance);
 }
 
+void driveCmd() {
+    float values[2];
+    getData(sizeof(values));
+    memcpy(values, data, sizeof(values));
+
+    alvik.disableKinematicsMovement();
+    alvik.disablePositionControl();
+    alvik.drive(values[0], values[1]);  // linear, angular
+}
+
 void parseMessage() {
 
     switch (command){
@@ -137,6 +206,9 @@ void parseMessage() {
             break;
         case 'G':
             moveCmd();
+            break;
+        case 'V':
+            driveCmd();
             break;
         default:
             break;
@@ -160,22 +232,11 @@ void requestEvent(){
             publishImu();
             alvik.ext_wire->write(out_buffer, message_len);
             break;
-        case 'D':
-            data[0]=0x01;
-            data[1]=0x02;
-            data[2]=0x03;
-            data[3]=0x04;
-            data[4]=0x05;
-            data[5]=0x06;
-            alvik.ext_wire->write(data,6);
+        case 'T':
+            publishTofMatrix();
+            alvik.ext_wire->write(out_buffer, message_len);
             break;
-            /*
-            case 'T':
-              test_flag=true;
-              break;
-            case 'N':
-              test_flag=false;
-              break;
-            */
+        default:
+            break;
     }
 }

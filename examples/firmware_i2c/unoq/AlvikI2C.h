@@ -57,6 +57,14 @@ class AlvikI2C{
         wire.endTransmission();
     }
 
+    void drive(float linear, float angular) {
+        wire.beginTransmission(address);
+        wire.write('V');
+        wire.write((uint8_t*)&linear, sizeof(float));
+        wire.write((uint8_t*)&angular, sizeof(float));
+        uint8_t error = wire.endTransmission();
+    }
+
     String getVersionString() {
         getVersion();
         String versionStr = String(version[0]) + "." +
@@ -81,6 +89,25 @@ class AlvikI2C{
         gx = data[3];
         gy = data[4];
         gz = data[5];
+    }
+
+    void getTofMatrix(int &ltof, int &cltof, int &ctof, int &crtof, int &rtof, int &ttof, int &btof) {
+        size_t arr_size = sizeof(int) * 7;
+        int data[7];
+
+        wire.beginTransmission(address);
+        wire.write('T');
+        wire.endTransmission();
+        wire.requestFrom((uint8_t)address, (uint8_t)arr_size);
+        wire.readBytes((uint8_t*)data, (uint8_t)arr_size);
+
+        ltof = data[0];
+        cltof = data[1];
+        ctof = data[2];
+        crtof = data[3];
+        rtof = data[4];
+        ttof = data[5];
+        btof = data[6];
     }
 
 };

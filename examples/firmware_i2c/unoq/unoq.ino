@@ -22,20 +22,23 @@ void setup() {
 
 void loop() {
 
-    Monitor.print("VER = ");
-    Monitor.println(alvik.getVersionString());
-    delay(1000);
+    // Monitor.print("VER = ");
+    // Monitor.println(alvik.getVersionString());
+    // delay(1000);
+    //
+    // alvik.rotate(10.0);
+    // delay(1000);
+    //
+    // alvik.rotate(-10.0);
+    // delay(1000);
+    //
+    // alvik.move(10.0);
+    // delay(1000);
+    //
+    // alvik.move(-10.0);
+    // delay(1000);
 
-    alvik.rotate(10.0);
-    delay(1000);
-
-    alvik.rotate(-10.0);
-    delay(1000);
-
-    alvik.move(10.0);
-    delay(1000);
-
-    alvik.move(-10.0);
+    alvik.drive(10, 10);
     delay(1000);
 
     float ax, ay, az, gx, gy, gz;
@@ -47,6 +50,7 @@ void loop() {
     Monitor.print(ay);
     Monitor.print(" | accZ: ");
     Monitor.println(az);
+    delay(100);
 
 }
 
