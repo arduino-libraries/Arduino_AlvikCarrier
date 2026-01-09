@@ -22,9 +22,9 @@ void setup() {
 
 void loop() {
 
-    // Monitor.print("VER = ");
-    // Monitor.println(alvik.getVersionString());
-    // delay(1000);
+    Monitor.print("VER = ");
+    Monitor.println(alvik.getVersionString());
+    delay(1000);
     //
     // alvik.rotate(10.0);
     // delay(1000);
@@ -38,7 +38,10 @@ void loop() {
     // alvik.move(-10.0);
     // delay(1000);
 
-    alvik.drive(10, 10);
+    // alvik.drive(10, 10);
+    // delay(1000);
+
+    alvik.setRpm(10, -10);
     delay(1000);
 
     float ax, ay, az, gx, gy, gz;

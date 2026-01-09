@@ -198,6 +198,16 @@ void driveCmd() {
     alvik.drive(values[0], values[1]);  // linear, angular
 }
 
+void setRpmCmd() {
+    float values[2];
+    getData(sizeof(values));
+    memcpy(values, data, sizeof(values));
+
+    alvik.disableKinematicsMovement();
+    alvik.disablePositionControl();
+    alvik.setRpm(values[0], values[1]);    // left, right
+}
+
 void parseMessage() {
 
     switch (command){
@@ -207,7 +217,10 @@ void parseMessage() {
         case 'G':
             moveCmd();
             break;
-        case 'V':
+        case 'J':
+            setRpmCmd();
+            break;
+        case 'D':
             driveCmd();
             break;
         default:
@@ -219,7 +232,6 @@ void parseMessage() {
 void receiveEvent(int event){
     command=alvik.ext_wire->read();
     parseMessage();
-
 }
 
 void requestEvent(){

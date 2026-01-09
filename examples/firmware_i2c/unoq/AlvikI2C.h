@@ -59,10 +59,18 @@ class AlvikI2C{
 
     void drive(float linear, float angular) {
         wire.beginTransmission(address);
-        wire.write('V');
+        wire.write('D');
         wire.write((uint8_t*)&linear, sizeof(float));
         wire.write((uint8_t*)&angular, sizeof(float));
-        uint8_t error = wire.endTransmission();
+        wire.endTransmission();
+    }
+
+    void setRpm(float left, float right) {
+        wire.beginTransmission(address);
+        wire.write('J');
+        wire.write((uint8_t*)&left, sizeof(float));
+        wire.write((uint8_t*)&right, sizeof(float));
+        wire.endTransmission();
     }
 
     String getVersionString() {
