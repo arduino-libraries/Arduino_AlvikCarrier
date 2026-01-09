@@ -81,6 +81,21 @@ class AlvikI2C{
         return versionStr;
     }
 
+    float getBatteryPercentage() {
+
+        if (!isOnline()) {return 0.0;}
+
+        float batt;
+
+        wire.beginTransmission(address);
+        wire.write('B');
+        wire.endTransmission();
+        wire.requestFrom((uint8_t)address, (uint8_t)sizeof(float));
+        wire.readBytes((uint8_t*)&batt, (uint8_t)sizeof(float));
+
+        return batt;
+    }
+
     void getImu(float &ax, float &ay, float &az, float &gx, float &gy, float &gz) {
         size_t arr_size = sizeof(float) * 6;
         float data[6];

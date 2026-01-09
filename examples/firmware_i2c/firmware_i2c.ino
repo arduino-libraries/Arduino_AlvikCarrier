@@ -111,7 +111,7 @@ void loop() {
     // battery update
     if (millis()-tbattery>1000){
         tbattery = millis();
-        //alvik.updateBMS();
+        alvik.updateBMS();
         if (blink) {
             alvik.setLedLeft(COLOR_GREEN);
         } else {
@@ -125,6 +125,11 @@ void loop() {
 void sendMessage(const uint8_t * buf, const size_t length) {
     memcpy(out_buffer, buf, length);
     message_len = length;
+}
+
+void publishBattery() {
+    float batt = alvik.isBatteryCharging()*alvik.getBatteryChargePercentage();
+    sendMessage((uint8_t*)&batt, sizeof(float));
 }
 
 void publishVersion() {
@@ -236,6 +241,10 @@ void receiveEvent(int event){
 
 void requestEvent(){
     switch(command){
+        case 'B':
+            publishBattery();
+            alvik.ext_wire->write(out_buffer, message_len);
+            break;
         case 'V':
             publishVersion();
             alvik.ext_wire->write(out_buffer, message_len);

@@ -24,7 +24,22 @@ void loop() {
 
     Monitor.print("VER = ");
     Monitor.println(alvik.getVersionString());
+
+    delay(100);
+    float batt = alvik.getBatteryPercentage();
+    Monitor.print("BATT = ");
+    if (batt > 0) {
+        Monitor.println(batt);
+    } else if (batt < 0) {
+        Monitor.print(-batt);
+        Monitor.println(" (discharging)");
+    } else {
+        Monitor.println("Alvik is off");
+    }
+
     delay(1000);
+
+
     //
     // alvik.rotate(10.0);
     // delay(1000);
